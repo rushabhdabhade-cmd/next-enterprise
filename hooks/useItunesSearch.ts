@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react"
 import { ITunesTrack, SearchTrackParams } from "@/types/itunes"
-import { searchTracks } from "@/services/itunesService"
+import { searchTracks, getTopTracks } from "@/services/itunesService"
 
 interface UseItunesSearchState {
   tracks: ITunesTrack[]
@@ -18,7 +18,7 @@ export function useItunesSearch() {
   })
 
   const search = useCallback(async (params: SearchTrackParams) => {
-    setState({ tracks: [], loading: true, error: null })
+    setState(s => ({ ...s, loading: true, error: null }))
 
     try {
       const response = await searchTracks(params)
@@ -32,10 +32,33 @@ export function useItunesSearch() {
     }
   }, [])
 
+  const fetchTopTracks = useCallback(async () => {
+    setState(s => ({ ...s, loading: true, error: null }))
+
+    try {
+      const results = await getTopTracks()
+      if (results.length === 0) {
+        throw new Error("No tracks found in top charts")
+      }
+
+      // Shuffle results for "random" feel
+      const shuffled = [...results].sort(() => 0.5 - Math.random())
+      setState({ tracks: shuffled, loading: false, error: null })
+      return shuffled
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch top tracks"
+      console.error("Hook fetchTopTracks failed:", errorMessage)
+      setState(s => ({ ...s, loading: false, error: errorMessage }))
+      throw error // Propagate to trigger fallback in Home page
+    }
+  }, [])
+
   return {
     tracks: state.tracks,
     loading: state.loading,
     error: state.error,
     search,
+    fetchTopTracks,
   }
 }
