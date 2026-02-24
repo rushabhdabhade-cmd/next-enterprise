@@ -75,6 +75,28 @@ If you hit the same error locally, run the Corepack commands above or install `p
 - If `pnpm install` fails with registry errors, try `pnpm install --registry=https://registry.npmjs.org/`.
 - If `patch-package` modifies files unexpectedly, check `patches/` in repo root.
 
+### Husky & lint-staged
+
+We use Husky and `lint-staged` to run formatting and linting on staged files before commits.
+
+- The repo adds a `prepare` script that runs `husky install` after `pnpm install`.
+- `lint-staged` is configured in `package.json` to run `prettier` and `eslint --fix` on staged JS/TS files.
+
+If you add the hooks manually or need to re-install them:
+
+```
+pnpm install
+pnpm prepare    # runs `husky install` (usually run automatically by pnpm)
+# confirm the pre-commit hook exists:
+ls -la .husky
+```
+
+To run the staged checks locally without committing, use:
+
+```
+npx --no-install lint-staged
+```
+
 ## Suggested Git commit & PR texts (use these as-is or modify)
 
 Commit (title + description):
