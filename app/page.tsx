@@ -1,81 +1,114 @@
-import Link from "next/link"
-import LeftSidebar from "components/LeftSidebar"
-import HeroSection from "components/HeroSection"
-import RecentlyPlayedGrid from "components/RecentlyPlayedGrid"
-import Queue from "components/Queue"
+"use client"
 
-export const metadata = {
-  title: "iTunes",
-}
+import { useState, useEffect } from "react"
+import LeftSidebar from "@/components/LeftSidebar"
+import HeroSection from "@/components/HeroSection"
+import RecentlyPlayedGrid from "@/components/RecentlyPlayedGrid"
+import Queue from "@/components/Queue"
+import ThemeToggle from "@/components/ThemeToggle"
+import SearchBar from "@/components/SearchBar"
+import TrackList from "@/components/TrackList"
+import { useItunesSearch } from "@/hooks/useItunesSearch"
+import { formatDuration } from "@/services/itunesService"
 
 export default function Home() {
-  const songs = [
-    { title: "Jumpsuit", artist: "Twenty One Pilots", duration: "0:22" },
-    { title: "If You Were A Home", artist: "Nick Carryn", duration: "3:45" },
-    { title: "Naive", artist: "The Kooks", duration: "3:12" },
-    { title: "NUMB", artist: "XXXTENTACION", duration: "2:56" },
-    { title: "All For You", artist: "Years & Years", duration: "3:28" },
-    { title: "Up in Flames", artist: "Dvelle", duration: "4:02" },
-    { title: "Tchibo", artist: "Volker Schown", duration: "3:15" },
-    { title: "Let Me Down Slowly", artist: "Alec Benjamin", duration: "3:41" },
-    { title: "Lucky Strike", artist: "Troye Smith", duration: "2:58" },
-    { title: "Blood // Water", artist: "Stardon", duration: "3:33" },
-    { title: "lovely (with Khalid)", artist: "Billie Eilish", duration: "3:21" },
-    { title: "Come Together", artist: "The Beatles", duration: "4:19" },
-  ]
+  const { tracks, loading, error, search } = useItunesSearch()
+  const [showSearch, setShowSearch] = useState(false)
 
-  const recentlyPlayedItems = [
-    { name: "Feel You So", artist: "Username" },
-    { name: "Anyone pt.2", artist: "BTC" },
-    { name: "Addicts With a Pen", artist: "Twenty One Pilots" },
-    { name: "The night I lost", artist: "Lil Marvin" },
-    { name: "Scary Love", artist: "Lara Del Rey" },
-    { name: "What you know", artist: "Jack Harlow" },
-  ]
+  // Initial search for Drake as requested
+  useEffect(() => {
+    search({ term: "Drake", entity: "song", limit: 20 })
+  }, [search])
+
+  const recentlyPlayedItems = tracks.slice(6, 12).map((track) => ({
+    name: track.trackName,
+    artist: track.artistName,
+    imageUrl: track.artworkUrl100,
+  }))
+
+  const firstTrack = tracks[0]
+  const heroTitle = firstTrack ? `This is ${firstTrack.artistName}` : "Search for your favorite music"
+  const heroSubtitle = firstTrack ? `Top tracks including "${firstTrack.trackName}"` : "The essential tracks, all in one place"
+
+  const queueSongs = tracks.slice(0, 5).map(track => ({
+    title: track.trackName,
+    artist: track.artistName,
+    duration: formatDuration(track.trackTimeMillis)
+  }))
+
+  const firstTrackDuration = firstTrack ? formatDuration(firstTrack.trackTimeMillis) : "0:00"
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 flex">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex transition-colors duration-300">
       <LeftSidebar />
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
         <div className="p-8 max-w-7xl mx-auto">
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl overflow-hidden border border-purple-100/50 shadow-xl shadow-purple-100/30">
-            <HeroSection />
+          <div className="flex justify-end mb-4">
+            <ThemeToggle />
+          </div>
+          <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl overflow-hidden border border-purple-100/50 dark:border-gray-700/50 shadow-xl shadow-purple-100/30 dark:shadow-gray-900/30 transition-colors duration-300">
+            <HeroSection title={heroTitle} subtitle={heroSubtitle} />
 
             {/* Content Tabs */}
-            <div className="border-b border-purple-100/50 px-8 pt-6">
+            <div className="border-b border-purple-100/50 dark:border-gray-700/50 px-8 pt-6">
               <div className="flex gap-8">
-                <button className="pb-4 text-pink-600 font-medium border-b-2 border-pink-600 text-sm">
+                <button
+                  onClick={() => setShowSearch(false)}
+                  className={`pb-4 font-medium border-b-2 text-sm transition-colors ${!showSearch
+                    ? "text-pink-600 dark:text-pink-400 border-pink-600 dark:border-pink-400"
+                    : "text-gray-500 dark:text-gray-400 border-transparent hover:text-pink-600 dark:hover:text-pink-400"
+                    }`}
+                >
                   Recently Played
                 </button>
-                <button className="pb-4 text-gray-500 hover:text-pink-600 text-sm">
-                  Featured
+                <button
+                  onClick={() => setShowSearch(true)}
+                  className={`pb-4 font-medium border-b-2 text-sm transition-colors ${showSearch
+                    ? "text-pink-600 dark:text-pink-400 border-pink-600 dark:border-pink-400"
+                    : "text-gray-500 dark:text-gray-400 border-transparent hover:text-pink-600 dark:hover:text-pink-400"
+                    }`}
+                >
+                  Search Tracks
                 </button>
-                <button className="pb-4 text-gray-500 hover:text-pink-600 text-sm">
+                <button className="pb-4 text-gray-500 dark:text-gray-400 hover:text-pink-600 dark:hover:text-pink-400 text-sm">
                   Recommended
                 </button>
               </div>
             </div>
 
-            {/* Recently Played Grid */}
+            {/* Content */}
             <div className="p-8">
-              <RecentlyPlayedGrid items={recentlyPlayedItems} />
+              {!showSearch ? (
+                <RecentlyPlayedGrid items={recentlyPlayedItems} />
+              ) : (
+                <>
+                  <SearchBar search={search} loading={loading} error={error} />
+                  <TrackList tracks={tracks} loading={loading} />
+                </>
+              )}
             </div>
 
             {/* Progress Bar */}
-            <div className="px-8 pb-8 flex items-center gap-3">
-              <span className="text-xs text-gray-500">0:32</span>
-              <div className="flex-1 bg-gray-200 h-1.5 rounded-full overflow-hidden">
-                <div className="bg-gradient-to-r from-purple-500 to-pink-600 h-1.5 rounded-full w-1/3" />
+            {!showSearch && firstTrack && (
+              <div className="px-8 pb-8 flex items-center gap-3">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  0:00
+                </span>
+                <div className="flex-1 bg-gray-200 dark:bg-gray-700 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-gradient-to-r from-purple-500 to-pink-600 h-1.5 rounded-full w-0" />
+                </div>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {firstTrackDuration}
+                </span>
               </div>
-              <span className="text-xs text-gray-500">3:34</span>
-            </div>
+            )}
           </div>
         </div>
       </main>
 
-      <Queue songs={songs} />
+      <Queue songs={queueSongs} />
     </div>
   )
 }
