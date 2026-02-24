@@ -3,6 +3,7 @@ import LeftSidebar from "components/LeftSidebar"
 import HeroSection from "components/HeroSection"
 import RecentlyPlayedGrid from "components/RecentlyPlayedGrid"
 import Queue from "components/Queue"
+import ThemeToggle from "components/ThemeToggle"
 
 export const metadata = {
   title: "iTunes",
@@ -34,47 +35,38 @@ export default function Home() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 flex">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex">
       <LeftSidebar />
-
-      {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
         <div className="p-8 max-w-7xl mx-auto">
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl overflow-hidden border border-purple-100/50 shadow-xl shadow-purple-100/30">
+          <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl overflow-hidden border border-purple-100/50 dark:border-purple-900/50 shadow-xl shadow-purple-100/30 dark:shadow-none">
             <HeroSection />
-
-            {/* Content Tabs */}
-            <div className="border-b border-purple-100/50 px-8 pt-6">
+            <div className="border-b border-purple-100/50 dark:border-purple-900/50 px-8 pt-6">
               <div className="flex gap-8">
-                <button className="pb-4 text-pink-600 font-medium border-b-2 border-pink-600 text-sm">
+                <button className="pb-4 text-pink-600 dark:text-pink-400 font-medium border-b-2 border-pink-600 dark:border-pink-400 text-sm">
                   Recently Played
                 </button>
-                <button className="pb-4 text-gray-500 hover:text-pink-600 text-sm">
+                <button className="pb-4 text-gray-500 dark:text-gray-400 hover:text-pink-600 dark:hover:text-pink-400 text-sm">
                   Featured
                 </button>
-                <button className="pb-4 text-gray-500 hover:text-pink-600 text-sm">
+                <button className="pb-4 text-gray-500 dark:text-gray-400 hover:text-pink-600 dark:hover:text-pink-400 text-sm">
                   Recommended
                 </button>
               </div>
             </div>
-
-            {/* Recently Played Grid */}
             <div className="p-8">
               <RecentlyPlayedGrid items={recentlyPlayedItems} />
             </div>
-
-            {/* Progress Bar */}
             <div className="px-8 pb-8 flex items-center gap-3">
-              <span className="text-xs text-gray-500">0:32</span>
-              <div className="flex-1 bg-gray-200 h-1.5 rounded-full overflow-hidden">
-                <div className="bg-gradient-to-r from-purple-500 to-pink-600 h-1.5 rounded-full w-1/3" />
+              <span className="text-xs text-gray-500 dark:text-gray-400">0:32</span>
+              <div className="flex-1 bg-gray-200 dark:bg-gray-700 h-1.5 rounded-full overflow-hidden">
+                <div className="bg-gradient-to-r from-purple-500 to-pink-600 dark:from-purple-400 dark:to-pink-500 h-1.5 rounded-full w-1/3" />
               </div>
-              <span className="text-xs text-gray-500">3:34</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">3:34</span>
             </div>
           </div>
         </div>
       </main>
-
       <Queue songs={songs} />
     </div>
   )
