@@ -13,22 +13,34 @@ import { formatDuration } from "@/services/itunesService"
 
 export default function Home() {
   const { tracks, loading, error, search } = useItunesSearch()
-  const [showSearch, setShowSearch] = useState(false)
+  const [activeTab, setActiveTab] = useState<"explore" | "recent" | "recommended">("explore")
 
-  // Initial search for Drake as requested
+  // Initial search for random songs on mount
   useEffect(() => {
-    search({ term: "Drake", entity: "song", limit: 20 })
+    const keywords = ["Trending", "Classic", "Hits", "Top", "Electronic", "Acoustic", "Jazz", "Pop", "Rock", "Lofi"]
+    const randomTerm = keywords[Math.floor(Math.random() * keywords.length)] || "Hits"
+
+    // Add a small delay if it's the first render to ensure network is stable
+    const timer = setTimeout(() => {
+      search({ term: randomTerm, entity: "song", limit: 20 }).catch(() => {
+        // Retry once with a safe fallback if first fails
+        search({ term: "Global Hits", entity: "song", limit: 20 })
+      })
+    }, 100)
+
+    return () => clearTimeout(timer)
   }, [search])
 
   const recentlyPlayedItems = tracks.slice(6, 12).map((track) => ({
+    id: track.trackId,
     name: track.trackName,
     artist: track.artistName,
     imageUrl: track.artworkUrl100,
   }))
 
   const firstTrack = tracks[0]
-  const heroTitle = firstTrack ? `This is ${firstTrack.artistName}` : "Search for your favorite music"
-  const heroSubtitle = firstTrack ? `Top tracks including "${firstTrack.trackName}"` : "The essential tracks, all in one place"
+  const heroTitle = firstTrack ? `This is ${firstTrack.artistName}` : "Explore trending music"
+  const heroSubtitle = firstTrack ? `Featuring tracks like "${firstTrack.trackName}"` : "Discover your next favorite song"
 
   const queueSongs = tracks.slice(0, 5).map(track => ({
     title: track.trackName,
@@ -55,8 +67,17 @@ export default function Home() {
             <div className="border-b border-purple-100/50 dark:border-gray-700/50 px-8 pt-6">
               <div className="flex gap-8">
                 <button
-                  onClick={() => setShowSearch(false)}
-                  className={`pb-4 font-medium border-b-2 text-sm transition-colors ${!showSearch
+                  onClick={() => setActiveTab("explore")}
+                  className={`pb-4 font-medium border-b-2 text-sm transition-colors ${activeTab === "explore"
+                    ? "text-pink-600 dark:text-pink-400 border-pink-600 dark:border-pink-400"
+                    : "text-gray-500 dark:text-gray-400 border-transparent hover:text-pink-600 dark:hover:text-pink-400"
+                    }`}
+                >
+                  Explore
+                </button>
+                <button
+                  onClick={() => setActiveTab("recent")}
+                  className={`pb-4 font-medium border-b-2 text-sm transition-colors ${activeTab === "recent"
                     ? "text-pink-600 dark:text-pink-400 border-pink-600 dark:border-pink-400"
                     : "text-gray-500 dark:text-gray-400 border-transparent hover:text-pink-600 dark:hover:text-pink-400"
                     }`}
@@ -64,15 +85,12 @@ export default function Home() {
                   Recently Played
                 </button>
                 <button
-                  onClick={() => setShowSearch(true)}
-                  className={`pb-4 font-medium border-b-2 text-sm transition-colors ${showSearch
+                  onClick={() => setActiveTab("recommended")}
+                  className={`pb-4 font-medium border-b-2 text-sm transition-colors ${activeTab === "recommended"
                     ? "text-pink-600 dark:text-pink-400 border-pink-600 dark:border-pink-400"
                     : "text-gray-500 dark:text-gray-400 border-transparent hover:text-pink-600 dark:hover:text-pink-400"
                     }`}
                 >
-                  Search Tracks
-                </button>
-                <button className="pb-4 text-gray-500 dark:text-gray-400 hover:text-pink-600 dark:hover:text-pink-400 text-sm">
                   Recommended
                 </button>
               </div>
@@ -80,18 +98,26 @@ export default function Home() {
 
             {/* Content */}
             <div className="p-8">
-              {!showSearch ? (
-                <RecentlyPlayedGrid items={recentlyPlayedItems} />
-              ) : (
+              {activeTab === "explore" && (
                 <>
                   <SearchBar search={search} loading={loading} error={error} />
                   <TrackList tracks={tracks} loading={loading} />
                 </>
               )}
+              {activeTab === "recent" && (
+                <RecentlyPlayedGrid items={recentlyPlayedItems} />
+              )}
+              {activeTab === "recommended" && (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 dark:text-gray-400 italic">
+                    Recommendations based on your taste will appear here soon...
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Progress Bar */}
-            {!showSearch && firstTrack && (
+            {activeTab === "recent" && firstTrack && (
               <div className="px-8 pb-8 flex items-center gap-3">
                 <span className="text-xs text-gray-500 dark:text-gray-400">
                   0:00
