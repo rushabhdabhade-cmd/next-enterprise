@@ -40,11 +40,6 @@ export default function Home() {
   const heroTitle = firstTrack ? `Discover ${firstTrack.artistName}` : "Curated for you"
   const heroSubtitle = firstTrack ? `The evolution of sound across ${firstTrack.primaryGenreName}.` : "Explore fresh tracks and timeless classics."
 
-  const queueSongs = tracks.slice(0, 10).map(track => ({
-    title: track.trackName,
-    artist: track.artistName,
-    duration: formatDuration(track.trackTimeMillis)
-  }))
 
   const tabs = [
     { id: "explore", name: "Explore", icon: Compass },
@@ -88,8 +83,8 @@ export default function Home() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`group pb-6 flex items-center gap-2.5 text-sm font-bold tracking-tight transition-all relative ${activeTab === tab.id
-                    ? "text-gray-950 dark:text-white"
-                    : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                  ? "text-gray-950 dark:text-white"
+                  : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
                   }`}
               >
                 <tab.icon size={18} className={activeTab === tab.id ? "text-pink-500" : "group-hover:text-pink-400 transition-colors"} />
@@ -133,7 +128,7 @@ export default function Home() {
         </div>
       </main>
 
-      <Queue songs={queueSongs} />
+      <Queue />
     </div>
   )
 }
