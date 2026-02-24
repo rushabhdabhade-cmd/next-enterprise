@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { SearchTrackParams } from "@/types/itunes"
+import { Search, Loader2, XCircle } from "lucide-react"
 
 interface SearchBarProps {
   onSearchComplete?: (count: number) => void
@@ -37,27 +38,37 @@ export default function SearchBar({
   }
 
   return (
-    <div className="mb-6">
-      <form onSubmit={handleSearch} className="flex gap-2">
+    <div className="relative w-full max-w-4xl mx-auto mb-12">
+      <form onSubmit={handleSearch} className="relative group">
+        <div className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-pink-500 transition-colors">
+          {loading ? (
+            <Loader2 size={24} className="animate-spin" />
+          ) : (
+            <Search size={24} strokeWidth={1.5} />
+          )}
+        </div>
+
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search songs, artists..."
-          className="flex-1 px-4 py-2 rounded-lg border border-purple-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500"
+          placeholder="Artist, song or mood..."
+          className="w-full pl-16 pr-32 py-6 rounded-[32px] bg-gray-50 dark:bg-gray-900 border-none text-gray-950 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-lg font-light tracking-tight focus:ring-4 focus:ring-pink-500/10 focus:bg-white dark:focus:bg-gray-800 transition-all duration-300 shadow-sm"
           disabled={loading}
         />
+
         <button
           type="submit"
-          disabled={loading}
-          className="px-6 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-600 text-white font-medium hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          disabled={loading || !searchQuery.trim()}
+          className="absolute right-3 top-1/2 -translate-y-1/2 px-8 py-3 bg-gray-950 dark:bg-white text-white dark:text-gray-950 rounded-full font-bold text-sm tracking-tight hover:scale-[1.02] active:scale-[0.98] disabled:opacity-0 disabled:pointer-events-none transition-all duration-300 shadow-xl"
         >
-          {loading ? "Searching..." : "Search"}
+          Explore
         </button>
       </form>
 
       {error && (
-        <div className="mt-3 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg text-sm">
+        <div className="mt-4 flex items-center gap-3 p-4 bg-red-50 dark:bg-red-900/10 text-red-600 dark:text-red-400 rounded-2xl text-sm font-medium border border-red-100 dark:border-red-900/20 animate-in slide-in-from-top-2">
+          <XCircle size={18} />
           {error}
         </div>
       )}
