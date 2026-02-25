@@ -1,11 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { ITunesTrack } from "@/types/itunes"
 import { formatDuration } from "@/services/itunesService"
 import { usePlayback } from "@/context/PlaybackContext"
-import { trackTrackSelected, trackTrackFavorited } from "@/lib/analytics"
+import { trackTrackSelected } from "@/lib/analytics"
 import { Play, Pause, Heart, Plus, Music } from "lucide-react"
 
 interface TrackListProps {
@@ -15,13 +14,11 @@ interface TrackListProps {
 
 export default function TrackList({ tracks, loading }: TrackListProps) {
   const router = useRouter()
-  const { currentTrack, isPlaying, playTrack, togglePlay } = usePlayback()
-  const [favorites, setFavorites] = useState<Set<number>>(new Set())
+  const { currentTrack, isPlaying, playTrack, togglePlay, favorites, toggleFavorite } = usePlayback()
 
   const handlePlayClick = (e: React.MouseEvent, track: ITunesTrack) => {
     e.stopPropagation()
 
-    // Explicitly track selection when playing as well for trending aggregation
     trackTrackSelected({
       id: String(track.trackId),
       artist: track.artistName,
@@ -42,21 +39,6 @@ export default function TrackList({ tracks, loading }: TrackListProps) {
       genre: track.primaryGenreName
     })
     router.push(`/track/${track.trackId}`)
-  }
-
-  const toggleFavorite = (e: React.MouseEvent, trackId: number) => {
-    e.stopPropagation()
-    setFavorites(prev => {
-      const next = new Set(prev)
-      const isFavoriting = !next.has(trackId)
-
-      // Log analytics
-      trackTrackFavorited(String(trackId), isFavoriting)
-
-      if (next.has(trackId)) next.delete(trackId)
-      else next.add(trackId)
-      return next
-    })
   }
 
   if (loading) {
@@ -132,7 +114,7 @@ export default function TrackList({ tracks, loading }: TrackListProps) {
             {/* Hover Actions */}
             <div className="flex flex-col gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0 duration-300">
               <button
-                onClick={(e) => toggleFavorite(e, track.trackId)}
+                onClick={(e) => { e.stopPropagation(); toggleFavorite(track) }}
                 className={`transition-all hover:scale-110 ${favorites.has(track.trackId) ? 'text-pink-500' : 'text-gray-300 dark:text-gray-600 hover:text-pink-500'}`}
               >
                 <Heart size={18} fill={favorites.has(track.trackId) ? "currentColor" : "none"} />

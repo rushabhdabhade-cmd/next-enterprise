@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState } from "react" // useState kept for isExpanded
 import { usePlayback } from "@/context/PlaybackContext"
 import { formatDuration } from "@/services/itunesService"
 import {
@@ -27,16 +27,16 @@ export default function NowPlayingBar() {
         volume,
         isShuffle,
         isRepeat,
+        favorites,
         togglePlay,
         playNext,
         playPrevious,
         seek,
         updateVolume,
         toggleShuffle,
-        toggleRepeat
+        toggleRepeat,
+        toggleFavorite,
     } = usePlayback()
-
-    const [isLiked, setIsLiked] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
 
     if (!currentTrack) return null
@@ -208,10 +208,10 @@ export default function NowPlayingBar() {
                             </p>
                         </div>
                         <button
-                            onClick={() => setIsLiked(!isLiked)}
-                            className={`ml-2 transition-all hover:scale-110 active:scale-90 ${isLiked ? 'text-pink-500' : 'text-gray-300 dark:text-gray-600 hover:text-pink-500'}`}
+                            onClick={() => toggleFavorite(currentTrack)}
+                            className={`ml-2 transition-all hover:scale-110 active:scale-90 ${favorites.has(currentTrack.trackId) ? 'text-pink-500' : 'text-gray-300 dark:text-gray-600 hover:text-pink-500'}`}
                         >
-                            <Heart size={18} fill={isLiked ? "currentColor" : "none"} />
+                            <Heart size={18} fill={favorites.has(currentTrack.trackId) ? "currentColor" : "none"} />
                         </button>
                     </div>
 

@@ -10,6 +10,7 @@ import {
   Heart,
   History,
   Radio,
+  Clock,
   PlusCircle,
   Layout,
   User as UserIcon,
@@ -35,9 +36,9 @@ export default function LeftSidebar() {
   ]
 
   const playlists = [
-    { name: "Favorites", icon: Heart },
-    { name: "History", icon: History },
-    { name: "Stations", icon: Radio },
+    { name: "Favorites", href: "/favorites", icon: Heart },
+    { name: "History", href: "/recently-played", icon: History },
+    { name: "Stations", href: "/stations", icon: Radio },
   ]
 
   return (
@@ -88,15 +89,23 @@ export default function LeftSidebar() {
             </button>
           </div>
           <ul className="space-y-1">
-            {playlists.map((playlist) => (
-              <li
-                key={playlist.name}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-900/50 hover:text-gray-950 dark:hover:text-white transition-all cursor-pointer group"
-              >
-                <playlist.icon size={18} className="group-hover:text-pink-500 transition-colors" />
-                {playlist.name}
-              </li>
-            ))}
+            {playlists.map((playlist) => {
+              const isActive = pathname === playlist.href
+              return (
+                <li key={playlist.name}>
+                  <Link
+                    href={playlist.href}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all group ${isActive
+                      ? "bg-gray-100 dark:bg-gray-900 text-gray-950 dark:text-white"
+                      : "text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-900/50 hover:text-gray-950 dark:hover:text-white"
+                    }`}
+                  >
+                    <playlist.icon size={18} className={isActive ? "text-pink-500" : "group-hover:text-pink-500 transition-colors"} />
+                    {playlist.name}
+                  </Link>
+                </li>
+              )
+            })}
           </ul>
         </div>
       </div>
