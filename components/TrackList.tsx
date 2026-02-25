@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { ITunesTrack } from "@/types/itunes"
 import { formatDuration } from "@/services/itunesService"
 import { usePlayback } from "@/context/PlaybackContext"
+import { trackTrackSelected, trackTrackFavorited } from "@/lib/analytics"
 import { Play, Pause, Heart, Plus, Music } from "lucide-react"
 
 interface TrackListProps {
@@ -19,6 +20,14 @@ export default function TrackList({ tracks, loading }: TrackListProps) {
 
   const handlePlayClick = (e: React.MouseEvent, track: ITunesTrack) => {
     e.stopPropagation()
+
+    // Explicitly track selection when playing as well for trending aggregation
+    trackTrackSelected({
+      id: String(track.trackId),
+      artist: track.artistName,
+      genre: track.primaryGenreName
+    })
+
     if (currentTrack?.trackId === track.trackId) {
       togglePlay()
     } else {
@@ -26,14 +35,24 @@ export default function TrackList({ tracks, loading }: TrackListProps) {
     }
   }
 
-  const handleDetailsClick = (trackId: number) => {
-    router.push(`/track/${trackId}`)
+  const handleDetailsClick = (track: ITunesTrack) => {
+    trackTrackSelected({
+      id: String(track.trackId),
+      artist: track.artistName,
+      genre: track.primaryGenreName
+    })
+    router.push(`/track/${track.trackId}`)
   }
 
   const toggleFavorite = (e: React.MouseEvent, trackId: number) => {
     e.stopPropagation()
     setFavorites(prev => {
       const next = new Set(prev)
+      const isFavoriting = !next.has(trackId)
+
+      // Log analytics
+      trackTrackFavorited(String(trackId), isFavoriting)
+
       if (next.has(trackId)) next.delete(trackId)
       else next.add(trackId)
       return next
@@ -62,7 +81,7 @@ export default function TrackList({ tracks, loading }: TrackListProps) {
         return (
           <div
             key={track.trackId}
-            onClick={() => handleDetailsClick(track.trackId)}
+            onClick={() => handleDetailsClick(track)}
             style={{ animationDelay: `${index * 50}ms` }}
             className={`group relative p-4 rounded-3xl border transition-all duration-500 flex items-center gap-5 cursor-pointer animate-in fade-in slide-in-from-bottom-4 fill-mode-both ${isCurrent
               ? "bg-gray-50 dark:bg-gray-900 border-pink-500/30 shadow-2xl shadow-pink-500/5 scale-[1.02]"
