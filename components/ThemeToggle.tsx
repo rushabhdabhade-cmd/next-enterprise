@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Sun, Moon } from "lucide-react"
+import { trackThemeSwitch } from "@/lib/analytics"
 
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false)
@@ -30,6 +31,7 @@ export default function ThemeToggle() {
     console.log("Toggling theme to:", newTheme)
     setTheme(newTheme)
     localStorage.setItem("theme", newTheme)
+    trackThemeSwitch(newTheme)
 
     const root = document.documentElement
     if (newTheme === "dark") {

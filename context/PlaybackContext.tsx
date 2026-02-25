@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useState, useRef, ReactNode, useEffect, useCallback } from "react"
 import { ITunesTrack } from "@/types/itunes"
 
+import { trackTrackPlayed, trackTrackPaused } from "@/lib/analytics"
+
 interface PlaybackContextType {
     currentTrack: ITunesTrack | null
     queue: ITunesTrack[]
@@ -132,8 +134,22 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
         audio.volume = volume
         audioRef.current = audio
 
-        audio.addEventListener('play', () => setIsPlaying(true))
-        audio.addEventListener('pause', () => setIsPlaying(false))
+        audio.addEventListener('play', () => {
+            setIsPlaying(true)
+            if (currentTrackRef.current) {
+                trackTrackPlayed({
+                    id: String(currentTrackRef.current.trackId),
+                    artist: currentTrackRef.current.artistName,
+                    title: currentTrackRef.current.trackName
+                })
+            }
+        })
+        audio.addEventListener('pause', () => {
+            setIsPlaying(false)
+            if (currentTrackRef.current) {
+                trackTrackPaused(String(currentTrackRef.current.trackId), audio.currentTime)
+            }
+        })
         audio.addEventListener('timeupdate', () => setCurrentTime(audio.currentTime))
         audio.addEventListener('loadedmetadata', () => setDuration(audio.duration))
         audio.addEventListener('ended', () => {
