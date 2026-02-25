@@ -3,12 +3,32 @@
 import { useEffect, useState } from "react"
 import { getHotTracks } from "@/lib/api"
 import { HotTrackWithMeta } from "@/types/hot"
-import { Flame, TrendingUp, Music, AlertCircle } from "lucide-react"
+import { usePlayback } from "@/context/PlaybackContext"
+import { trackTrackSelected } from "@/lib/analytics"
+import { Flame, TrendingUp, Play, Pause, Music, AlertCircle } from "lucide-react"
 
 export default function HotSection() {
     const [tracks, setTracks] = useState<HotTrackWithMeta[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
+    const { currentTrack, isPlaying, playTrack, togglePlay } = usePlayback()
+
+    const handlePlay = (e: React.MouseEvent, track: HotTrackWithMeta) => {
+        e.stopPropagation()
+
+        // Track analytics
+        trackTrackSelected({
+            id: String(track.trackId),
+            artist: track.artistName,
+            genre: track.primaryGenreName
+        })
+
+        if (currentTrack?.trackId === track.trackId) {
+            togglePlay()
+        } else {
+            playTrack(track, tracks)
+        }
+    }
 
     useEffect(() => {
         const load = async () => {
@@ -54,42 +74,55 @@ export default function HotSection() {
                         <TrendingUp className="text-white" size={20} />
                     </div>
                     <div>
-                        <h3 className="text-2xl font-bold text-gray-950 dark:text-white leading-none">Global Heatmap</h3>
+                        <h3 className="text-2xl font-bold text-gray-950 dark:text-white leading-none">Global Trending</h3>
                         <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mt-1">Real-time Trending</p>
                     </div>
                 </div>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-                {tracks.map((track, idx) => (
-                    <div
-                        key={track.trackId}
-                        className="group relative bg-white dark:bg-gray-900 rounded-[32px] p-4 border border-gray-100 dark:border-gray-800 hover:border-orange-500/30 transition-all duration-500 hover:shadow-2xl hover:shadow-orange-500/5 active:scale-95 cursor-pointer"
-                    >
-                        <div className="relative aspect-square rounded-2xl overflow-hidden mb-4 shadow-md">
-                            <img
-                                src={track.artworkUrl100.replace('100x100', '400x400')}
-                                alt={track.trackName}
-                                className="object-cover transition-transform duration-700 group-hover:scale-110"
-                            />
-                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors" />
+                {tracks.map((track, idx) => {
+                    const isCurrent = currentTrack?.trackId === track.trackId
+                    const isPlayingThis = isCurrent && isPlaying
 
-                            {/* Trending Rank Badge */}
-                            <div className="absolute top-2 left-2 w-8 h-8 bg-black/60 backdrop-blur-md rounded-xl flex items-center justify-center text-xs font-black text-white border border-white/10">
-                                #{idx + 1}
+                    return (
+                        <div
+                            key={track.trackId}
+                            onClick={(e) => handlePlay(e, track)}
+                            className={`group relative bg-white dark:bg-gray-900 rounded-[32px] p-4 border transition-all duration-500 hover:shadow-2xl hover:shadow-orange-500/5 active:scale-95 cursor-pointer ${isCurrent ? "border-orange-500/50" : "border-gray-100 dark:border-gray-800 hover:border-orange-500/30"
+                                }`}
+                        >
+                            <div className="relative aspect-square rounded-2xl overflow-hidden mb-4 shadow-md">
+                                <img
+                                    src={track.artworkUrl100.replace('100x100', '400x400')}
+                                    alt={track.trackName}
+                                    className="object-cover transition-transform duration-700 group-hover:scale-110 h-full w-full"
+                                />
+                                <div className={`absolute inset-0 bg-black/40 transition-opacity flex items-center justify-center ${isCurrent ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
+                                    <div className="w-12 h-12 flex items-center justify-center bg-orange-500 text-white rounded-full shadow-2xl transition-transform active:scale-90 scale-0 group-hover:scale-100 duration-300">
+                                        {isPlayingThis ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" className="ml-1" />}
+                                    </div>
+                                </div>
+
+                                {/* Trending Rank Badge */}
+                                <div className="absolute top-2 left-2 w-8 h-8 bg-black/60 backdrop-blur-md rounded-xl flex items-center justify-center text-xs font-black text-white border border-white/10">
+                                    #{idx + 1}
+                                </div>
+
+                                {/* Score Badge */}
+                                <div className="absolute bottom-2 right-2 px-2.5 py-1 bg-orange-500 rounded-lg flex items-center gap-1 shadow-lg">
+                                    <Flame size={12} className="text-white" />
+                                    <span className="text-[10px] font-black text-white">{track.trendingScore}</span>
+                                </div>
                             </div>
 
-                            {/* Score Badge */}
-                            <div className="absolute bottom-2 right-2 px-2.5 py-1 bg-orange-500 rounded-lg flex items-center gap-1 shadow-lg">
-                                <Flame size={12} className="text-white" />
-                                <span className="text-[10px] font-black text-white">{track.trendingScore}</span>
-                            </div>
+                            <h4 className={`font-bold truncate text-sm mb-1 ${isCurrent ? "text-orange-500" : "text-gray-950 dark:text-white"}`}>
+                                {track.trackName}
+                            </h4>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium truncate">{track.artistName}</p>
                         </div>
-
-                        <h4 className="font-bold text-gray-950 dark:text-white truncate text-sm mb-1">{track.trackName}</h4>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 font-medium truncate">{track.artistName}</p>
-                    </div>
-                ))}
+                    )
+                })}
             </div>
         </section>
     )

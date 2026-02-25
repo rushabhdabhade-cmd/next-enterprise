@@ -70,8 +70,8 @@ export async function GET() {
             throw new Error(`PostHog query failed: ${phResponse.statusText}`)
         }
 
-        const phData = await phResponse.json()
-        const results: any[][] = phData.results || []
+        const phData = await phResponse.json() as { results: any[][] }
+        const results = phData.results || []
 
         if (results.length === 0) {
             console.log("Trending: No events found in last 24h.")
@@ -93,16 +93,12 @@ export async function GET() {
                 try {
                     const itunesRes = await fetch(`https://itunes.apple.com/lookup?id=${item.trackId}`)
                     if (!itunesRes.ok) return null
-                    const itunesData = await itunesRes.json()
+                    const itunesData = await itunesRes.json() as { results: any[] }
                     const track = itunesData.results?.[0]
                     if (!track) return null
 
                     return {
-                        trackId: item.trackId,
-                        trackName: track.trackName,
-                        artistName: track.artistName,
-                        artworkUrl100: track.artworkUrl100,
-                        previewUrl: track.previewUrl,
+                        ...track,
                         trendingScore: item.count
                     } as HotTrackWithMeta
                 } catch (err) {

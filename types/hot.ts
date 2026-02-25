@@ -1,13 +1,10 @@
+import { ITunesTrack } from "./itunes";
+
 export type HotTrack = {
     trackId: string;
     count: number;
 };
 
-export type HotTrackWithMeta = {
-    trackId: string;
-    trackName: string;
-    artistName: string;
-    artworkUrl100: string;
-    previewUrl: string;
+export type HotTrackWithMeta = ITunesTrack & {
     trendingScore: number;
 };
