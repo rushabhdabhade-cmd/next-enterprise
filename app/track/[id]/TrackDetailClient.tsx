@@ -1,15 +1,27 @@
 "use client"
 
+import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { ITunesTrack } from "@/types/itunes"
 import { usePlayback } from "@/context/PlaybackContext"
 import LeftSidebar from "@/components/LeftSidebar"
+import AISummary from "@/components/AISummary"
 import { formatDuration } from "@/services/itunesService"
+import { useFeatureFlag } from "@/lib/featureFlags"
+import { trackAISummaryExposure } from "@/lib/analytics"
 import { Play, Pause, Heart, MoreHorizontal, ChevronLeft } from "lucide-react"
 
 export default function TrackDetailClient({ track }: { track: ITunesTrack }) {
     const router = useRouter()
     const { playTrack, currentTrack, isPlaying, togglePlay } = usePlayback()
+    const showAISummary = useFeatureFlag("ai-summaries")
+
+    // Track PostHog exposure once the flag resolves to true
+    useEffect(() => {
+        if (showAISummary === true) {
+            trackAISummaryExposure(String(track.trackId))
+        }
+    }, [showAISummary, track.trackId])
 
     const isCurrent = currentTrack?.trackId === track.trackId
     const highResArtwork = track.artworkUrl100.replace("100x100", "800x800")
@@ -122,6 +134,11 @@ export default function TrackDetailClient({ track }: { track: ITunesTrack }) {
                             &ldquo;This {track.primaryGenreName} masterpiece spans {formatDuration(track.trackTimeMillis)} of acoustic excellence. Originally part of {track.collectionName}, it stands as a testament to {track.artistName}&apos;s distinctive sound signature.&rdquo;
                         </p>
                     </div>
+
+                    {/* ai-summaries feature flag — renders AI insight panel when enabled */}
+                    {showAISummary && (
+                        <AISummary trackId={String(track.trackId)} />
+                    )}
                 </div>
             </main>
         </div>
