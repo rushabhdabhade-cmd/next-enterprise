@@ -32,6 +32,7 @@ storybook-static/
 /test-results/
 /playwright-report/
 /playwright/.cache/
+.lighthouseci
 
 /.npm-only-allow
 
