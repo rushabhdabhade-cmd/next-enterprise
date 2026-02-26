@@ -1,6 +1,7 @@
 import { Suspense } from "react"
 import "styles/tailwind.css"
 import { PlaybackProvider } from "@/context/PlaybackContext"
+import { LibraryProvider } from "@/context/LibraryContext"
 import NowPlayingBar from "@/components/NowPlayingBar"
 import PostHogPageView from "@/components/PostHogPageView"
 import PostHogIdentifier from "@/components/PostHogIdentifier"
@@ -28,8 +29,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <PostHogPageView />
           </Suspense>
           <PlaybackProvider>
-            {children}
-            <NowPlayingBar />
+            <LibraryProvider>
+              {children}
+              <NowPlayingBar />
+            </LibraryProvider>
           </PlaybackProvider>
         </body>
       </html>

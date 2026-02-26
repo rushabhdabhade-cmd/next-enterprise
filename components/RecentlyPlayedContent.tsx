@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react"
 import { useUser } from "@clerk/nextjs"
-import { Clock, Play, Pause, Music, Heart } from "lucide-react"
+import { Clock, Play, Pause, Music, Heart, Plus } from "lucide-react"
 import { usePlayback } from "@/context/PlaybackContext"
 import { formatDuration } from "@/services/itunesService"
+import AddToLibraryModal from "@/components/AddToLibraryModal"
 import type { SongPlay } from "@/lib/db"
 import type { ITunesTrack } from "@/types/itunes"
 
@@ -61,6 +62,7 @@ export default function RecentlyPlayedContent() {
     const { currentTrack, isPlaying, playTrack, togglePlay, favorites, toggleFavorite } = usePlayback()
     const [recentTracks, setRecentTracks] = useState<SongPlay[]>([])
     const [loading, setLoading] = useState(true)
+    const [libraryTrack, setLibraryTrack] = useState<ITunesTrack | null>(null)
 
     useEffect(() => {
         if (!isLoaded) return
@@ -196,13 +198,22 @@ export default function RecentlyPlayedContent() {
                                             </span>
                                         )}
                                     </div>
-                                    <button
-                                        onClick={() => toggleFavorite(playToTrack(play))}
-                                        className={`flex-shrink-0 hover:scale-110 active:scale-90 transition-all ${isFav ? "text-pink-500" : "text-gray-300 dark:text-gray-600 hover:text-pink-500"}`}
-                                        title={isFav ? "Remove from favorites" : "Add to favorites"}
-                                    >
-                                        <Heart size={16} fill={isFav ? "currentColor" : "none"} />
-                                    </button>
+                                    <div className="flex items-center gap-2 flex-shrink-0">
+                                        <button
+                                            onClick={() => setLibraryTrack(playToTrack(play))}
+                                            className="text-gray-300 dark:text-gray-600 hover:text-gray-900 dark:hover:text-white hover:scale-110 active:scale-90 transition-all"
+                                            title="Add to library"
+                                        >
+                                            <Plus size={16} />
+                                        </button>
+                                        <button
+                                            onClick={() => toggleFavorite(playToTrack(play))}
+                                            className={`hover:scale-110 active:scale-90 transition-all ${isFav ? "text-pink-500" : "text-gray-300 dark:text-gray-600 hover:text-pink-500"}`}
+                                            title={isFav ? "Remove from favorites" : "Add to favorites"}
+                                        >
+                                            <Heart size={16} fill={isFav ? "currentColor" : "none"} />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -210,6 +221,13 @@ export default function RecentlyPlayedContent() {
                 })}
             </div>
 
+            {libraryTrack && (
+                <AddToLibraryModal
+                    track={libraryTrack}
+                    open={!!libraryTrack}
+                    onOpenChange={(open) => { if (!open) setLibraryTrack(null) }}
+                />
+            )}
         </>
     )
 }

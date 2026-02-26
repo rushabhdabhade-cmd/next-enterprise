@@ -14,8 +14,10 @@ import {
     Heart,
     Repeat,
     Shuffle,
-    Maximize2
+    Maximize2,
+    Plus
 } from "lucide-react"
+import AddToLibraryModal from "@/components/AddToLibraryModal"
 
 export default function NowPlayingBar() {
     const {
@@ -38,6 +40,7 @@ export default function NowPlayingBar() {
         toggleFavorite,
     } = usePlayback()
     const [isExpanded, setIsExpanded] = useState(false)
+    const [showLibraryModal, setShowLibraryModal] = useState(false)
 
     if (!currentTrack) return null
 
@@ -207,6 +210,12 @@ export default function NowPlayingBar() {
                         >
                             <Heart size={18} fill={favorites.has(currentTrack.trackId) ? "currentColor" : "none"} />
                         </button>
+                        <button
+                            onClick={() => setShowLibraryModal(true)}
+                            className="ml-1 text-gray-300 dark:text-gray-600 hover:text-gray-900 dark:hover:text-white transition-all hover:scale-110 active:scale-90"
+                        >
+                            <Plus size={18} />
+                        </button>
                     </div>
 
                     {/* Center: Controls & Global Progress */}
@@ -301,6 +310,13 @@ export default function NowPlayingBar() {
                 </div>
             </div>
 
+            {showLibraryModal && currentTrack && (
+                <AddToLibraryModal
+                    track={currentTrack}
+                    open={showLibraryModal}
+                    onOpenChange={setShowLibraryModal}
+                />
+            )}
         </div>
     )
 }

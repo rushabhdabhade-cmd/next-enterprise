@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { ITunesTrack } from "@/types/itunes"
 import { usePlayback } from "@/context/PlaybackContext"
@@ -9,7 +9,8 @@ import AISummary from "@/components/AISummary"
 import { formatDuration } from "@/services/itunesService"
 import { useFeatureFlag } from "@/lib/featureFlags"
 import { trackAISummaryExposure } from "@/lib/analytics"
-import { Play, Pause, Heart, MoreHorizontal, ChevronLeft } from "lucide-react"
+import { Play, Pause, Heart, Plus, ChevronLeft } from "lucide-react"
+import AddToLibraryModal from "@/components/AddToLibraryModal"
 
 export default function TrackDetailClient({ track }: { track: ITunesTrack }) {
     const router = useRouter()
@@ -23,6 +24,7 @@ export default function TrackDetailClient({ track }: { track: ITunesTrack }) {
         }
     }, [showAISummary, track.trackId])
 
+    const [showLibraryModal, setShowLibraryModal] = useState(false)
     const isCurrent = currentTrack?.trackId === track.trackId
     const highResArtwork = track.artworkUrl100.replace("100x100", "800x800")
 
@@ -92,8 +94,11 @@ export default function TrackDetailClient({ track }: { track: ITunesTrack }) {
                                     <Heart size={24} className="text-gray-400 hover:text-pink-500" />
                                 </button>
 
-                                <button className="w-14 h-14 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-900 transition-all text-xl">
-                                    <MoreHorizontal size={24} className="text-gray-400 hover:text-gray-900 dark:hover:text-white" />
+                                <button
+                                    onClick={() => setShowLibraryModal(true)}
+                                    className="w-14 h-14 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-900 transition-all text-xl"
+                                >
+                                    <Plus size={24} className="text-gray-400 hover:text-gray-900 dark:hover:text-white" />
                                 </button>
                             </div>
                         </div>
@@ -141,6 +146,14 @@ export default function TrackDetailClient({ track }: { track: ITunesTrack }) {
                     )}
                 </div>
             </main>
+
+            {showLibraryModal && (
+                <AddToLibraryModal
+                    track={track}
+                    open={showLibraryModal}
+                    onOpenChange={setShowLibraryModal}
+                />
+            )}
         </div>
     )
 }

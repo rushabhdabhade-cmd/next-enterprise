@@ -1,12 +1,13 @@
 "use client"
 
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useFeatureFlag } from "@/lib/featureFlags"
 import { trackLayoutExposure, trackTrackSelected } from "@/lib/analytics"
 import { usePlayback } from "@/context/PlaybackContext"
 import { ITunesTrack } from "@/types/itunes"
-import { Pause, Play } from "lucide-react"
+import { Pause, Play, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
+import AddToLibraryModal from "@/components/AddToLibraryModal"
 
 interface Props {
     tracks: ITunesTrack[]
@@ -35,6 +36,7 @@ export default function CatalogGrid({ tracks }: Props) {
 function NewCatalogGrid({ tracks }: Props) {
     const router = useRouter()
     const { playTrack, togglePlay, currentTrack, isPlaying } = usePlayback()
+    const [libraryTrack, setLibraryTrack] = useState<ITunesTrack | null>(null)
 
     const handlePlay = (e: React.MouseEvent, track: ITunesTrack) => {
         e.stopPropagation() // prevent card navigation
@@ -80,15 +82,31 @@ function NewCatalogGrid({ tracks }: Props) {
                                 </button>
                             </div>
                         </div>
-                        <div className="px-2">
-                            <h3 className={`text-xl font-bold mb-1 truncate ${isCurrent ? "text-pink-500" : "text-gray-950 dark:text-white"}`}>
-                                {track.trackName}
-                            </h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{track.artistName}</p>
+                        <div className="px-2 flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                                <h3 className={`text-xl font-bold mb-1 truncate ${isCurrent ? "text-pink-500" : "text-gray-950 dark:text-white"}`}>
+                                    {track.trackName}
+                                </h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{track.artistName}</p>
+                            </div>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); setLibraryTrack(track) }}
+                                className="mt-1 flex-shrink-0 text-gray-300 dark:text-gray-600 hover:text-gray-900 dark:hover:text-white transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
+                            >
+                                <Plus size={20} />
+                            </button>
                         </div>
                     </div>
                 )
             })}
+
+            {libraryTrack && (
+                <AddToLibraryModal
+                    track={libraryTrack}
+                    open={!!libraryTrack}
+                    onOpenChange={(open) => { if (!open) setLibraryTrack(null) }}
+                />
+            )}
         </div>
     )
 }

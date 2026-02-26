@@ -18,6 +18,7 @@ import {
   User as UserIcon,
   LogOut,
   Settings,
+  ListMusic,
 } from "lucide-react"
 import {
   SignInButton,
@@ -27,10 +28,12 @@ import {
   SignedOut,
   useUser
 } from "@clerk/nextjs"
+import { useLibrary } from "@/context/LibraryContext"
 
 export default function LeftSidebar() {
   const pathname = usePathname()
   const { user } = useUser()
+  const { libraries } = useLibrary()
 
   const navItems = [
     { name: "Discover", href: "/", icon: Compass },
@@ -42,6 +45,7 @@ export default function LeftSidebar() {
   const playlists = [
     { name: "Favorites", href: "/favorites", icon: Heart, requiresAuth: true },
     { name: "History", href: "/recently-played", icon: History, requiresAuth: true },
+    { name: "My Libraries", href: "/libraries", icon: ListMusic, requiresAuth: true },
     { name: "Stations", href: "/stations", icon: Radio, requiresAuth: false },
   ]
 
@@ -89,9 +93,9 @@ export default function LeftSidebar() {
               Library
             </h3>
             <SignedIn>
-              <button className="text-gray-400 hover:text-pink-500 transition-colors">
+              <Link href="/libraries" className="text-gray-400 hover:text-pink-500 transition-colors">
                 <PlusCircle size={14} />
-              </button>
+              </Link>
             </SignedIn>
           </div>
           <ul className="space-y-1">
@@ -128,6 +132,42 @@ export default function LeftSidebar() {
               return <li key={playlist.name}>{linkEl}</li>
             })}
           </ul>
+
+          {/* Dynamic user libraries */}
+          <SignedIn>
+            {libraries.length > 0 && (
+              <ul className="mt-2 space-y-0.5 border-t border-gray-100 dark:border-gray-900 pt-2">
+                {libraries.slice(0, 5).map((lib) => {
+                  const isActive = pathname === `/libraries/${lib.id}`
+                  return (
+                    <li key={lib.id}>
+                      <Link
+                        href={`/libraries/${lib.id}`}
+                        className={`flex items-center gap-3 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
+                          isActive
+                            ? "bg-gray-100 dark:bg-gray-900 text-gray-950 dark:text-white"
+                            : "text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900/50 hover:text-gray-950 dark:hover:text-white"
+                        }`}
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-purple-500/40 flex-shrink-0" />
+                        <span className="truncate">{lib.name}</span>
+                      </Link>
+                    </li>
+                  )
+                })}
+                {libraries.length > 5 && (
+                  <li>
+                    <Link
+                      href="/libraries"
+                      className="flex items-center px-4 py-2 text-[10px] font-bold text-gray-400 hover:text-purple-500 transition-colors"
+                    >
+                      View all ({libraries.length})
+                    </Link>
+                  </li>
+                )}
+              </ul>
+            )}
+          </SignedIn>
         </div>
       </div>
 

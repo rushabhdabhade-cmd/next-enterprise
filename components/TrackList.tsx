@@ -1,11 +1,13 @@
 "use client"
 
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { ITunesTrack } from "@/types/itunes"
 import { formatDuration } from "@/services/itunesService"
 import { usePlayback } from "@/context/PlaybackContext"
 import { trackTrackSelected } from "@/lib/analytics"
 import { Play, Pause, Heart, Plus, Music } from "lucide-react"
+import AddToLibraryModal from "@/components/AddToLibraryModal"
 
 interface TrackListProps {
   tracks: ITunesTrack[]
@@ -15,6 +17,7 @@ interface TrackListProps {
 export default function TrackList({ tracks, loading }: TrackListProps) {
   const router = useRouter()
   const { currentTrack, isPlaying, playTrack, togglePlay, favorites, toggleFavorite } = usePlayback()
+  const [libraryTrack, setLibraryTrack] = useState<ITunesTrack | null>(null)
 
   const handlePlayClick = (e: React.MouseEvent, track: ITunesTrack) => {
     e.stopPropagation()
@@ -119,13 +122,24 @@ export default function TrackList({ tracks, loading }: TrackListProps) {
               >
                 <Heart size={18} fill={favorites.has(track.trackId) ? "currentColor" : "none"} />
               </button>
-              <button className="text-gray-300 dark:text-gray-600 hover:text-gray-900 dark:hover:text-white transition-all hover:scale-110">
+              <button
+                onClick={(e) => { e.stopPropagation(); setLibraryTrack(track) }}
+                className="text-gray-300 dark:text-gray-600 hover:text-gray-900 dark:hover:text-white transition-all hover:scale-110"
+              >
                 <Plus size={18} />
               </button>
             </div>
           </div>
         )
       })}
+
+      {libraryTrack && (
+        <AddToLibraryModal
+          track={libraryTrack}
+          open={!!libraryTrack}
+          onOpenChange={(open) => { if (!open) setLibraryTrack(null) }}
+        />
+      )}
     </div>
   )
 }

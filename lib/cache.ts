@@ -1,11 +1,12 @@
 import { revalidateTag, unstable_cache } from "next/cache"
-import { getFavorites, getPlayHistory } from "@/lib/db"
+import { getFavorites, getLibraries, getPlayHistory } from "@/lib/db"
 
 // ─── Cache Tags ────────────────────────────────────────────────────────────────
 
 export const cacheTags = {
   favorites: (userId: string) => `favorites-${userId}`,
   plays: (userId: string) => `plays-${userId}`,
+  libraries: (userId: string) => `libraries-${userId}`,
 } as const
 
 // ─── TTLs (seconds) ────────────────────────────────────────────────────────────
@@ -50,6 +51,21 @@ export function getCachedPlayHistory(userId: string, limit: number) {
   )()
 }
 
+/**
+ * Cache libraries per user for 5 minutes.
+ * Invalidate with: revalidateLibraries(userId)
+ */
+export function getCachedLibraries(userId: string) {
+  return unstable_cache(
+    async () => getLibraries(userId),
+    ["libraries", userId],
+    {
+      revalidate: TTL.USER_DATA,
+      tags: [cacheTags.libraries(userId)],
+    }
+  )()
+}
+
 // ─── Invalidation Helpers ──────────────────────────────────────────────────────
 
 export function revalidateFavorites(userId: string) {
@@ -58,4 +74,8 @@ export function revalidateFavorites(userId: string) {
 
 export function revalidatePlays(userId: string) {
   revalidateTag(cacheTags.plays(userId))
+}
+
+export function revalidateLibraries(userId: string) {
+  revalidateTag(cacheTags.libraries(userId))
 }

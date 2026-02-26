@@ -5,13 +5,15 @@ import { getHotTracks } from "@/lib/api"
 import { HotTrackWithMeta } from "@/types/hot"
 import { usePlayback } from "@/context/PlaybackContext"
 import { trackTrackSelected } from "@/lib/analytics"
-import { Flame, TrendingUp, Play, Pause, Music, AlertCircle } from "lucide-react"
+import { Flame, TrendingUp, Play, Pause, Music, AlertCircle, Plus } from "lucide-react"
+import AddToLibraryModal from "@/components/AddToLibraryModal"
 
 export default function HotSection() {
     const [tracks, setTracks] = useState<HotTrackWithMeta[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
     const { currentTrack, isPlaying, playTrack, togglePlay } = usePlayback()
+    const [libraryTrack, setLibraryTrack] = useState<HotTrackWithMeta | null>(null)
 
     const handlePlay = (e: React.MouseEvent, track: HotTrackWithMeta) => {
         e.stopPropagation()
@@ -116,14 +118,32 @@ export default function HotSection() {
                                 </div>
                             </div>
 
-                            <h4 className={`font-bold truncate text-sm mb-1 ${isCurrent ? "text-orange-500" : "text-gray-950 dark:text-white"}`}>
-                                {track.trackName}
-                            </h4>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium truncate">{track.artistName}</p>
+                            <div className="flex items-start justify-between gap-1">
+                                <div className="min-w-0">
+                                    <h4 className={`font-bold truncate text-sm mb-1 ${isCurrent ? "text-orange-500" : "text-gray-950 dark:text-white"}`}>
+                                        {track.trackName}
+                                    </h4>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium truncate">{track.artistName}</p>
+                                </div>
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); setLibraryTrack(track) }}
+                                    className="mt-0.5 flex-shrink-0 text-gray-300 dark:text-gray-600 hover:text-gray-900 dark:hover:text-white transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
+                                >
+                                    <Plus size={16} />
+                                </button>
+                            </div>
                         </div>
                     )
                 })}
             </div>
+
+            {libraryTrack && (
+                <AddToLibraryModal
+                    track={libraryTrack}
+                    open={!!libraryTrack}
+                    onOpenChange={(open) => { if (!open) setLibraryTrack(null) }}
+                />
+            )}
         </section>
     )
 }
