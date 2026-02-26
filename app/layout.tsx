@@ -1,4 +1,5 @@
 import { Suspense } from "react"
+import type { Metadata } from "next"
 import "styles/tailwind.css"
 import { PlaybackProvider } from "@/context/PlaybackContext"
 import { LibraryProvider } from "@/context/LibraryContext"
@@ -7,6 +8,33 @@ import PostHogPageView from "@/components/PostHogPageView"
 import PostHogIdentifier from "@/components/PostHogIdentifier"
 import { ClerkProvider } from "@clerk/nextjs"
 import UserSync from "@/components/UserSync"
+
+export const metadata: Metadata = {
+  title: {
+    default: "iTunes - Discover Music",
+    template: "%s | iTunes",
+  },
+  description:
+    "Discover trending tracks, build curated libraries, and share your music taste. Powered by iTunes.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  openGraph: {
+    type: "website",
+    siteName: "iTunes",
+    title: "iTunes - Discover Music",
+    description:
+      "Discover trending tracks, build curated libraries, and share your music taste.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "iTunes - Discover Music",
+    description:
+      "Discover trending tracks, build curated libraries, and share your music taste.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
