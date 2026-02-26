@@ -1,7 +1,9 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
+import logo from "@/assets/logo.png"
 import {
   Compass,
   Music2,
@@ -12,7 +14,6 @@ import {
   Radio,
   Clock,
   PlusCircle,
-  Layout,
   Lock,
   User as UserIcon,
   LogOut,
@@ -48,8 +49,8 @@ export default function LeftSidebar() {
     <aside className="w-64 bg-white dark:bg-gray-950 border-r border-gray-100 dark:border-gray-900 flex flex-col transition-colors duration-500">
       <div className="p-8">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 bg-gray-950 dark:bg-white rounded-xl flex items-center justify-center transition-transform group-hover:scale-105">
-            <Layout className="text-white dark:text-gray-950" size={24} fill="currentColor" />
+          <div className="w-10 h-10 rounded-xl overflow-hidden transition-transform group-hover:scale-105 flex-shrink-0">
+            <Image src={logo} alt="Logo" width={40} height={40} className="w-full h-full object-cover" />
           </div>
           <h1 className="text-xl font-bold tracking-tight text-gray-950 dark:text-white">
             iTunes

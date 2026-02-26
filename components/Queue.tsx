@@ -110,12 +110,6 @@ export default function Queue() {
         )}
       </div>
 
-      <style jsx>{`
-        @keyframes music-bar {
-          0%, 100% { height: 4px; }
-          50% { height: 10px; }
-        }
-      `}</style>
     </aside>
   )
 }

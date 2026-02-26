@@ -123,7 +123,7 @@ export default function Home() {
           </header>
 
           <div className="rounded-[40px] overflow-hidden border border-gray-100 dark:border-gray-900 shadow-2xl shadow-black/5 dark:shadow-white/5 mb-16">
-            <HeroSection title={heroTitle} subtitle={heroSubtitle} />
+            <HeroSection title={heroTitle} subtitle={heroSubtitle} track={firstTrack} queue={tracks} />
           </div>
 
           {/* Navigation Tabs */}

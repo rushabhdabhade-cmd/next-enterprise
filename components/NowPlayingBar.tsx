@@ -166,12 +166,6 @@ export default function NowPlayingBar() {
                         </div>
                     </div>
                 </div>
-                <style jsx>{`
-                    @keyframes music-bar {
-                        0%, 100% { height: 4px; }
-                        50% { height: 12px; }
-                    }
-                `}</style>
             </div>
         )
     }
@@ -307,12 +301,6 @@ export default function NowPlayingBar() {
                 </div>
             </div>
 
-            <style jsx>{`
-        @keyframes music-bar {
-          0%, 100% { height: 4px; }
-          50% { height: 12px; }
-        }
-      `}</style>
         </div>
     )
 }

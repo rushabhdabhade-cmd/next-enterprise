@@ -281,12 +281,6 @@ export default function HistoryPage() {
 
             <Queue />
 
-            <style jsx>{`
-                @keyframes music-bar {
-                    0%, 100% { height: 4px; }
-                    50% { height: 10px; }
-                }
-            `}</style>
         </div>
     )
 }
