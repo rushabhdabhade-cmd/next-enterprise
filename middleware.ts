@@ -4,9 +4,11 @@ const isPublicRoute = createRouteMatcher([
     '/',
     '/sign-in(.*)',
     '/sign-up(.*)',
-    '/api/hot(.*)', // Trending API should be public
+    '/api/hot(.*)',       // Trending API should be public
     '/api/webhooks/(.*)', // Webhooks must bypass Clerk auth
-    '/track/(.*)'   // Track details should be public
+    '/api/public/(.*)',   // Public sharing API
+    '/track/(.*)',        // Track details should be public
+    '/shared/(.*)',       // Shared library pages
 ]);
 
 export default clerkMiddleware(async (auth, request) => {

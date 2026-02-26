@@ -9,7 +9,7 @@ import AISummary from "@/components/AISummary"
 import { formatDuration } from "@/services/itunesService"
 import { useFeatureFlag } from "@/lib/featureFlags"
 import { trackAISummaryExposure } from "@/lib/analytics"
-import { Play, Pause, Heart, Plus, ChevronLeft } from "lucide-react"
+import { Play, Pause, Heart, Plus, ChevronLeft, Share2, Check } from "lucide-react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
 
 export default function TrackDetailClient({ track }: { track: ITunesTrack }) {
@@ -25,8 +25,15 @@ export default function TrackDetailClient({ track }: { track: ITunesTrack }) {
     }, [showAISummary, track.trackId])
 
     const [showLibraryModal, setShowLibraryModal] = useState(false)
+    const [copied, setCopied] = useState(false)
     const isCurrent = currentTrack?.trackId === track.trackId
     const highResArtwork = track.artworkUrl100.replace("100x100", "800x800")
+
+    const handleShareTrack = async () => {
+        await navigator.clipboard.writeText(`${window.location.origin}/track/${track.trackId}`)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+    }
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-950 flex transition-colors duration-500 relative overflow-hidden">
@@ -99,6 +106,18 @@ export default function TrackDetailClient({ track }: { track: ITunesTrack }) {
                                     className="w-14 h-14 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-900 transition-all text-xl"
                                 >
                                     <Plus size={24} className="text-gray-400 hover:text-gray-900 dark:hover:text-white" />
+                                </button>
+
+                                <button
+                                    onClick={handleShareTrack}
+                                    className="w-14 h-14 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-900 transition-all text-xl"
+                                    title="Copy share link"
+                                >
+                                    {copied ? (
+                                        <Check size={24} className="text-green-500" />
+                                    ) : (
+                                        <Share2 size={24} className="text-gray-400 hover:text-pink-500" />
+                                    )}
                                 </button>
                             </div>
                         </div>

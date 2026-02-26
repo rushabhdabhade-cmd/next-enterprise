@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useUser } from "@clerk/nextjs"
-import { ListMusic, Play, Pause, Music, Heart, Trash2, ChevronLeft, Plus } from "lucide-react"
+import { ListMusic, Play, Pause, Music, Heart, Trash2, ChevronLeft, Plus, Share2, Check, Link2, Loader2 } from "lucide-react"
 import LeftSidebar from "@/components/LeftSidebar"
 import Queue from "@/components/Queue"
 import { usePlayback } from "@/context/PlaybackContext"
@@ -62,6 +62,10 @@ export default function LibraryDetailPage() {
     const [tracks, setTracks] = useState<LibraryTrack[]>([])
     const [loading, setLoading] = useState(true)
     const [addLibraryTrack, setAddLibraryTrack] = useState<ITunesTrack | null>(null)
+    const [shareId, setShareId] = useState<string | null>(null)
+    const [sharing, setSharing] = useState(false)
+    const [copied, setCopied] = useState(false)
+    const [showSharePopover, setShowSharePopover] = useState(false)
 
     const library = libraries.find((l) => l.id === libraryId)
 
@@ -96,6 +100,43 @@ export default function LibraryDetailPage() {
         }
     }
 
+    useEffect(() => {
+        if (library) setShareId(library.share_id ?? null)
+    }, [library])
+
+    const handleShare = async () => {
+        setSharing(true)
+        try {
+            const res = await fetch(`/api/user/libraries/${libraryId}/share`, { method: "POST" })
+            if (res.ok) {
+                const data = (await res.json()) as { shareId: string }
+                setShareId(data.shareId)
+                setShowSharePopover(true)
+                const url = `${window.location.origin}/shared/${data.shareId}`
+                await navigator.clipboard.writeText(url)
+                setCopied(true)
+                setTimeout(() => setCopied(false), 2000)
+            }
+        } finally {
+            setSharing(false)
+        }
+    }
+
+    const handleUnshare = async () => {
+        const res = await fetch(`/api/user/libraries/${libraryId}/share`, { method: "DELETE" })
+        if (res.ok) {
+            setShareId(null)
+            setShowSharePopover(false)
+        }
+    }
+
+    const handleCopyShareLink = async () => {
+        if (!shareId) return
+        await navigator.clipboard.writeText(`${window.location.origin}/shared/${shareId}`)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+    }
+
     return (
         <div className="min-h-screen bg-white dark:bg-gray-950 flex transition-colors duration-500 relative">
             <LeftSidebar />
@@ -128,7 +169,47 @@ export default function LibraryDetailPage() {
                                 {loading ? "Loading..." : `${tracks.length} ${tracks.length === 1 ? "track" : "tracks"}`}
                             </p>
                         </div>
+                        <button
+                            onClick={shareId ? () => setShowSharePopover(!showSharePopover) : handleShare}
+                            disabled={sharing}
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 transition-all disabled:opacity-50"
+                        >
+                            {sharing ? (
+                                <Loader2 size={16} className="animate-spin" />
+                            ) : copied ? (
+                                <Check size={16} className="text-green-500" />
+                            ) : (
+                                <Share2 size={16} />
+                            )}
+                            {copied ? "Copied!" : shareId ? "Shared" : "Share"}
+                        </button>
                     </header>
+
+                    {/* Share info bar */}
+                    {shareId && showSharePopover && (
+                        <div className="mb-8 p-4 rounded-2xl border border-purple-200 dark:border-purple-800/40 bg-purple-50 dark:bg-purple-950/20 flex items-center justify-between animate-in fade-in slide-in-from-top-2 duration-300">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <Link2 size={16} className="text-purple-500 flex-shrink-0" />
+                                <code className="text-sm text-purple-700 dark:text-purple-300 truncate">
+                                    {typeof window !== "undefined" ? window.location.origin : ""}/shared/{shareId}
+                                </code>
+                            </div>
+                            <div className="flex items-center gap-2 flex-shrink-0 ml-4">
+                                <button
+                                    onClick={handleCopyShareLink}
+                                    className="px-3 py-1.5 rounded-lg bg-purple-500 text-white text-xs font-bold hover:bg-purple-600 transition-all"
+                                >
+                                    {copied ? "Copied!" : "Copy"}
+                                </button>
+                                <button
+                                    onClick={handleUnshare}
+                                    className="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-xs font-bold text-gray-500 hover:text-red-500 hover:border-red-300 transition-all"
+                                >
+                                    Unshare
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Loading skeleton */}
                     {loading && (
