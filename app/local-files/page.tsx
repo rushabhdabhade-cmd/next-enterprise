@@ -52,7 +52,7 @@ const ACCEPTED = ".mp3,.flac,.wav,.aac,.ogg,.m4a,.webm,audio/*"
 let idCounter = Date.now()
 
 function nameGradient(name: string): string {
-  const hash = [...name].reduce((acc, c) => acc + c.charCodeAt(0), 0)
+  const hash = Array.from(name).reduce((acc, c) => acc + c.charCodeAt(0), 0)
   return GRADIENTS[hash % GRADIENTS.length]!
 }
 

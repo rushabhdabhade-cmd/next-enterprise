@@ -10,7 +10,7 @@ if (typeof window !== 'undefined') {
             api_host: host,
             persistence: 'localStorage+cookie',
             capture_pageview: false, // We use the custom component for more control
-            loaded: (ph: PostHog) => {
+            loaded: (ph) => {
                 if (process.env.NODE_ENV === 'development') ph.debug()
             },
         })

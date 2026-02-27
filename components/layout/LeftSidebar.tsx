@@ -12,16 +12,16 @@ import {
   HardDrive,
   Heart,
   History,
-  Radio,
-  Clock,
   PlusCircle,
   Lock,
   User as UserIcon,
-  LogOut,
-  Settings,
   ListMusic,
   Menu,
   X,
+  Search,
+  Podcast,
+  Film,
+  TrendingUp,
 } from "lucide-react"
 import {
   SignInButton,
@@ -41,14 +41,20 @@ export default function LeftSidebar() {
 
   const navItems = [
     { name: "Discover", href: "/", icon: Compass },
+    { name: "Search", href: "/search", icon: Search },
     { name: "Genres", href: "/genres", icon: Music2 },
+    { name: "Charts", href: "/charts", icon: BarChart3 },
+    { name: "Podcasts", href: "/podcasts", icon: Podcast },
+    { name: "Videos", href: "/videos", icon: Film },
     { name: "Local Files", href: "/local-files", icon: HardDrive },
   ]
 
   const playlists = [
     { name: "Favorites", href: "/favorites", icon: Heart, requiresAuth: true },
     { name: "History", href: "/recently-played", icon: History, requiresAuth: true },
-    { name: "My Libraries", href: "/libraries", icon: ListMusic, requiresAuth: true }
+    { name: "My Libraries", href: "/libraries", icon: ListMusic, requiresAuth: true },
+    { name: "Profile", href: "/profile", icon: UserIcon, requiresAuth: true },
+    { name: "Stats", href: "/stats", icon: TrendingUp, requiresAuth: true },
   ]
 
   const closeMobile = () => setMobileOpen(false)
