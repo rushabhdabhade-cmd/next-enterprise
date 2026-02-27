@@ -131,7 +131,7 @@ export default function GenresPage() {
       <LeftSidebar />
 
       <main className="flex-1 overflow-y-auto scroll-smooth">
-        <div className="max-w-7xl mx-auto px-8 py-12 pb-32">
+        <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
           {/* Header */}
           <header className="flex items-center justify-between mb-10 lg:mb-14">
@@ -158,7 +158,7 @@ export default function GenresPage() {
                   value={customQuery}
                   onChange={(e) => setCustomQuery(e.target.value)}
                   placeholder="Search any genre or mood..."
-                  className="w-full ml-14 pl-14 pr-4 py-3 rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 text-sm text-gray-950 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:border-pink-500/40 focus:ring-1 focus:ring-pink-500/20 transition-all"
+                  className="w-full pl-4 pr-4 py-3 rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 text-sm text-gray-950 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:border-pink-500/40 focus:ring-1 focus:ring-pink-500/20 transition-all"
                 />
               </div>
             </form>

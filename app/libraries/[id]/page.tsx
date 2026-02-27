@@ -142,7 +142,7 @@ export default function LibraryDetailPage() {
             <LeftSidebar />
 
             <main className="flex-1 overflow-y-auto scroll-smooth">
-                <div className="max-w-7xl mx-auto px-8 py-12 pb-32">
+                <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
                     {/* Back button */}
                     <button
                         onClick={() => router.push("/libraries")}
@@ -187,14 +187,14 @@ export default function LibraryDetailPage() {
 
                     {/* Share info bar */}
                     {shareId && showSharePopover && (
-                        <div className="mb-8 p-4 rounded-2xl border border-purple-200 dark:border-purple-800/40 bg-purple-50 dark:bg-purple-950/20 flex items-center justify-between animate-in fade-in slide-in-from-top-2 duration-300">
+                        <div className="mb-8 p-4 rounded-2xl border border-purple-200 dark:border-purple-800/40 bg-purple-50 dark:bg-purple-950/20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
                             <div className="flex items-center gap-3 min-w-0">
                                 <Link2 size={16} className="text-purple-500 flex-shrink-0" />
-                                <code className="text-sm text-purple-700 dark:text-purple-300 truncate">
+                                <code className="text-xs sm:text-sm text-purple-700 dark:text-purple-300 truncate">
                                     {typeof window !== "undefined" ? window.location.origin : ""}/shared/{shareId}
                                 </code>
                             </div>
-                            <div className="flex items-center gap-2 flex-shrink-0 ml-4">
+                            <div className="flex items-center gap-2 flex-shrink-0">
                                 <button
                                     onClick={handleCopyShareLink}
                                     className="px-3 py-1.5 rounded-lg bg-purple-500 text-white text-xs font-bold hover:bg-purple-600 transition-all"
@@ -213,7 +213,7 @@ export default function LibraryDetailPage() {
 
                     {/* Loading skeleton */}
                     {loading && (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
                             {[...Array(10)].map((_, i) => (
                                 <SkeletonCard key={i} />
                             ))}
@@ -249,7 +249,7 @@ export default function LibraryDetailPage() {
 
                     {/* Tracks grid */}
                     {!loading && tracks.length > 0 && (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
                             {tracks.map((lt, index) => {
                                 const isCurrent = currentTrack?.trackId === lt.track_id
                                 const isPlayingThis = isCurrent && isPlaying

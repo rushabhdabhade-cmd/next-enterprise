@@ -38,13 +38,13 @@ export default function SearchBar({
   }
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto mb-12">
+    <div className="relative w-full max-w-4xl mx-auto mb-8 md:mb-12">
       <form onSubmit={handleSearch} className="relative group">
-        <div className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-pink-500 transition-colors">
+        <div className="absolute left-4 md:left-7 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-pink-500 transition-colors">
           {loading ? (
-            <Loader2 size={24} className="animate-spin" />
+            <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin" />
           ) : (
-            <Search size={24} strokeWidth={1.5} />
+            <Search className="w-5 h-5 md:w-6 md:h-6" strokeWidth={1.5} />
           )}
         </div>
 
@@ -53,14 +53,14 @@ export default function SearchBar({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Artist, song or mood..."
-          className="w-full pl-16 pr-32 py-6 rounded-[32px] bg-gray-50 dark:bg-gray-900 border-none text-gray-950 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-lg font-light tracking-tight focus:ring-4 focus:ring-pink-500/10 focus:bg-white dark:focus:bg-gray-800 transition-all duration-300 shadow-sm"
+          className="w-full pl-12 pr-14 py-4 md:pl-[4.5rem] md:pr-36 md:py-6 rounded-2xl md:rounded-[32px] bg-gray-50 dark:bg-gray-900 border-none text-gray-950 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-base md:text-lg font-light tracking-tight focus:ring-4 focus:ring-pink-500/10 focus:bg-white dark:focus:bg-gray-800 transition-all duration-300 shadow-sm"
           disabled={loading}
         />
 
         <button
           type="submit"
           disabled={loading || !searchQuery.trim()}
-          className="absolute right-3 top-1/2 -translate-y-1/2 px-8 py-3 bg-gray-950 dark:bg-white text-white dark:text-gray-950 rounded-full font-bold text-sm tracking-tight hover:scale-[1.02] active:scale-[0.98] disabled:opacity-0 disabled:pointer-events-none transition-all duration-300 shadow-xl"
+          className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 md:right-3 md:px-8 md:py-3 bg-gray-950 dark:bg-white text-white dark:text-gray-950 rounded-full font-bold text-xs md:text-sm tracking-tight hover:scale-[1.02] active:scale-[0.98] disabled:opacity-0 disabled:pointer-events-none transition-all duration-300 shadow-xl"
         >
           Explore
         </button>

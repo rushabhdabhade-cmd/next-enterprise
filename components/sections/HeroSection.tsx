@@ -34,20 +34,20 @@ export default function HeroSection({
   }
 
   return (
-    <div className="relative h-80 bg-gray-950 overflow-hidden group">
+    <div className="relative h-56 md:h-80 bg-gray-950 overflow-hidden group">
       <div className="relative h-full flex">
 
         {/* Left — Text content */}
-        <div className=" relative z-10 flex flex-col justify-center px-10 md:px-10 w-full md:w-[55%]">
-          <p className="text-pink-400 text-xs font-semibold tracking-wide mb-4">
+        <div className="relative z-10 flex flex-col justify-center px-5 md:px-10 w-full md:w-[55%]">
+          <p className="text-pink-400 text-[10px] md:text-xs font-semibold tracking-wide mb-2 md:mb-4">
             Trending New Hits
           </p>
 
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight line-clamp-2">
+          <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight line-clamp-2">
             {track?.trackName || title}
           </h1>
 
-          <p className="text-gray-400 text-lg mt-1 mb-6 truncate">
+          <p className="text-gray-400 text-sm md:text-lg mt-1 mb-4 md:mb-6 truncate">
             <span className="text-white font-medium">{track?.artistName}</span>
             {track?.artistName && (
               <span className="ml-2 text-gray-500">
@@ -57,11 +57,11 @@ export default function HeroSection({
             {!track?.artistName && subtitle}
           </p>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <button
               onClick={handlePlay}
               disabled={!track}
-              className="px-6 py-2.5 bg-pink-500 hover:bg-pink-400 text-white text-sm font-semibold rounded-full transition-all hover:scale-105 active:scale-95 flex items-center gap-2 shadow-lg shadow-pink-500/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="px-4 py-2 md:px-6 md:py-2.5 bg-pink-500 hover:bg-pink-400 text-white text-xs md:text-sm font-semibold rounded-full transition-all hover:scale-105 active:scale-95 flex items-center gap-2 shadow-lg shadow-pink-500/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isPlayingThis
                 ? <Pause fill="currentColor" size={16} />
@@ -73,7 +73,7 @@ export default function HeroSection({
             <button
               onClick={() => track && toggleFavorite(track)}
               disabled={!track}
-              className="w-10 h-10 bg-pink-500 hover:bg-pink-400 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-9 h-9 md:w-10 md:h-10 bg-pink-500 hover:bg-pink-400 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Heart
                 size={16}
