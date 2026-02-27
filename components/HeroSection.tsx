@@ -1,6 +1,6 @@
 "use client"
 
-import { Play, Pause, Heart, Star } from "lucide-react"
+import { Play, Pause, Heart } from "lucide-react"
 import { usePlayback } from "@/context/PlaybackContext"
 import { ITunesTrack } from "@/types/itunes"
 
@@ -35,75 +35,67 @@ export default function HeroSection({
 
   return (
     <div className="relative h-80 bg-gray-950 overflow-hidden group">
+      <div className="relative h-full flex">
 
-      {/* Blurred artwork background */}
-      {artworkUrl && (
-        <img
-          src={artworkUrl}
-          alt=""
-          aria-hidden
-          className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-30 transition-opacity duration-1000"
-        />
-      )}
-
-      {/* Ambient gradient orbs */}
-      <div className="absolute inset-0 transition-opacity duration-1000">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_20%,#db2777_0%,transparent_50%)] opacity-30" />
-        <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_80%,#4f46e5_0%,transparent_50%)] opacity-30" />
-      </div>
-
-      {/* Decorative star */}
-      <div className="absolute top-8 right-12 opacity-20 animate-pulse">
-        <Star size={40} className="text-white" />
-      </div>
-
-      {/* Artwork thumbnail — top right when track is loaded */}
-      {artworkUrl && (
-        <div className="absolute top-6 right-6 w-24 h-24 rounded-2xl overflow-hidden shadow-2xl shadow-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 border border-white/10">
-          <img src={artworkUrl} alt={track?.trackName} className="w-full h-full object-cover" />
-        </div>
-      )}
-
-      <div className="absolute inset-0 flex flex-col justify-end p-12 bg-gradient-to-t from-gray-950 via-gray-950/20 to-transparent">
-        <div className="max-w-2xl translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-[10px] uppercase tracking-widest font-bold text-pink-400 mb-6 border border-white/5">
-            <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-pulse" />
-            Spotlight
-          </div>
-
-          <h1 className="text-5xl md:text-6xl font-light tracking-tight text-white mb-4 leading-tight">
-            {title}
-          </h1>
-
-          <p className="text-gray-400 text-lg font-light mb-8 max-w-lg leading-relaxed">
-            {subtitle}
+        {/* Left — Text content */}
+        <div className="relative z-10 flex flex-col justify-center px-10 md:px-14 w-full md:w-[55%]">
+          <p className="text-pink-400 text-xs font-semibold tracking-wide mb-4">
+            Trending New Hits
           </p>
 
-          <div className="flex items-center gap-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 leading-tight tracking-tight">
+            {track?.trackName || title}
+          </h1>
+
+          <p className="text-gray-400 text-sm mb-8">
+            <span className="text-white font-medium">{track?.artistName}</span>
+            {track?.artistName && (
+              <span className="ml-2 text-gray-500">
+                {track?.primaryGenreName ?? "Music"}
+              </span>
+            )}
+            {!track?.artistName && subtitle}
+          </p>
+
+          <div className="flex items-center gap-3">
             <button
               onClick={handlePlay}
               disabled={!track}
-              className="px-10 py-4 bg-white text-gray-950 font-bold rounded-full hover:scale-105 active:scale-95 transition-all flex items-center gap-3 shadow-[0_20px_40px_-10px_rgba(255,255,255,0.2)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="px-6 py-2.5 bg-pink-500 hover:bg-pink-400 text-white text-sm font-semibold rounded-full transition-all hover:scale-105 active:scale-95 flex items-center gap-2 shadow-lg shadow-pink-500/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isPlayingThis
-                ? <Pause fill="currentColor" size={18} />
-                : <Play  fill="currentColor" size={18} />
+                ? <Pause fill="currentColor" size={16} />
+                : <Play  fill="currentColor" size={16} />
               }
-              {isPlayingThis ? "Pause" : "Experience Now"}
+              {isPlayingThis ? "Pause" : "Listen Now"}
             </button>
 
             <button
               onClick={() => track && toggleFavorite(track)}
               disabled={!track}
-              className="w-14 h-14 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/10 hover:border-white/20 transition-all backdrop-blur-md disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-10 h-10 bg-purple-600 hover:bg-purple-500 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Heart
-                size={20}
+                size={16}
                 fill={isFavorited ? "currentColor" : "none"}
-                className={isFavorited ? "text-pink-500" : "text-white"}
+                className={isFavorited ? "text-white" : "text-white"}
               />
             </button>
           </div>
+        </div>
+
+        {/* Right — Artwork */}
+        <div className="hidden md:block absolute right-0 top-0 w-[50%] h-full">
+          {artworkUrl && (
+            <img
+              src={artworkUrl}
+              alt={track?.trackName ?? "Featured track"}
+              className="w-full h-full object-cover"
+            />
+          )}
+          {/* Gradient overlay fading artwork into the dark left side */}
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-950 via-gray-950/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-950/40 to-transparent" />
         </div>
       </div>
     </div>
