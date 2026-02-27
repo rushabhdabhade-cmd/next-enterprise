@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextRequest, NextResponse } from "next/server"
-import { getCachedPlayHistory, revalidatePlays } from "@/lib/cache"
+import { getCachedPlayHistory, revalidatePlays, revalidateRecommendations } from "@/lib/cache"
 import { recordPlay } from "@/lib/db"
 import type { ITunesTrack } from "@/types/itunes"
 
@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
     const track = await req.json() as ITunesTrack
     await recordPlay(userId, track)
     revalidatePlays(userId)
+    revalidateRecommendations(userId)
 
     return NextResponse.json({ ok: true })
 }

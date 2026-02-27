@@ -7,6 +7,7 @@ export const cacheTags = {
   favorites: (userId: string) => `favorites-${userId}`,
   plays: (userId: string) => `plays-${userId}`,
   libraries: (userId: string) => `libraries-${userId}`,
+  recommendations: (userId: string) => `recs-${userId}`,
 } as const
 
 // ─── TTLs (seconds) ────────────────────────────────────────────────────────────
@@ -17,6 +18,7 @@ export const TTL = {
   ITUNES_META: 86400, // 24h — track/artist metadata
   ITUNES_CHARTS: 86400, // 24h — iTunes RSS charts
   ITUNES_SEARCH: 3600,  // 1h  — search results
+  RECOMMENDATIONS: 1800, // 30 min — personalized recommendations
 } as const
 
 // ─── Cached DB Queries ─────────────────────────────────────────────────────────
@@ -66,6 +68,24 @@ export function getCachedLibraries(userId: string) {
   )()
 }
 
+// ─── Recommendations ─────────────────────────────────────────────────────────
+
+export function getCachedRecommendations(userId: string) {
+  return unstable_cache(
+    async () => {
+      const { generateRecommendationsForUser } = await import(
+        "@/lib/recommendations/engine"
+      )
+      return generateRecommendationsForUser(userId)
+    },
+    ["recommendations", userId],
+    {
+      revalidate: TTL.RECOMMENDATIONS,
+      tags: [cacheTags.recommendations(userId)],
+    }
+  )()
+}
+
 // ─── Invalidation Helpers ──────────────────────────────────────────────────────
 
 export function revalidateFavorites(userId: string) {
@@ -78,4 +98,8 @@ export function revalidatePlays(userId: string) {
 
 export function revalidateLibraries(userId: string) {
   revalidateTag(cacheTags.libraries(userId))
+}
+
+export function revalidateRecommendations(userId: string) {
+  revalidateTag(cacheTags.recommendations(userId))
 }

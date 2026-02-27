@@ -9,6 +9,7 @@ import ThemeToggle from "@/components/ThemeToggle"
 import SearchBar from "@/components/SearchBar"
 import CatalogGrid, { CatalogLoadingSkeleton } from "@/components/CatalogGrid"
 import HotSection from "@/components/HotSection"
+import ForYouSection from "@/components/ForYouSection"
 import { useItunesSearch } from "@/hooks/useItunesSearch"
 import { Sparkles, Compass, History, Star, ChevronLeft, ChevronRight, MoreHorizontal, Flame } from "lucide-react"
 
@@ -227,14 +228,8 @@ export default function Home() {
             )}
 
             {activeTab === "recommended" && (
-              <div className="h-64 flex flex-col items-center justify-center text-center p-12 bg-gray-50 dark:bg-gray-900 rounded-[40px] border border-gray-100 dark:border-gray-800 animate-in zoom-in-95 duration-700">
-                <div className="w-16 h-16 bg-white dark:bg-gray-950 rounded-3xl flex items-center justify-center shadow-xl mb-6">
-                  <Sparkles size={28} className="text-pink-500" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Curating Perfection</h3>
-                <p className="text-gray-500 dark:text-gray-400 max-w-sm font-medium leading-relaxed">
-                  Our algorithm is learning your acoustic fingerprint. Check back soon for custom picks.
-                </p>
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <ForYouSection />
               </div>
             )}
           </div>
