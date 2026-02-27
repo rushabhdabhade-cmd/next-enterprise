@@ -69,9 +69,12 @@ export default function RecentlyPlayedContent() {
         if (!isSignedIn) { setLoading(false); return }
 
         fetch("/api/user/plays?limit=100")
-            .then((r) => r.json() as Promise<{ plays: SongPlay[] }>)
+            .then((r) => {
+                if (!r.ok) throw new Error(`${r.status}`)
+                return r.json() as Promise<{ plays: SongPlay[] }>
+            })
             .then(({ plays }) => setRecentTracks(deduplicateByTrack(plays ?? [])))
-            .catch(() => {})
+            .catch((err) => console.error("Failed to load play history:", err))
             .finally(() => setLoading(false))
     }, [isLoaded, isSignedIn])
 

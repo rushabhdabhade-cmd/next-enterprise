@@ -62,9 +62,12 @@ export default function FavoritesPage() {
         if (!isSignedIn) { setLoading(false); return }
 
         fetch("/api/user/favorites")
-            .then((r) => r.json() as Promise<{ favorites: Favorite[] }>)
+            .then((r) => {
+                if (!r.ok) throw new Error(`${r.status}`)
+                return r.json() as Promise<{ favorites: Favorite[] }>
+            })
             .then(({ favorites }) => setFavorites(favorites ?? []))
-            .catch(() => {})
+            .catch((err) => console.error("Failed to load favorites:", err))
             .finally(() => setLoading(false))
     }, [isLoaded, isSignedIn])
 

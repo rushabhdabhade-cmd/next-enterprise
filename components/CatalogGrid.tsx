@@ -5,7 +5,8 @@ import { useFeatureFlag } from "@/lib/featureFlags"
 import { trackLayoutExposure, trackTrackSelected } from "@/lib/analytics"
 import { usePlayback } from "@/context/PlaybackContext"
 import { ITunesTrack } from "@/types/itunes"
-import { Pause, Play, Plus } from "lucide-react"
+import { formatDuration } from "@/services/itunesService"
+import { Heart, Pause, Play, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
 
@@ -35,11 +36,11 @@ export default function CatalogGrid({ tracks }: Props) {
 
 function NewCatalogGrid({ tracks }: Props) {
     const router = useRouter()
-    const { playTrack, togglePlay, currentTrack, isPlaying } = usePlayback()
+    const { playTrack, togglePlay, currentTrack, isPlaying, favorites, toggleFavorite } = usePlayback()
     const [libraryTrack, setLibraryTrack] = useState<ITunesTrack | null>(null)
 
     const handlePlay = (e: React.MouseEvent, track: ITunesTrack) => {
-        e.stopPropagation() // prevent card navigation
+        e.stopPropagation()
         trackTrackSelected({ id: String(track.trackId), artist: track.artistName, genre: track.primaryGenreName })
         if (currentTrack?.trackId === track.trackId) {
             togglePlay()
@@ -49,56 +50,88 @@ function NewCatalogGrid({ tracks }: Props) {
     }
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-            {tracks.map((track) => {
-                const isCurrent = currentTrack?.trackId === track.trackId
-                const isPlayingThis = isCurrent && isPlaying
+        <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {tracks.map((track, index) => {
+                    const isCurrent = currentTrack?.trackId === track.trackId
+                    const isPlayingThis = isCurrent && isPlaying
 
-                return (
-                    <div
-                        key={track.trackId}
-                        onClick={() => router.push(`/track/${track.trackId}`)}
-                        className={`group relative bg-white dark:bg-gray-900 rounded-[40px] p-4 border transition-all duration-500 cursor-pointer shadow-sm hover:shadow-2xl hover:shadow-pink-500/10 ${
-                            isCurrent
-                                ? "border-pink-500/50"
-                                : "border-gray-100 dark:border-gray-800 hover:border-pink-500/30"
-                        }`}
-                    >
-                        <div className="relative aspect-[4/3] rounded-[32px] overflow-hidden mb-6">
-                            <img
-                                src={track.artworkUrl100.replace("100x100", "600x600")}
-                                alt={track.trackName}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            />
-                            <div className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-500 flex items-end p-6 ${isCurrent ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
-                                <button
+                    return (
+                        <div
+                            key={track.trackId}
+                            onClick={() => router.push(`/track/${track.trackId}`)}
+                            style={{ animationDelay: `${index * 40}ms` }}
+                            className={`group relative flex items-center gap-4 p-3 rounded-2xl border cursor-pointer transition-all duration-300 animate-in fade-in slide-in-from-bottom-2 fill-mode-both ${
+                                isCurrent
+                                    ? "bg-gray-50 dark:bg-gray-800/80 border-pink-500/30 shadow-lg shadow-pink-500/5"
+                                    : "bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/60 hover:border-gray-200 dark:hover:border-gray-700"
+                            }`}
+                        >
+                            {/* Artwork with play overlay */}
+                            <div className="relative w-14 h-14 flex-shrink-0 rounded-xl overflow-hidden shadow-md">
+                                <img
+                                    src={track.artworkUrl100}
+                                    alt={track.trackName}
+                                    className="w-full h-full object-cover"
+                                />
+                                <div
                                     onClick={(e) => handlePlay(e, track)}
-                                    className="w-14 h-14 bg-pink-500 rounded-full flex items-center justify-center text-white shadow-xl translate-y-4 group-hover:translate-y-0 transition-transform duration-500 hover:scale-110 active:scale-95"
+                                    className={`absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px] rounded-xl transition-opacity ${
+                                        isCurrent ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                                    }`}
                                 >
-                                    {isPlayingThis
-                                        ? <Pause fill="currentColor" size={22} />
-                                        : <Play fill="currentColor" size={22} className="ml-0.5" />
-                                    }
+                                    <div className="w-8 h-8 flex items-center justify-center bg-white text-gray-950 rounded-full shadow-lg transition-transform active:scale-90">
+                                        {isPlayingThis
+                                            ? <Pause size={14} fill="currentColor" />
+                                            : <Play size={14} fill="currentColor" className="ml-0.5" />
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Track info + badges */}
+                            <div className="flex-1 min-w-0">
+                                <h4 className={`font-bold text-sm truncate ${isCurrent ? "text-pink-500" : "text-gray-950 dark:text-white"}`}>
+                                    {track.trackName}
+                                </h4>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium truncate">
+                                    {track.artistName}
+                                </p>
+                                <div className="flex items-center gap-1.5 mt-1.5">
+                                    <span className="px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-tight">
+                                        {formatDuration(track.trackTimeMillis)}
+                                    </span>
+                                    {index % 4 === 0 && (
+                                        <span className="px-1.5 py-0.5 rounded-md bg-pink-500/10 text-pink-500 text-[9px] font-bold uppercase tracking-tight">
+                                            Hot
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Actions — heart & plus */}
+                            <div className="flex flex-col items-center gap-2 flex-shrink-0">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); toggleFavorite(track) }}
+                                    className={`transition-all hover:scale-110 ${
+                                        favorites.has(track.trackId)
+                                            ? "text-pink-500"
+                                            : "text-gray-300 dark:text-gray-600 hover:text-pink-500"
+                                    }`}
+                                >
+                                    <Heart size={16} fill={favorites.has(track.trackId) ? "currentColor" : "none"} />
+                                </button>
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); setLibraryTrack(track) }}
+                                    className="text-gray-300 dark:text-gray-600 hover:text-gray-900 dark:hover:text-white transition-all hover:scale-110"
+                                >
+                                    <Plus size={16} />
                                 </button>
                             </div>
                         </div>
-                        <div className="px-2 flex items-start justify-between gap-2">
-                            <div className="min-w-0">
-                                <h3 className={`text-xl font-bold mb-1 truncate ${isCurrent ? "text-pink-500" : "text-gray-950 dark:text-white"}`}>
-                                    {track.trackName}
-                                </h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{track.artistName}</p>
-                            </div>
-                            <button
-                                onClick={(e) => { e.stopPropagation(); setLibraryTrack(track) }}
-                                className="mt-1 flex-shrink-0 text-gray-300 dark:text-gray-600 hover:text-gray-900 dark:hover:text-white transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
-                            >
-                                <Plus size={20} />
-                            </button>
-                        </div>
-                    </div>
-                )
-            })}
+                    )
+                })}
+            </div>
 
             {libraryTrack && (
                 <AddToLibraryModal
@@ -107,44 +140,108 @@ function NewCatalogGrid({ tracks }: Props) {
                     onOpenChange={(open) => { if (!open) setLibraryTrack(null) }}
                 />
             )}
-        </div>
+        </>
     )
 }
 
 function OldCatalogGrid({ tracks }: Props) {
     const router = useRouter()
+    const { playTrack, togglePlay, currentTrack, isPlaying, favorites, toggleFavorite } = usePlayback()
+    const [libraryTrack, setLibraryTrack] = useState<ITunesTrack | null>(null)
+
+    const handlePlay = (e: React.MouseEvent, track: ITunesTrack) => {
+        e.stopPropagation()
+        trackTrackSelected({ id: String(track.trackId), artist: track.artistName, genre: track.primaryGenreName })
+        if (currentTrack?.trackId === track.trackId) {
+            togglePlay()
+        } else {
+            playTrack(track, tracks)
+        }
+    }
+
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            {tracks.map((track) => (
-                <div
-                    key={track.trackId}
-                    onClick={() => router.push(`/track/${track.trackId}`)}
-                    className="group cursor-pointer"
-                >
-                    <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 mb-3">
-                        <img
-                            src={track.artworkUrl100}
-                            alt={track.trackName}
-                            className="w-full h-full object-cover"
-                        />
-                    </div>
-                    <h4 className="text-sm font-bold truncate">{track.trackName}</h4>
-                    <p className="text-xs text-gray-500 truncate">{track.artistName}</p>
-                </div>
-            ))}
-        </div>
+        <>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                {tracks.map((track) => {
+                    const isCurrent = currentTrack?.trackId === track.trackId
+                    const isPlayingThis = isCurrent && isPlaying
+
+                    return (
+                        <div
+                            key={track.trackId}
+                            onClick={() => router.push(`/track/${track.trackId}`)}
+                            className={`group cursor-pointer ${isCurrent ? "scale-[1.03]" : ""} transition-transform`}
+                        >
+                            <div className={`relative aspect-square rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 mb-3 ${
+                                isCurrent ? "ring-2 ring-pink-500/50" : ""
+                            }`}>
+                                <img
+                                    src={track.artworkUrl100}
+                                    alt={track.trackName}
+                                    className="w-full h-full object-cover"
+                                />
+                                {/* Play overlay */}
+                                <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity ${
+                                    isCurrent ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                                }`}>
+                                    <button
+                                        onClick={(e) => handlePlay(e, track)}
+                                        className="w-10 h-10 bg-white text-gray-950 rounded-full flex items-center justify-center shadow-xl transition-transform hover:scale-110 active:scale-95"
+                                    >
+                                        {isPlayingThis
+                                            ? <Pause size={16} fill="currentColor" />
+                                            : <Play size={16} fill="currentColor" className="ml-0.5" />
+                                        }
+                                    </button>
+                                </div>
+                                {/* Favorite + Library actions */}
+                                <div className="absolute top-2 right-2 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); toggleFavorite(track) }}
+                                        className={`w-7 h-7 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110 ${
+                                            favorites.has(track.trackId) ? "text-pink-500" : "text-white/80 hover:text-pink-500"
+                                        }`}
+                                    >
+                                        <Heart size={13} fill={favorites.has(track.trackId) ? "currentColor" : "none"} />
+                                    </button>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setLibraryTrack(track) }}
+                                        className="w-7 h-7 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white/80 hover:text-white transition-all hover:scale-110"
+                                    >
+                                        <Plus size={13} />
+                                    </button>
+                                </div>
+                            </div>
+                            <h4 className={`text-sm font-bold truncate ${isCurrent ? "text-pink-500" : ""}`}>{track.trackName}</h4>
+                            <p className="text-xs text-gray-500 truncate">{track.artistName}</p>
+                        </div>
+                    )
+                })}
+            </div>
+
+            {libraryTrack && (
+                <AddToLibraryModal
+                    track={libraryTrack}
+                    open={!!libraryTrack}
+                    onOpenChange={(open) => { if (!open) setLibraryTrack(null) }}
+                />
+            )}
+        </>
     )
 }
 
 // Exported so page.tsx can show the same skeleton while iTunes tracks are loading
 export function CatalogLoadingSkeleton() {
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 animate-pulse">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-pulse">
             {[...Array(12)].map((_, i) => (
-                <div key={i} className="space-y-3">
-                    <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-2xl" />
-                    <div className="h-4 bg-gray-100 dark:bg-gray-800 rounded w-3/4" />
-                    <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-1/2" />
+                <div key={i} className="flex items-center gap-4 p-3 rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
+                    <div className="w-14 h-14 bg-gray-100 dark:bg-gray-800 rounded-xl flex-shrink-0" />
+                    <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-gray-100 dark:bg-gray-800 rounded w-3/4" />
+                        <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-1/2" />
+                        <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-1/4" />
+                    </div>
                 </div>
             ))}
         </div>

@@ -107,12 +107,8 @@ export default function Home() {
 
           <header className="flex items-center justify-between mb-10">
             <div>
-              <h2 className="text-3xl font-light tracking-tight text-gray-900 dark:text-white">
-                Discovery <span className="font-bold">Hub</span>
-              </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">
-                Your personalized soundtrack for today
-              </p>
+         
+             
             </div>
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-full border border-gray-100 dark:border-gray-900 flex items-center justify-center opacity-50">

@@ -35,9 +35,10 @@ export default function HotSection() {
     useEffect(() => {
         const load = async () => {
             setLoading(true)
+            setError(false)
             const data = await getHotTracks()
-            if (data.length === 0 && !loading) {
-                // Could be error or just empty
+            if (data.length === 0) {
+                setError(true)
             }
             setTracks(data)
             setLoading(false)
@@ -65,7 +66,21 @@ export default function HotSection() {
     }
 
     if (error || (tracks.length === 0 && !loading)) {
-        return null // Gracefully degrade if no trending data
+        return (
+            <section className="mb-16">
+                <div className="flex items-center gap-3 mb-8">
+                    <div className="w-10 h-10 bg-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/20">
+                        <TrendingUp className="text-white" size={20} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-950 dark:text-white leading-none">Global Trending</h3>
+                </div>
+                <div className="flex flex-col items-center justify-center py-16 px-8 rounded-[32px] border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+                    <AlertCircle size={32} className="text-gray-300 dark:text-gray-600 mb-4" />
+                    <p className="text-sm font-bold text-gray-400 dark:text-gray-500 mb-1">Trending data unavailable</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-600">Play some tracks to populate the trending feed.</p>
+                </div>
+            </section>
+        )
     }
 
     return (

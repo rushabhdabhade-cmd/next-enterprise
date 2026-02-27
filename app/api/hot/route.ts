@@ -24,8 +24,8 @@ import { NextResponse } from "next/server"
 import { env } from "@/env.mjs"
 import { HotTrack, HotTrackWithMeta } from "@/types/hot"
 
-// Cache the entire route response for 60 seconds (ISR)
-export const revalidate = 60
+// Route is dynamic — freshness handled by fetch-level caches below
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
     try {
