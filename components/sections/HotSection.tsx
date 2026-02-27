@@ -1,12 +1,12 @@
 "use client"
 
+import { AlertCircle, Flame, Pause, Play, Plus, TrendingUp } from "lucide-react"
 import { useEffect, useState } from "react"
-import { getHotTracks } from "@/lib/api"
-import { HotTrackWithMeta } from "@/types/hot"
+import AddToLibraryModal from "@/components/AddToLibraryModal"
 import { usePlayback } from "@/context/PlaybackContext"
 import { trackTrackSelected } from "@/lib/analytics"
-import { Flame, TrendingUp, Play, Pause, Music, AlertCircle, Plus } from "lucide-react"
-import AddToLibraryModal from "@/components/AddToLibraryModal"
+import { getHotTracks } from "@/lib/api"
+import { HotTrackWithMeta } from "@/types/hot"
 
 export default function HotSection() {
     const [tracks, setTracks] = useState<HotTrackWithMeta[]>([])

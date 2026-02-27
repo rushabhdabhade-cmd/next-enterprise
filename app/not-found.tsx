@@ -1,5 +1,5 @@
+import { Home, Music, Search } from "lucide-react"
 import Link from "next/link"
-import { Music, Home, Search } from "lucide-react"
 
 export default function NotFound() {
     return (

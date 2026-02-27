@@ -1,13 +1,13 @@
-import { Suspense } from "react"
 import type { Metadata } from "next"
+import { Suspense } from "react"
 import "styles/tailwind.css"
-import { PlaybackProvider } from "@/context/PlaybackContext"
-import { LibraryProvider } from "@/context/LibraryContext"
-import NowPlayingBar from "@/components/playback/NowPlayingBar"
-import PostHogPageView from "@/components/analytics/PostHogPageView"
 import PostHogIdentifier from "@/components/analytics/PostHogIdentifier"
-import { ClerkProvider } from "@clerk/nextjs"
+import PostHogPageView from "@/components/analytics/PostHogPageView"
 import UserSync from "@/components/analytics/UserSync"
+import NowPlayingBar from "@/components/playback/NowPlayingBar"
+import { LibraryProvider } from "@/context/LibraryContext"
+import { PlaybackProvider } from "@/context/PlaybackContext"
+import { ClerkProvider } from "@clerk/nextjs"
 
 export const metadata: Metadata = {
   title: {

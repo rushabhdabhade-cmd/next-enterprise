@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect } from "react"
+import { AlertTriangle, Home, RotateCcw } from "lucide-react"
 import Link from "next/link"
-import { AlertTriangle, RotateCcw, Home } from "lucide-react"
+import { useEffect } from "react"
 
 export default function Error({
     error,

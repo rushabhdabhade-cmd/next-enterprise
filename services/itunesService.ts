@@ -1,4 +1,5 @@
-import { ITunesSearchResponse, SearchTrackParams, ITunesTrack, ITunesPodcast, ITunesMusicVideo } from "@/types/itunes"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ITunesMusicVideo, ITunesPodcast, ITunesSearchResponse, ITunesTrack, SearchTrackParams } from "@/types/itunes"
 
 const ITUNES_API_BASE = "https://itunes.apple.com/search"
 const ITUNES_LOOKUP_BASE = "https://itunes.apple.com/lookup"
@@ -72,7 +73,7 @@ export async function getTopTracks(): Promise<ITunesTrack[]> {
           currency: "USD",
           isStreamable: true
         } as ITunesTrack)
-      } catch (err) {
+      } catch (_err) {
         // Skip malformed
       }
     })

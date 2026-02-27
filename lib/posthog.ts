@@ -1,4 +1,4 @@
-import posthog, { type PostHog } from 'posthog-js'
+import posthog from 'posthog-js'
 import { env } from '../env.mjs'
 
 if (typeof window !== 'undefined') {

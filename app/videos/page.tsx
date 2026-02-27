@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Film, Search, Play, X, Music } from "lucide-react"
+import { Film, Music, Play, Search, X } from "lucide-react"
+import { useEffect, useState } from "react"
 import LeftSidebar from "@/components/layout/LeftSidebar"
 import Queue from "@/components/playback/Queue"
-import { searchMusicVideos, formatDuration } from "@/services/itunesService"
+import { formatDuration, searchMusicVideos } from "@/services/itunesService"
 import type { ITunesMusicVideo } from "@/types/itunes"
 
 const trendingSearches = ["Pop Hits", "Hip Hop", "Rock Classics", "K-Pop", "Latin", "R&B", "Country", "Indie"]

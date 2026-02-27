@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextRequest, NextResponse } from "next/server"
 import { revalidateLibraries } from "@/lib/cache"
-import { updateLibrary, deleteLibrary } from "@/lib/db"
+import { deleteLibrary, updateLibrary } from "@/lib/db"
 
 export async function PATCH(
     req: NextRequest,

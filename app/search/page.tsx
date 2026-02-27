@@ -1,18 +1,19 @@
 "use client"
 
-import { useState, useEffect, useCallback, Suspense } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
-import { Search, Music, Disc3, User, Podcast, Film, Play, Pause, Heart, Plus, ExternalLink, X } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
+import { Disc3, ExternalLink, Film, Heart, Music, Pause, Play, Plus, Podcast, Search, User, X } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { Suspense, useCallback, useEffect, useState } from "react"
+import AddToLibraryModal from "@/components/AddToLibraryModal"
 import LeftSidebar from "@/components/layout/LeftSidebar"
 import Queue from "@/components/playback/Queue"
 import { usePlayback } from "@/context/PlaybackContext"
-import { searchTracks, searchPodcasts, searchMusicVideos, formatDuration } from "@/services/itunesService"
-import AddToLibraryModal from "@/components/AddToLibraryModal"
-import type { ITunesTrack, ITunesPodcast, ITunesMusicVideo } from "@/types/itunes"
+import { formatDuration, searchMusicVideos, searchPodcasts, searchTracks } from "@/services/itunesService"
+import type { ITunesMusicVideo, ITunesPodcast, ITunesTrack } from "@/types/itunes"
 
 type FilterType = "all" | "song" | "album" | "artist" | "podcast" | "musicVideo"
 
-const filters: { id: FilterType; label: string; icon: any }[] = [
+const filters: { id: FilterType; label: string; icon: LucideIcon }[] = [
     { id: "all", label: "All", icon: Search },
     { id: "song", label: "Songs", icon: Music },
     { id: "album", label: "Albums", icon: Disc3 },
@@ -86,7 +87,7 @@ function SearchPageContent() {
 
     useEffect(() => {
         if (initialQuery) handleSearch(initialQuery)
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [])
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()

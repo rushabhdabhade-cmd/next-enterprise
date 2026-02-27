@@ -1,11 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { useUser } from "@clerk/nextjs"
+import { LogIn, Music, Sparkles } from "lucide-react"
+import { useEffect, useState } from "react"
+import CatalogGrid, { CatalogLoadingSkeleton } from "@/components/catalog/CatalogGrid"
 import { getRecommendations } from "@/lib/api"
 import type { RecommendationsResponse } from "@/types/recommendations"
-import CatalogGrid, { CatalogLoadingSkeleton } from "@/components/catalog/CatalogGrid"
-import { Sparkles, Music, LogIn } from "lucide-react"
 
 export default function ForYouSection() {
     const { isSignedIn, isLoaded } = useUser()

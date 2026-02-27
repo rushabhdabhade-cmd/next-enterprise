@@ -1,23 +1,23 @@
 "use client"
 
-import React, { useState } from "react" // useState kept for isExpanded
-import { usePlayback } from "@/context/PlaybackContext"
-import { formatDuration } from "@/services/itunesService"
 import {
-    Play,
-    Pause,
-    SkipBack,
-    SkipForward,
-    Volume2,
-    Volume1,
-    VolumeX,
     Heart,
+    Maximize2,
+    Pause,
+    Play,
+    Plus,
     Repeat,
     Shuffle,
-    Maximize2,
-    Plus
+    SkipBack,
+    SkipForward,
+    Volume1,
+    Volume2,
+    VolumeX
 } from "lucide-react"
+import React, { useState } from "react" // useState kept for isExpanded
 import AddToLibraryModal from "@/components/AddToLibraryModal"
+import { usePlayback } from "@/context/PlaybackContext"
+import { formatDuration } from "@/services/itunesService"
 
 export default function NowPlayingBar() {
     const {

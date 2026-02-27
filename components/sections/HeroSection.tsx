@@ -1,6 +1,6 @@
 "use client"
 
-import { Play, Pause, Heart } from "lucide-react"
+import { Heart, Pause, Play } from "lucide-react"
 import { usePlayback } from "@/context/PlaybackContext"
 import { ITunesTrack } from "@/types/itunes"
 

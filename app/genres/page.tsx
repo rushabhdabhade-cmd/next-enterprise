@@ -1,17 +1,17 @@
 "use client"
 
-import { useState, useCallback } from "react"
-import { useRouter } from "next/navigation"
 import {
-  ArrowLeft, Play, Pause, Music2, Heart, Plus, Search,
-  Music, Mic, Guitar, Waves, TreePine, Radio,
-  Sparkles, Music3, Crown, Flame, Star, Sun,
-  type LucideIcon,
+  ArrowLeft, Crown, Flame, Guitar, Heart, type LucideIcon, Mic,
+  Music, Music2, Music3, Pause, Play, Plus,
+  Radio, Search, Sparkles, Star, Sun, TreePine,
+  Waves,
 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useCallback, useState } from "react"
+import AddToLibraryModal from "@/components/AddToLibraryModal"
 import LeftSidebar from "@/components/layout/LeftSidebar"
 import Queue from "@/components/playback/Queue"
 import ThemeToggle from "@/components/ui/ThemeToggle"
-import AddToLibraryModal from "@/components/AddToLibraryModal"
 import { usePlayback } from "@/context/PlaybackContext"
 import { trackTrackSelected } from "@/lib/analytics"
 import { formatDuration } from "@/services/itunesService"

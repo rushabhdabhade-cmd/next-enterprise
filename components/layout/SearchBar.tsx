@@ -1,12 +1,12 @@
 "use client"
 
+import { Loader2, Search, XCircle } from "lucide-react"
 import { useState } from "react"
 import { SearchTrackParams } from "@/types/itunes"
-import { Search, Loader2, XCircle } from "lucide-react"
 
 interface SearchBarProps {
   onSearchComplete?: (count: number) => void
-  search: (params: SearchTrackParams) => Promise<any>
+  search: (params: SearchTrackParams) => Promise<{ length: number }>
   loading: boolean
   error: string | null
 }

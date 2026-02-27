@@ -71,6 +71,7 @@ export async function GET() {
             throw new Error(`PostHog query failed: ${phResponse.statusText}`)
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const phData = await phResponse.json() as { results: any[][] }
         const results = phData.results || []
 
@@ -97,6 +98,7 @@ export async function GET() {
                         { next: { revalidate: 86400 } } // track metadata is stable for 24h
                     )
                     if (!itunesRes.ok) return null
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const itunesData = await itunesRes.json() as { results: any[] }
                     const track = itunesData.results?.[0]
                     if (!track) return null

@@ -1,16 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useParams, useRouter } from "next/navigation"
 import { useUser } from "@clerk/nextjs"
-import { ListMusic, Play, Pause, Music, Heart, Trash2, ChevronLeft, Plus, Share2, Check, Link2, Loader2 } from "lucide-react"
+import { Check, ChevronLeft, Heart, Link2, ListMusic, Loader2, Music, Pause, Play, Plus, Share2, Trash2 } from "lucide-react"
+import { useParams, useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import AddToLibraryModal from "@/components/AddToLibraryModal"
 import LeftSidebar from "@/components/layout/LeftSidebar"
 import Queue from "@/components/playback/Queue"
-import { usePlayback } from "@/context/PlaybackContext"
 import { useLibrary } from "@/context/LibraryContext"
-import { formatDuration } from "@/services/itunesService"
-import AddToLibraryModal from "@/components/AddToLibraryModal"
+import { usePlayback } from "@/context/PlaybackContext"
 import type { LibraryTrack } from "@/lib/db"
+import { formatDuration } from "@/services/itunesService"
 import type { ITunesTrack } from "@/types/itunes"
 
 function libraryTrackToTrack(lt: LibraryTrack): ITunesTrack {
