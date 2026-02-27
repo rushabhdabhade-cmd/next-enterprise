@@ -4,8 +4,8 @@ import { useState } from "react"
 import { useUser } from "@clerk/nextjs"
 import { ListMusic, Plus, Trash2, Music } from "lucide-react"
 import Link from "next/link"
-import LeftSidebar from "@/components/LeftSidebar"
-import Queue from "@/components/Queue"
+import LeftSidebar from "@/components/layout/LeftSidebar"
+import Queue from "@/components/playback/Queue"
 import { useLibrary } from "@/context/LibraryContext"
 
 function SkeletonCard() {

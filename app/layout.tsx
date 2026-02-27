@@ -3,11 +3,11 @@ import type { Metadata } from "next"
 import "styles/tailwind.css"
 import { PlaybackProvider } from "@/context/PlaybackContext"
 import { LibraryProvider } from "@/context/LibraryContext"
-import NowPlayingBar from "@/components/NowPlayingBar"
-import PostHogPageView from "@/components/PostHogPageView"
-import PostHogIdentifier from "@/components/PostHogIdentifier"
+import NowPlayingBar from "@/components/playback/NowPlayingBar"
+import PostHogPageView from "@/components/analytics/PostHogPageView"
+import PostHogIdentifier from "@/components/analytics/PostHogIdentifier"
 import { ClerkProvider } from "@clerk/nextjs"
-import UserSync from "@/components/UserSync"
+import UserSync from "@/components/analytics/UserSync"
 
 export const metadata: Metadata = {
   title: {

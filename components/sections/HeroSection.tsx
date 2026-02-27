@@ -38,16 +38,16 @@ export default function HeroSection({
       <div className="relative h-full flex">
 
         {/* Left — Text content */}
-        <div className="relative z-10 flex flex-col justify-center px-10 md:px-14 w-full md:w-[55%]">
+        <div className=" relative z-10 flex flex-col justify-center px-10 md:px-10 w-full md:w-[55%]">
           <p className="text-pink-400 text-xs font-semibold tracking-wide mb-4">
             Trending New Hits
           </p>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 leading-tight tracking-tight">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight line-clamp-2">
             {track?.trackName || title}
           </h1>
 
-          <p className="text-gray-400 text-sm mb-8">
+          <p className="text-gray-400 text-lg mt-1 mb-6 truncate">
             <span className="text-white font-medium">{track?.artistName}</span>
             {track?.artistName && (
               <span className="ml-2 text-gray-500">
@@ -73,7 +73,7 @@ export default function HeroSection({
             <button
               onClick={() => track && toggleFavorite(track)}
               disabled={!track}
-              className="w-10 h-10 bg-purple-600 hover:bg-purple-500 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-10 h-10 bg-pink-500 hover:bg-pink-400 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Heart
                 size={16}

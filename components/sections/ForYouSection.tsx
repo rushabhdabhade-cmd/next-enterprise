@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useUser } from "@clerk/nextjs"
 import { getRecommendations } from "@/lib/api"
 import type { RecommendationsResponse } from "@/types/recommendations"
-import CatalogGrid, { CatalogLoadingSkeleton } from "@/components/CatalogGrid"
+import CatalogGrid, { CatalogLoadingSkeleton } from "@/components/catalog/CatalogGrid"
 import { Sparkles, Music, LogIn } from "lucide-react"
 
 export default function ForYouSection() {

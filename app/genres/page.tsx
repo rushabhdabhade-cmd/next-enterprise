@@ -8,9 +8,9 @@ import {
   Sparkles, Music3, Crown, Flame, Star, Sun,
   type LucideIcon,
 } from "lucide-react"
-import LeftSidebar from "@/components/LeftSidebar"
-import Queue from "@/components/Queue"
-import ThemeToggle from "@/components/ThemeToggle"
+import LeftSidebar from "@/components/layout/LeftSidebar"
+import Queue from "@/components/playback/Queue"
+import ThemeToggle from "@/components/ui/ThemeToggle"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
 import { usePlayback } from "@/context/PlaybackContext"
 import { trackTrackSelected } from "@/lib/analytics"

@@ -13,9 +13,9 @@ import {
   Trash2,
   AlertCircle,
 } from "lucide-react"
-import LeftSidebar from "@/components/LeftSidebar"
-import Queue from "@/components/Queue"
-import ThemeToggle from "@/components/ThemeToggle"
+import LeftSidebar from "@/components/layout/LeftSidebar"
+import Queue from "@/components/playback/Queue"
+import ThemeToggle from "@/components/ui/ThemeToggle"
 import { usePlayback } from "@/context/PlaybackContext"
 import { formatDuration } from "@/services/itunesService"
 import { ITunesTrack } from "@/types/itunes"

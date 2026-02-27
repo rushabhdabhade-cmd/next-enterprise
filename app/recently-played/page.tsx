@@ -1,9 +1,9 @@
 "use client"
 
 import { Clock } from "lucide-react"
-import LeftSidebar from "@/components/LeftSidebar"
-import Queue from "@/components/Queue"
-import RecentlyPlayedContent from "@/components/RecentlyPlayedContent"
+import LeftSidebar from "@/components/layout/LeftSidebar"
+import Queue from "@/components/playback/Queue"
+import RecentlyPlayedContent from "@/components/catalog/RecentlyPlayedContent"
 
 export default function RecentlyPlayedPage() {
     return (
