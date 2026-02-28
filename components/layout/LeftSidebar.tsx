@@ -52,7 +52,7 @@ export default function LeftSidebar() {
   const playlists = [
     { name: "Favorites", href: "/favorites", icon: Heart, requiresAuth: true },
     { name: "History", href: "/recently-played", icon: History, requiresAuth: true },
-    { name: "My Libraries", href: "/libraries", icon: ListMusic, requiresAuth: true },
+    { name: "My Playlists", href: "/libraries", icon: ListMusic, requiresAuth: true },
     { name: "Profile", href: "/profile", icon: UserIcon, requiresAuth: true },
     { name: "Stats", href: "/stats", icon: TrendingUp, requiresAuth: true },
   ]

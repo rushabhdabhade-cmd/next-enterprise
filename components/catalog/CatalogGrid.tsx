@@ -1,6 +1,6 @@
 "use client"
 
-import { Heart, Pause, Play, Plus } from "lucide-react"
+import { ChevronRight, Heart, Pause, Play, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
@@ -8,6 +8,7 @@ import { usePlayback } from "@/context/PlaybackContext"
 import { trackLayoutExposure, trackTrackSelected } from "@/lib/analytics"
 import { useFeatureFlag } from "@/lib/featureFlags"
 import { formatDuration } from "@/services/itunesService"
+import { setCachedTrack } from "@/lib/trackNavigationCache"
 import { ITunesTrack } from "@/types/itunes"
 
 interface Props {
@@ -59,7 +60,7 @@ function NewCatalogGrid({ tracks }: Props) {
                     return (
                         <div
                             key={track.trackId}
-                            onClick={() => router.push(`/track/${track.trackId}`)}
+                            onClick={() => { setCachedTrack(track); router.push(`/track/${track.trackId}`) }}
                             style={{ animationDelay: `${index * 40}ms` }}
                             className={`group relative flex items-center gap-4 p-3 rounded-2xl border cursor-pointer transition-all duration-300 animate-in fade-in slide-in-from-bottom-2 fill-mode-both ${
                                 isCurrent
@@ -128,6 +129,9 @@ function NewCatalogGrid({ tracks }: Props) {
                                     <Plus size={16} />
                                 </button>
                             </div>
+
+                            {/* Navigation indicator */}
+                            <ChevronRight size={14} className="flex-shrink-0 text-gray-300 dark:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                     )
                 })}
@@ -169,7 +173,7 @@ function OldCatalogGrid({ tracks }: Props) {
                     return (
                         <div
                             key={track.trackId}
-                            onClick={() => router.push(`/track/${track.trackId}`)}
+                            onClick={() => { setCachedTrack(track); router.push(`/track/${track.trackId}`) }}
                             className={`group cursor-pointer ${isCurrent ? "scale-[1.03]" : ""} transition-transform`}
                         >
                             <div className={`relative aspect-square rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 mb-3 ${
@@ -212,7 +216,10 @@ function OldCatalogGrid({ tracks }: Props) {
                                     </button>
                                 </div>
                             </div>
-                            <h4 className={`text-sm font-bold truncate ${isCurrent ? "text-pink-500" : ""}`}>{track.trackName}</h4>
+                            <div className="flex items-center gap-1">
+                                <h4 className={`text-sm font-bold truncate flex-1 ${isCurrent ? "text-pink-500" : ""}`}>{track.trackName}</h4>
+                                <ChevronRight size={12} className="flex-shrink-0 text-gray-300 dark:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
                             <p className="text-xs text-gray-500 truncate">{track.artistName}</p>
                         </div>
                     )

@@ -1,31 +1,67 @@
 "use client"
 
-import { Check, ChevronLeft, Heart, Pause, Play, Plus, Share2 } from "lucide-react"
+import { Check, ChevronLeft, Heart, Loader2, Pause, Play, Plus, Share2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
 import AISummary from "@/components/AISummary"
-import LeftSidebar from "@/components/layout/LeftSidebar"
 import { usePlayback } from "@/context/PlaybackContext"
 import { trackAISummaryExposure } from "@/lib/analytics"
 import { useFeatureFlag } from "@/lib/featureFlags"
+import { getCachedTrack } from "@/lib/trackNavigationCache"
 import { formatDuration } from "@/services/itunesService"
 import { ITunesTrack } from "@/types/itunes"
 
-export default function TrackDetailClient({ track }: { track: ITunesTrack }) {
+export default function TrackDetailClient({ trackId }: { trackId: number }) {
     const router = useRouter()
     const { playTrack, currentTrack, isPlaying, togglePlay } = usePlayback()
     const showAISummary = useFeatureFlag("ai-summaries")
 
-    // Track PostHog exposure once the flag resolves to true
-    useEffect(() => {
-        if (showAISummary === true) {
-            trackAISummaryExposure(String(track.trackId))
-        }
-    }, [showAISummary, track.trackId])
-
+    const [track, setTrack] = useState<ITunesTrack | null>(() => getCachedTrack(trackId))
+    const [loading, setLoading] = useState(!track)
     const [showLibraryModal, setShowLibraryModal] = useState(false)
     const [copied, setCopied] = useState(false)
+
+    // Fallback: fetch client-side only for direct URL visits (no cache)
+    useEffect(() => {
+        if (track) return
+        fetch(`https://itunes.apple.com/lookup?id=${trackId}`)
+            .then((res) => res.json() as Promise<{ results?: ITunesTrack[] }>)
+            .then((data) => {
+                if (data.results?.[0]) setTrack(data.results[0])
+            })
+            .finally(() => setLoading(false))
+    }, [trackId, track])
+
+    // Track PostHog exposure once the flag resolves to true
+    useEffect(() => {
+        if (showAISummary === true && track) {
+            trackAISummaryExposure(String(track.trackId))
+        }
+    }, [showAISummary, track])
+
+    if (loading) {
+        return (
+            <div className="min-h-[50vh] flex items-center justify-center">
+                <Loader2 size={32} className="animate-spin text-pink-500" />
+            </div>
+        )
+    }
+
+    if (!track) {
+        return (
+            <div className="min-h-[50vh] flex flex-col items-center justify-center gap-4">
+                <p className="text-gray-500 text-lg">Track not found</p>
+                <button
+                    onClick={() => router.back()}
+                    className="px-6 py-2 bg-pink-500 text-white rounded-full text-sm font-semibold hover:bg-pink-400 transition-colors"
+                >
+                    Go Back
+                </button>
+            </div>
+        )
+    }
+
     const isCurrent = currentTrack?.trackId === track.trackId
     const highResArtwork = track.artworkUrl100.replace("100x100", "800x800")
 
@@ -36,19 +72,17 @@ export default function TrackDetailClient({ track }: { track: ITunesTrack }) {
     }
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-950 flex transition-colors duration-500 relative overflow-hidden">
-            {/* Dynamic Background Glow */}
-            <div
-                className="absolute inset-0 opacity-20 dark:opacity-30 blur-[120px] pointer-events-none transition-all duration-1000"
-                style={{
-                    background: `radial-gradient(circle at 50% 50%, #db2777 0%, transparent 60%)`,
-                }}
-            />
+        <>
+            <div className="relative overflow-hidden min-h-full">
+                {/* Dynamic Background Glow */}
+                <div
+                    className="absolute inset-0 opacity-20 dark:opacity-30 blur-[120px] pointer-events-none transition-all duration-1000"
+                    style={{
+                        background: `radial-gradient(circle at 50% 50%, #db2777 0%, transparent 60%)`,
+                    }}
+                />
 
-            <LeftSidebar />
-
-            <main className="flex-1 overflow-y-auto relative z-10">
-                <div className="max-w-6xl mx-auto px-4 py-6 md:px-8 md:py-12">
+                <div className="max-w-6xl mx-auto px-4 py-6 md:px-8 md:py-12 relative z-10">
                     {/* Navigation */}
                     <button
                         onClick={() => router.back()}
@@ -164,7 +198,7 @@ export default function TrackDetailClient({ track }: { track: ITunesTrack }) {
                         <AISummary trackId={String(track.trackId)} />
                     )}
                 </div>
-            </main>
+            </div>
 
             {showLibraryModal && (
                 <AddToLibraryModal
@@ -173,6 +207,6 @@ export default function TrackDetailClient({ track }: { track: ITunesTrack }) {
                     onOpenChange={setShowLibraryModal}
                 />
             )}
-        </div>
+        </>
     )
 }

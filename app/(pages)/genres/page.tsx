@@ -1,7 +1,7 @@
 "use client"
 
 import {
-  ArrowLeft, Crown, Flame, Guitar, Heart, type LucideIcon, Mic,
+  ArrowLeft, ChevronRight, Crown, Flame, Guitar, Heart, type LucideIcon, Mic,
   Music, Music2, Music3, Pause, Play, Plus,
   Radio, Search, Sparkles, Star, Sun, TreePine,
   Waves,
@@ -9,11 +9,10 @@ import {
 import { useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
-import LeftSidebar from "@/components/layout/LeftSidebar"
-import Queue from "@/components/playback/Queue"
 import ThemeToggle from "@/components/ui/ThemeToggle"
 import { usePlayback } from "@/context/PlaybackContext"
 import { trackTrackSelected } from "@/lib/analytics"
+import { setCachedTrack } from "@/lib/trackNavigationCache"
 import { formatDuration } from "@/services/itunesService"
 import { ITunesTrack } from "@/types/itunes"
 
@@ -127,10 +126,7 @@ export default function GenresPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 flex transition-colors duration-500 relative">
-      <LeftSidebar />
-
-      <main className="flex-1 overflow-y-auto scroll-smooth">
+    <>
         <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
           {/* Header */}
@@ -237,7 +233,7 @@ export default function GenresPage() {
                     return (
                       <div
                         key={track.trackId}
-                        onClick={() => router.push(`/track/${track.trackId}`)}
+                        onClick={() => { setCachedTrack(track); router.push(`/track/${track.trackId}`) }}
                         style={{ animationDelay: `${idx * 25}ms` }}
                         className={`group relative flex items-center gap-4 p-3 rounded-2xl border cursor-pointer transition-all duration-300 animate-in fade-in slide-in-from-bottom-2 fill-mode-both ${
                           isCurrent
@@ -306,6 +302,9 @@ export default function GenresPage() {
                             <Plus size={16} />
                           </button>
                         </div>
+
+                        {/* Navigation indicator */}
+                        <ChevronRight size={14} className="flex-shrink-0 text-gray-300 dark:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                     )
                   })}
@@ -315,9 +314,6 @@ export default function GenresPage() {
           )}
 
         </div>
-      </main>
-
-      <Queue />
 
       {libraryTrack && (
         <AddToLibraryModal
@@ -326,6 +322,6 @@ export default function GenresPage() {
           onOpenChange={(open) => { if (!open) setLibraryTrack(null) }}
         />
       )}
-    </div>
+    </>
   )
 }

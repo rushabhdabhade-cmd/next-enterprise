@@ -4,9 +4,7 @@ import { ChevronLeft, ChevronRight, Compass, Flame, History, MoreHorizontal, Spa
 import { useEffect, useMemo, useRef, useState } from "react"
 import CatalogGrid, { CatalogLoadingSkeleton } from "@/components/catalog/CatalogGrid"
 import RecentlyPlayedContent from "@/components/catalog/RecentlyPlayedContent"
-import LeftSidebar from "@/components/layout/LeftSidebar"
 import SearchBar from "@/components/layout/SearchBar"
-import Queue from "@/components/playback/Queue"
 import ForYouSection from "@/components/sections/ForYouSection"
 import HeroSection from "@/components/sections/HeroSection"
 import HotSection from "@/components/sections/HotSection"
@@ -99,11 +97,6 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 flex transition-colors duration-500 relative">
-      <LeftSidebar />
-
-      {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto relative scroll-smooth">
         <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
           <header className="flex items-center justify-end mb-6 md:mb-10 pl-12 lg:pl-0">
@@ -229,9 +222,5 @@ export default function Home() {
             )}
           </div>
         </div>
-      </main>
-
-      <Queue />
-    </div>
   )
 }

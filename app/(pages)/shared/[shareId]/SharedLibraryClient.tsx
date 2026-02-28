@@ -3,8 +3,6 @@
 import { Check, ChevronLeft, ListMusic, Music, Pause, Play, Share2 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import LeftSidebar from "@/components/layout/LeftSidebar"
-import Queue from "@/components/playback/Queue"
 import { usePlayback } from "@/context/PlaybackContext"
 import type { LibraryTrack } from "@/lib/db"
 import { formatDuration } from "@/services/itunesService"
@@ -95,10 +93,6 @@ export default function SharedLibraryClient({ shareId }: { shareId: string }) {
     }
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-950 flex transition-colors duration-500 relative">
-            <LeftSidebar />
-
-            <main className="flex-1 overflow-y-auto scroll-smooth">
                 <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
                     {/* Back button */}
                     <Link
@@ -271,9 +265,5 @@ export default function SharedLibraryClient({ shareId }: { shareId: string }) {
                         </div>
                     )}
                 </div>
-            </main>
-
-            <Queue />
-        </div>
     )
 }

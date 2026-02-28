@@ -7,6 +7,7 @@ import AddToLibraryModal from "@/components/AddToLibraryModal"
 import { usePlayback } from "@/context/PlaybackContext"
 import type { SongPlay } from "@/lib/db"
 import { formatDuration } from "@/services/itunesService"
+import { getPageData, setPageData } from "@/lib/pageDataCache"
 import type { ITunesTrack } from "@/types/itunes"
 
 function playToTrack(play: SongPlay): ITunesTrack {
@@ -60,20 +61,26 @@ function SkeletonCard() {
 export default function RecentlyPlayedContent() {
     const { isSignedIn, isLoaded } = useUser()
     const { currentTrack, isPlaying, playTrack, togglePlay, favorites, toggleFavorite } = usePlayback()
-    const [recentTracks, setRecentTracks] = useState<SongPlay[]>([])
-    const [loading, setLoading] = useState(true)
+    const cachedRecent = getPageData<SongPlay[]>("recentlyPlayed")
+    const [recentTracks, setRecentTracks] = useState<SongPlay[]>(cachedRecent ?? [])
+    const [loading, setLoading] = useState(!cachedRecent)
     const [libraryTrack, setLibraryTrack] = useState<ITunesTrack | null>(null)
 
     useEffect(() => {
         if (!isLoaded) return
         if (!isSignedIn) { setLoading(false); return }
+        if (getPageData("recentlyPlayed")) { setLoading(false); return }
 
         fetch("/api/user/plays?limit=100")
             .then((r) => {
                 if (!r.ok) throw new Error(`${r.status}`)
                 return r.json() as Promise<{ plays: SongPlay[] }>
             })
-            .then(({ plays }) => setRecentTracks(deduplicateByTrack(plays ?? [])))
+            .then(({ plays }) => {
+                const data = deduplicateByTrack(plays ?? [])
+                setPageData("recentlyPlayed", data)
+                setRecentTracks(data)
+            })
             .catch((err) => console.error("Failed to load play history:", err))
             .finally(() => setLoading(false))
     }, [isLoaded, isSignedIn])

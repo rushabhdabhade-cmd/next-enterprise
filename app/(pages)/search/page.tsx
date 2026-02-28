@@ -5,8 +5,6 @@ import { Disc3, ExternalLink, Film, Heart, Music, Pause, Play, Plus, Podcast, Se
 import { useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useCallback, useEffect, useState } from "react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
-import LeftSidebar from "@/components/layout/LeftSidebar"
-import Queue from "@/components/playback/Queue"
 import { usePlayback } from "@/context/PlaybackContext"
 import { formatDuration, searchMusicVideos, searchPodcasts, searchTracks } from "@/services/itunesService"
 import type { ITunesMusicVideo, ITunesPodcast, ITunesTrack } from "@/types/itunes"
@@ -103,10 +101,8 @@ function SearchPageContent() {
     }
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-950 flex transition-colors duration-500 relative">
-            <LeftSidebar />
-            <main className="flex-1 overflow-y-auto scroll-smooth">
-                <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
+        <>
+            <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
                     {/* Header */}
                     <header className="mb-8 lg:mb-12">
@@ -384,9 +380,7 @@ function SearchPageContent() {
                             </p>
                         </div>
                     )}
-                </div>
-            </main>
-            <Queue />
+            </div>
 
             {libraryTrack && (
                 <AddToLibraryModal
@@ -430,6 +424,6 @@ function SearchPageContent() {
                     </div>
                 </div>
             )}
-        </div>
+        </>
     )
 }

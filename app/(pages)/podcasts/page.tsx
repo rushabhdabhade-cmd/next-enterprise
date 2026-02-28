@@ -2,21 +2,25 @@
 
 import { ExternalLink, Music, Podcast, Search } from "lucide-react"
 import { useEffect, useState } from "react"
-import LeftSidebar from "@/components/layout/LeftSidebar"
-import Queue from "@/components/playback/Queue"
+import { getPageData, setPageData } from "@/lib/pageDataCache"
 import { getTopPodcasts, searchPodcasts } from "@/services/itunesService"
 import type { ITunesPodcast } from "@/types/itunes"
 
 export default function PodcastsPage() {
-    const [topPodcasts, setTopPodcasts] = useState<ITunesPodcast[]>([])
+    const cachedPodcasts = getPageData<ITunesPodcast[]>("podcasts:top")
+    const [topPodcasts, setTopPodcasts] = useState<ITunesPodcast[]>(cachedPodcasts ?? [])
     const [searchResults, setSearchResults] = useState<ITunesPodcast[]>([])
     const [query, setQuery] = useState("")
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(!cachedPodcasts)
     const [searching, setSearching] = useState(false)
 
     useEffect(() => {
+        if (getPageData("podcasts:top")) return
         getTopPodcasts(20)
-            .then(setTopPodcasts)
+            .then((data) => {
+                setPageData("podcasts:top", data)
+                setTopPodcasts(data)
+            })
             .finally(() => setLoading(false))
     }, [])
 
@@ -33,9 +37,6 @@ export default function PodcastsPage() {
     const gridPodcasts = searchResults.length > 0 ? searchResults : topPodcasts
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-950 flex transition-colors duration-500 relative">
-            <LeftSidebar />
-            <main className="flex-1 overflow-y-auto scroll-smooth">
                 <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
                     {/* Header */}
@@ -177,8 +178,5 @@ export default function PodcastsPage() {
                         </div>
                     )}
                 </div>
-            </main>
-            <Queue />
-        </div>
     )
 }

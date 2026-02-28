@@ -3,12 +3,11 @@
 import { useUser } from "@clerk/nextjs"
 import { Heart, History, Music, Pause, Play } from "lucide-react"
 import { useEffect, useState } from "react"
-import LeftSidebar from "@/components/layout/LeftSidebar"
-import Queue from "@/components/playback/Queue"
 import { usePlayback } from "@/context/PlaybackContext"
 import type { SongPlay } from "@/lib/db"
 import { formatDuration } from "@/services/itunesService"
 import type { ITunesTrack } from "@/types/itunes"
+import { getPageData, setPageData } from "@/lib/pageDataCache"
 
 function playToTrack(play: SongPlay): ITunesTrack {
     return {
@@ -86,16 +85,22 @@ const DATE_ORDER = ["Today", "Yesterday", "This Week", "Earlier"]
 export default function HistoryPage() {
     const { isSignedIn, isLoaded } = useUser()
     const { currentTrack, isPlaying, playTrack, togglePlay, favorites, toggleFavorite } = usePlayback()
-    const [plays, setPlays] = useState<SongPlay[]>([])
-    const [loading, setLoading] = useState(true)
+    const cachedPlays = getPageData<SongPlay[]>("history")
+    const [plays, setPlays] = useState<SongPlay[]>(cachedPlays ?? [])
+    const [loading, setLoading] = useState(!cachedPlays)
 
     useEffect(() => {
         if (!isLoaded) return
         if (!isSignedIn) { setLoading(false); return }
+        if (getPageData("history")) { setLoading(false); return }
 
         fetch("/api/user/plays?limit=200")
             .then((r) => r.json() as Promise<{ plays: SongPlay[] }>)
-            .then(({ plays }) => setPlays(plays ?? []))
+            .then(({ plays }) => {
+                const data = plays ?? []
+                setPageData("history", data)
+                setPlays(data)
+            })
             .catch(() => {})
             .finally(() => setLoading(false))
     }, [isLoaded, isSignedIn])
@@ -119,10 +124,6 @@ export default function HistoryPage() {
     }
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-950 flex transition-colors duration-500 relative">
-            <LeftSidebar />
-
-            <main className="flex-1 overflow-y-auto scroll-smooth">
                 <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
                     {/* Header */}
@@ -277,10 +278,5 @@ export default function HistoryPage() {
                         </div>
                     )}
                 </div>
-            </main>
-
-            <Queue />
-
-        </div>
     )
 }

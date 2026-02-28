@@ -13,8 +13,6 @@ import {
   X,
 } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
-import LeftSidebar from "@/components/layout/LeftSidebar"
-import Queue from "@/components/playback/Queue"
 import ThemeToggle from "@/components/ui/ThemeToggle"
 import { usePlayback } from "@/context/PlaybackContext"
 import { formatDuration } from "@/services/itunesService"
@@ -243,9 +241,7 @@ export default function LocalFilesPage() {
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 flex transition-colors duration-500 relative">
-      <LeftSidebar />
-
+    <>
       {/* Full-page drag overlay */}
       {isDragging && (
         <div className="fixed inset-0 z-50 bg-gray-950/80 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none animate-in fade-in duration-200">
@@ -265,7 +261,6 @@ export default function LocalFilesPage() {
         </div>
       )}
 
-      <main className="flex-1 overflow-y-auto scroll-smooth">
         <div className="max-w-5xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
           {/* Header */}
@@ -450,9 +445,6 @@ export default function LocalFilesPage() {
           )}
 
         </div>
-      </main>
-
-      <Queue />
-    </div>
+    </>
   )
 }
