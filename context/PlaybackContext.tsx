@@ -1,10 +1,11 @@
 "use client"
 
-import React, { createContext, useContext, useState, useRef, ReactNode, useEffect } from "react"
+import React, { createContext, useContext, useState, useRef, ReactNode, useEffect, useCallback } from "react"
 import { ITunesTrack } from "@/types/itunes"
 
 interface PlaybackContextType {
     currentTrack: ITunesTrack | null
+    queue: ITunesTrack[]
     isPlaying: boolean
     progress: number
     currentTime: number
@@ -28,101 +29,152 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
     const [currentTime, setCurrentTime] = useState(0)
     const [duration, setDuration] = useState(0)
     const [volume, setVolume] = useState(0.7)
+
     const audioRef = useRef<HTMLAudioElement | null>(null)
+    const queueRef = useRef<ITunesTrack[]>([])
+    const currentTrackRef = useRef<ITunesTrack | null>(null)
+
+    // Keep refs in sync for event listeners
+    useEffect(() => {
+        queueRef.current = queue
+    }, [queue])
+
+    useEffect(() => {
+        currentTrackRef.current = currentTrack
+    }, [currentTrack])
 
     const progress = duration > 0 ? (currentTime / duration) * 100 : 0
 
-    const playTrack = (track: ITunesTrack, newQueue?: ITunesTrack[]) => {
-        if (newQueue) setQueue(newQueue)
+    const playTrack = useCallback((track: ITunesTrack, newQueue?: ITunesTrack[]) => {
+        if (newQueue) {
+            const slicedQueue = newQueue.slice(0, 20)
+            setQueue(slicedQueue)
+            queueRef.current = slicedQueue
+        }
 
-        if (currentTrack?.trackId === track.trackId) {
-            if (audioRef.current) {
-                audioRef.current.play()
-                setIsPlaying(true)
-            }
+        if (currentTrackRef.current?.trackId === track.trackId && audioRef.current) {
+            audioRef.current.play().catch(console.error)
+            setIsPlaying(true)
             return
         }
 
         if (audioRef.current) {
             audioRef.current.pause()
-            audioRef.current.onplay = null
-            audioRef.current.onpause = null
-            audioRef.current.ontimeupdate = null
-            audioRef.current.onloadedmetadata = null
-            audioRef.current.onended = null
+            audioRef.current.src = ""
+            audioRef.current.load()
         }
 
         const audio = new Audio(track.previewUrl)
-        audio.volume = volume // Apply current volume
+        audio.volume = volume
+        audioRef.current = audio
 
-        audio.onplay = () => setIsPlaying(true)
-        audio.onpause = () => setIsPlaying(false)
-        audio.ontimeupdate = () => setCurrentTime(audio.currentTime)
-        audio.onloadedmetadata = () => setDuration(audio.duration)
-        audio.onended = () => {
+        audio.addEventListener('play', () => setIsPlaying(true))
+        audio.addEventListener('pause', () => setIsPlaying(false))
+        audio.addEventListener('timeupdate', () => setCurrentTime(audio.currentTime))
+        audio.addEventListener('loadedmetadata', () => setDuration(audio.duration))
+        audio.addEventListener('ended', () => {
             setIsPlaying(false)
-            playNext()
+            playNextAction()
+        })
+
+        audio.play().catch(err => {
+            console.error("Playback failed:", err)
+            playNextAction()
+        })
+
+        setCurrentTrack(track)
+        currentTrackRef.current = track
+        setIsPlaying(true)
+    }, [volume])
+
+    const playNextAction = useCallback(() => {
+        const currentQueue = queueRef.current
+        const track = currentTrackRef.current
+
+        if (currentQueue.length === 0) return
+
+        let nextTrack: ITunesTrack | undefined
+        if (!track) {
+            nextTrack = currentQueue[0]
+        } else {
+            const currentIndex = currentQueue.findIndex(t => t.trackId === track.trackId)
+            const nextIndex = (currentIndex + 1) % currentQueue.length
+            nextTrack = currentQueue[nextIndex]
         }
 
-        audioRef.current = audio
-        audio.play()
-        setCurrentTrack(track)
-        setIsPlaying(true)
-    }
+        if (nextTrack) {
+            playTrack(nextTrack)
+        }
+    }, [playTrack])
 
-    const pauseTrack = () => {
+    const playPrevious = useCallback(() => {
+        const currentQueue = queueRef.current
+        const track = currentTrackRef.current
+
+        if (currentQueue.length === 0) return
+
+        let prevTrack: ITunesTrack | undefined
+        if (!track) {
+            prevTrack = currentQueue[currentQueue.length - 1]
+        } else {
+            const currentIndex = currentQueue.findIndex(t => t.trackId === track.trackId)
+            const prevIndex = (currentIndex - 1 + currentQueue.length) % currentQueue.length
+            prevTrack = currentQueue[prevIndex]
+        }
+
+        if (prevTrack) {
+            playTrack(prevTrack)
+        }
+    }, [playTrack])
+
+    const pauseTrack = useCallback(() => {
         if (audioRef.current) {
             audioRef.current.pause()
             setIsPlaying(false)
         }
-    }
+    }, [])
 
-    const togglePlay = () => {
+    const togglePlay = useCallback(() => {
         if (isPlaying) {
             pauseTrack()
         } else if (audioRef.current) {
-            audioRef.current.play()
+            audioRef.current.play().catch(console.error)
             setIsPlaying(true)
         } else if (currentTrack) {
             playTrack(currentTrack)
         }
-    }
+    }, [isPlaying, currentTrack, pauseTrack, playTrack])
 
-    const playNext = () => {
-        if (!currentTrack || queue.length === 0) return
-        const currentIndex = queue.findIndex(t => t.trackId === currentTrack.trackId)
-        const nextIndex = (currentIndex + 1) % queue.length
-        const nextTrack = queue[nextIndex]
-        if (nextTrack) playTrack(nextTrack)
-    }
-
-    const playPrevious = () => {
-        if (!currentTrack || queue.length === 0) return
-        const currentIndex = queue.findIndex(t => t.trackId === currentTrack.trackId)
-        const prevIndex = (currentIndex - 1 + queue.length) % queue.length
-        const prevTrack = queue[prevIndex]
-        if (prevTrack) playTrack(prevTrack)
-    }
-
-    const seek = (timePercent: number) => {
+    const seek = useCallback((timePercent: number) => {
         if (audioRef.current && duration > 0) {
             const newTime = (timePercent / 100) * duration
             audioRef.current.currentTime = newTime
             setCurrentTime(newTime)
         }
-    }
+    }, [duration])
 
-    const updateVolume = (val: number) => {
+    const updateVolume = useCallback((val: number) => {
         setVolume(val)
         if (audioRef.current) {
             audioRef.current.volume = val
         }
-    }
+    }, [])
+
+    // Clean up on unmount
+    useEffect(() => {
+        return () => {
+            if (audioRef.current) {
+                audioRef.current.pause()
+                audioRef.current.src = ""
+            }
+        }
+    }, [])
 
     return (
         <PlaybackContext.Provider
             value={{
                 currentTrack,
+                queue,
                 isPlaying,
                 progress,
                 currentTime,
@@ -131,7 +183,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
                 playTrack,
                 pauseTrack,
                 togglePlay,
-                playNext,
+                playNext: playNextAction,
                 playPrevious,
                 seek,
                 updateVolume

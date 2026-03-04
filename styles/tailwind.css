@@ -3,8 +3,10 @@
 @theme {
     --color-brand: #db2777;
     --font-sans: 'Inter', system-ui, sans-serif;
-    --dark-mode: class;
 }
+
+/* Tailwind v4 Class-based Dark Mode */
+@variant dark (&:where(.dark, .dark *));
 
 @layer base {
     body {
