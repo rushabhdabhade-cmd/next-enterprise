@@ -3,8 +3,9 @@
 import { ChevronRight, Heart, Pause, Play, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
+import { useUser } from "@clerk/nextjs"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
-import { usePlayback } from "@/context/PlaybackContext"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { trackLayoutExposure, trackTrackSelected } from "@/lib/analytics"
 import { useFeatureFlag } from "@/lib/featureFlags"
 import { formatDuration } from "@/services/itunesService"
@@ -37,7 +38,8 @@ export default function CatalogGrid({ tracks }: Props) {
 
 function NewCatalogGrid({ tracks }: Props) {
     const router = useRouter()
-    const { playTrack, togglePlay, currentTrack, isPlaying, favorites, toggleFavorite } = usePlayback()
+    const { isSignedIn } = useUser()
+    const { playTrack, togglePlay, currentTrack, isPlaying, favorites, toggleFavorite } = usePlaybackStore()
     const [libraryTrack, setLibraryTrack] = useState<ITunesTrack | null>(null)
 
     const handlePlay = (e: React.MouseEvent, track: ITunesTrack) => {
@@ -46,7 +48,7 @@ function NewCatalogGrid({ tracks }: Props) {
         if (currentTrack?.trackId === track.trackId) {
             togglePlay()
         } else {
-            playTrack(track, tracks)
+            playTrack(track, tracks, !!isSignedIn)
         }
     }
 
@@ -62,11 +64,10 @@ function NewCatalogGrid({ tracks }: Props) {
                             key={track.trackId}
                             onClick={() => { setCachedTrack(track); router.push(`/track/${track.trackId}`) }}
                             style={{ animationDelay: `${index * 40}ms` }}
-                            className={`group relative flex items-center gap-4 p-3 rounded-2xl border cursor-pointer transition-all duration-300 animate-in fade-in slide-in-from-bottom-2 fill-mode-both ${
-                                isCurrent
-                                    ? "bg-gray-50 dark:bg-gray-800/80 border-pink-500/30 shadow-lg shadow-pink-500/5"
-                                    : "bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/60 hover:border-gray-200 dark:hover:border-gray-700"
-                            }`}
+                            className={`group relative flex items-center gap-4 p-3 rounded-2xl border cursor-pointer transition-all duration-300 animate-in fade-in slide-in-from-bottom-2 fill-mode-both ${isCurrent
+                                ? "bg-gray-50 dark:bg-gray-800/80 border-pink-500/30 shadow-lg shadow-pink-500/5"
+                                : "bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/60 hover:border-gray-200 dark:hover:border-gray-700"
+                                }`}
                         >
                             {/* Artwork with play overlay */}
                             <div className="relative w-14 h-14 flex-shrink-0 rounded-xl overflow-hidden shadow-md">
@@ -77,9 +78,8 @@ function NewCatalogGrid({ tracks }: Props) {
                                 />
                                 <div
                                     onClick={(e) => handlePlay(e, track)}
-                                    className={`absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px] rounded-xl transition-opacity ${
-                                        isCurrent ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                                    }`}
+                                    className={`absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px] rounded-xl transition-opacity ${isCurrent ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                                        }`}
                                 >
                                     <div className="w-8 h-8 flex items-center justify-center bg-white text-gray-950 rounded-full shadow-lg transition-transform active:scale-90">
                                         {isPlayingThis
@@ -113,12 +113,11 @@ function NewCatalogGrid({ tracks }: Props) {
                             {/* Actions — heart & plus */}
                             <div className="flex flex-col items-center gap-2 flex-shrink-0">
                                 <button
-                                    onClick={(e) => { e.stopPropagation(); toggleFavorite(track) }}
-                                    className={`transition-all hover:scale-110 ${
-                                        favorites.has(track.trackId)
-                                            ? "text-pink-500"
-                                            : "text-gray-300 dark:text-gray-600 hover:text-pink-500"
-                                    }`}
+                                    onClick={(e) => { e.stopPropagation(); toggleFavorite(track, !!isSignedIn) }}
+                                    className={`transition-all hover:scale-110 ${favorites.has(track.trackId)
+                                        ? "text-pink-500"
+                                        : "text-gray-300 dark:text-gray-600 hover:text-pink-500"
+                                        }`}
                                 >
                                     <Heart size={16} fill={favorites.has(track.trackId) ? "currentColor" : "none"} />
                                 </button>
@@ -150,7 +149,8 @@ function NewCatalogGrid({ tracks }: Props) {
 
 function OldCatalogGrid({ tracks }: Props) {
     const router = useRouter()
-    const { playTrack, togglePlay, currentTrack, isPlaying, favorites, toggleFavorite } = usePlayback()
+    const { isSignedIn } = useUser()
+    const { playTrack, togglePlay, currentTrack, isPlaying, favorites, toggleFavorite } = usePlaybackStore()
     const [libraryTrack, setLibraryTrack] = useState<ITunesTrack | null>(null)
 
     const handlePlay = (e: React.MouseEvent, track: ITunesTrack) => {
@@ -159,7 +159,7 @@ function OldCatalogGrid({ tracks }: Props) {
         if (currentTrack?.trackId === track.trackId) {
             togglePlay()
         } else {
-            playTrack(track, tracks)
+            playTrack(track, tracks, !!isSignedIn)
         }
     }
 
@@ -176,18 +176,16 @@ function OldCatalogGrid({ tracks }: Props) {
                             onClick={() => { setCachedTrack(track); router.push(`/track/${track.trackId}`) }}
                             className={`group cursor-pointer ${isCurrent ? "scale-[1.03]" : ""} transition-transform`}
                         >
-                            <div className={`relative aspect-square rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 mb-3 ${
-                                isCurrent ? "ring-2 ring-pink-500/50" : ""
-                            }`}>
+                            <div className={`relative aspect-square rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 mb-3 ${isCurrent ? "ring-2 ring-pink-500/50" : ""
+                                }`}>
                                 <img
                                     src={track.artworkUrl100}
                                     alt={track.trackName}
                                     className="w-full h-full object-cover"
                                 />
                                 {/* Play overlay */}
-                                <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity ${
-                                    isCurrent ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                                }`}>
+                                <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity ${isCurrent ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                                    }`}>
                                     <button
                                         onClick={(e) => handlePlay(e, track)}
                                         className="w-10 h-10 bg-white text-gray-950 rounded-full flex items-center justify-center shadow-xl transition-transform hover:scale-110 active:scale-95"
@@ -201,10 +199,9 @@ function OldCatalogGrid({ tracks }: Props) {
                                 {/* Favorite + Library actions */}
                                 <div className="absolute top-2 right-2 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button
-                                        onClick={(e) => { e.stopPropagation(); toggleFavorite(track) }}
-                                        className={`w-7 h-7 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110 ${
-                                            favorites.has(track.trackId) ? "text-pink-500" : "text-white/80 hover:text-pink-500"
-                                        }`}
+                                        onClick={(e) => { e.stopPropagation(); toggleFavorite(track, !!isSignedIn) }}
+                                        className={`w-7 h-7 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110 ${favorites.has(track.trackId) ? "text-pink-500" : "text-white/80 hover:text-pink-500"
+                                            }`}
                                     >
                                         <Heart size={13} fill={favorites.has(track.trackId) ? "currentColor" : "none"} />
                                     </button>

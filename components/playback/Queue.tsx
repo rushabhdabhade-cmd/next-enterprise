@@ -2,13 +2,16 @@
 
 import { ChevronLeft, ChevronRight, GripVertical, MoreVertical, Music } from "lucide-react"
 import { useState } from "react"
-import { usePlayback } from "@/context/PlaybackContext"
+import { useUser } from "@clerk/nextjs"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { formatDuration } from "@/services/itunesService"
+import { ITunesTrack } from "@/types/itunes"
 
 const ITEMS_PER_PAGE = 10
 
 export default function Queue() {
-  const { queue, currentTrack, playTrack, isPlaying } = usePlayback()
+  const { isSignedIn } = useUser()
+  const { queue, currentTrack, playTrack, isPlaying } = usePlaybackStore()
   const [currentPage, setCurrentPage] = useState(0)
 
   const totalPages = Math.ceil(queue.length / ITEMS_PER_PAGE)
@@ -52,12 +55,12 @@ export default function Queue() {
 
       <div className="flex-1 overflow-y-auto px-4 space-y-2 pb-24">
         {currentItems.length > 0 ? (
-          currentItems.map((track) => {
+          currentItems.map((track: ITunesTrack) => {
             const isCurrent = currentTrack?.trackId === track.trackId
             return (
               <div
                 key={track.trackId}
-                onClick={() => playTrack(track)}
+                onClick={() => playTrack(track, undefined, !!isSignedIn)}
                 className={`flex items-center gap-3 p-3 rounded-[20px] transition-all cursor-pointer group border ${isCurrent
                   ? "bg-gray-50 dark:bg-gray-900 border-pink-500/20 shadow-sm"
                   : "bg-transparent border-transparent hover:bg-gray-50 dark:hover:bg-gray-900 hover:border-gray-100 dark:hover:border-gray-800"

@@ -8,9 +8,10 @@ import {
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
+import { useUser } from "@clerk/nextjs"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
 import ThemeToggle from "@/components/ui/ThemeToggle"
-import { usePlayback } from "@/context/PlaybackContext"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { trackTrackSelected } from "@/lib/analytics"
 import { setCachedTrack } from "@/lib/trackNavigationCache"
 import { formatDuration } from "@/services/itunesService"
@@ -68,7 +69,8 @@ function TrackCardSkeleton() {
 
 export default function GenresPage() {
   const router = useRouter()
-  const { playTrack, togglePlay, currentTrack, isPlaying, favorites, toggleFavorite } = usePlayback()
+  const { isSignedIn } = useUser()
+  const { playTrack, togglePlay, currentTrack, isPlaying, favorites, toggleFavorite } = usePlaybackStore()
   const [selectedGenre, setSelectedGenre] = useState<Genre | null>(null)
   const [tracks, setTracks] = useState<ITunesTrack[]>([])
   const [loading, setLoading] = useState(false)
@@ -121,199 +123,196 @@ export default function GenresPage() {
     if (currentTrack?.trackId === track.trackId) {
       togglePlay()
     } else {
-      playTrack(track, tracks)
+      playTrack(track, tracks, !!isSignedIn)
     }
   }
 
   return (
     <>
-        <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
+      <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
-          {/* Header */}
-          <header className="flex items-center justify-between mb-10 lg:mb-14">
-            <div>
-              <h2 className="text-3xl lg:text-5xl font-light tracking-tight text-gray-900 dark:text-white">
-                Browse <span className="font-bold">Genres</span>
-              </h2>
-              <p className="text-sm lg:text-base text-gray-500 dark:text-gray-400 font-medium mt-1 lg:mt-2">
-                Explore music by mood and style
-              </p>
-            </div>
-            <ThemeToggle />
-          </header>
+        {/* Header */}
+        <header className="flex items-center justify-between mb-10 lg:mb-14">
+          <div>
+            <h2 className="text-3xl lg:text-5xl font-light tracking-tight text-gray-900 dark:text-white">
+              Browse <span className="font-bold">Genres</span>
+            </h2>
+            <p className="text-sm lg:text-base text-gray-500 dark:text-gray-400 font-medium mt-1 lg:mt-2">
+              Explore music by mood and style
+            </p>
+          </div>
+          <ThemeToggle />
+        </header>
 
-          {/* Search bar */}
-          {!selectedGenre && tracks.length === 0 && !loading && (
-            <form onSubmit={handleCustomSearch} className="mb-8">
-              <div className="relative max-w-md">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                  {/* <Search size={16} className="text-gray-400" /> */}
-                </div>
-                <input
-                  type="text"
-                  value={customQuery}
-                  onChange={(e) => setCustomQuery(e.target.value)}
-                  placeholder="Search any genre or mood..."
-                  className="w-full pl-4 pr-4 py-3 rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 text-sm text-gray-950 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:border-pink-500/40 focus:ring-1 focus:ring-pink-500/20 transition-all"
-                />
+        {/* Search bar */}
+        {!selectedGenre && tracks.length === 0 && !loading && (
+          <form onSubmit={handleCustomSearch} className="mb-8">
+            <div className="relative max-w-md">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                {/* <Search size={16} className="text-gray-400" /> */}
               </div>
-            </form>
-          )}
-
-          {/* ── Genre Grid ── */}
-          {!selectedGenre && tracks.length === 0 && !loading && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in duration-500">
-              {GENRES.map((genre) => (
-                <GenreCard
-                  key={genre.name}
-                  genre={genre}
-                  onClick={() => handleGenreSelect(genre)}
-                />
-              ))}
+              <input
+                type="text"
+                value={customQuery}
+                onChange={(e) => setCustomQuery(e.target.value)}
+                placeholder="Search any genre or mood..."
+                className="w-full pl-4 pr-4 py-3 rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 text-sm text-gray-950 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:border-pink-500/40 focus:ring-1 focus:ring-pink-500/20 transition-all"
+              />
             </div>
-          )}
+          </form>
+        )}
 
-          {/* ── Track Browser (preset genre or custom search) ── */}
-          {(selectedGenre || tracks.length > 0 || loading) && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+        {/* ── Genre Grid ── */}
+        {!selectedGenre && tracks.length === 0 && !loading && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in duration-500">
+            {GENRES.map((genre) => (
+              <GenreCard
+                key={genre.name}
+                genre={genre}
+                onClick={() => handleGenreSelect(genre)}
+              />
+            ))}
+          </div>
+        )}
 
-              {/* Header Row */}
-              <div className="flex items-center gap-4 mb-10">
-                <button
-                  onClick={handleBack}
-                  className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-100 dark:border-gray-800 text-gray-500 hover:text-gray-900 dark:hover:text-white hover:border-gray-900 dark:hover:border-white transition-all"
-                >
-                  <ArrowLeft size={18} />
-                </button>
-                <div className="flex items-center gap-3 px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-2xl">
-                  {selectedGenre
-                    ? (() => { const Icon = selectedGenre.icon; return <Icon size={20} className="text-pink-500" /> })()
-                    : <Search size={20} className="text-pink-500" />
-                  }
-                  <h2 className="text-gray-950 dark:text-white font-bold text-xl tracking-tight">
-                    {selectedGenre ? selectedGenre.name : customQuery}
-                  </h2>
-                </div>
-                {!loading && tracks.length > 0 && (
-                  <span className="text-sm font-medium text-gray-400">
-                    {tracks.length} tracks
-                  </span>
-                )}
+        {/* ── Track Browser (preset genre or custom search) ── */}
+        {(selectedGenre || tracks.length > 0 || loading) && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+            {/* Header Row */}
+            <div className="flex items-center gap-4 mb-10">
+              <button
+                onClick={handleBack}
+                className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-100 dark:border-gray-800 text-gray-500 hover:text-gray-900 dark:hover:text-white hover:border-gray-900 dark:hover:border-white transition-all"
+              >
+                <ArrowLeft size={18} />
+              </button>
+              <div className="flex items-center gap-3 px-5 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-2xl">
+                {selectedGenre
+                  ? (() => { const Icon = selectedGenre.icon; return <Icon size={20} className="text-pink-500" /> })()
+                  : <Search size={20} className="text-pink-500" />
+                }
+                <h2 className="text-gray-950 dark:text-white font-bold text-xl tracking-tight">
+                  {selectedGenre ? selectedGenre.name : customQuery}
+                </h2>
               </div>
-
-              {/* Loading Skeleton */}
-              {loading && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[...Array(12)].map((_, i) => <TrackCardSkeleton key={i} />)}
-                </div>
-              )}
-
-              {/* Empty State */}
-              {!loading && tracks.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-32 text-center">
-                  <div className="w-20 h-20 bg-gray-100 dark:bg-gray-900 rounded-3xl flex items-center justify-center mb-6">
-                    <Music2 size={32} className="text-gray-400" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                    No tracks found
-                  </h3>
-                  <p className="text-gray-500 dark:text-gray-400 font-medium">
-                    Try a different genre
-                  </p>
-                </div>
-              )}
-
-              {/* Track Grid — Horizontal compact cards */}
               {!loading && tracks.length > 0 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {tracks.map((track, idx) => {
-                    const isCurrent = currentTrack?.trackId === track.trackId
-                    const isPlayingThis = isCurrent && isPlaying
-
-                    return (
-                      <div
-                        key={track.trackId}
-                        onClick={() => { setCachedTrack(track); router.push(`/track/${track.trackId}`) }}
-                        style={{ animationDelay: `${idx * 25}ms` }}
-                        className={`group relative flex items-center gap-4 p-3 rounded-2xl border cursor-pointer transition-all duration-300 animate-in fade-in slide-in-from-bottom-2 fill-mode-both ${
-                          isCurrent
-                            ? "bg-gray-50 dark:bg-gray-800/80 border-pink-500/30 shadow-lg shadow-pink-500/5"
-                            : "bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/60 hover:border-gray-200 dark:hover:border-gray-700"
-                        }`}
-                      >
-                        {/* Artwork with play overlay */}
-                        <div className="relative w-14 h-14 flex-shrink-0 rounded-xl overflow-hidden shadow-md">
-                          <img
-                            src={track.artworkUrl100}
-                            alt={track.trackName}
-                            className="w-full h-full object-cover"
-                          />
-                          <div
-                            onClick={(e) => handlePlay(e, track)}
-                            className={`absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px] rounded-xl transition-opacity ${
-                              isCurrent ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                            }`}
-                          >
-                            <div className="w-8 h-8 flex items-center justify-center bg-white text-gray-950 rounded-full shadow-lg transition-transform active:scale-90">
-                              {isPlayingThis
-                                ? <Pause size={14} fill="currentColor" />
-                                : <Play size={14} fill="currentColor" className="ml-0.5" />
-                              }
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Track info + badges */}
-                        <div className="flex-1 min-w-0">
-                          <h4 className={`font-bold text-sm truncate ${isCurrent ? "text-pink-500" : "text-gray-950 dark:text-white"}`}>
-                            {track.trackName}
-                          </h4>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium truncate">
-                            {track.artistName}
-                          </p>
-                          <div className="flex items-center gap-1.5 mt-1.5">
-                            <span className="px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-tight">
-                              {formatDuration(track.trackTimeMillis)}
-                            </span>
-                            {track.primaryGenreName && (
-                              <span className="px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-tight truncate max-w-[80px]">
-                                {track.primaryGenreName}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Actions — heart & plus */}
-                        <div className="flex flex-col items-center gap-2 flex-shrink-0">
-                          <button
-                            onClick={(e) => { e.stopPropagation(); toggleFavorite(track) }}
-                            className={`transition-all hover:scale-110 ${
-                              favorites.has(track.trackId)
-                                ? "text-pink-500"
-                                : "text-gray-300 dark:text-gray-600 hover:text-pink-500"
-                            }`}
-                          >
-                            <Heart size={16} fill={favorites.has(track.trackId) ? "currentColor" : "none"} />
-                          </button>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); setLibraryTrack(track) }}
-                            className="text-gray-300 dark:text-gray-600 hover:text-gray-900 dark:hover:text-white transition-all hover:scale-110"
-                          >
-                            <Plus size={16} />
-                          </button>
-                        </div>
-
-                        {/* Navigation indicator */}
-                        <ChevronRight size={14} className="flex-shrink-0 text-gray-300 dark:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
-                    )
-                  })}
-                </div>
+                <span className="text-sm font-medium text-gray-400">
+                  {tracks.length} tracks
+                </span>
               )}
             </div>
-          )}
 
-        </div>
+            {/* Loading Skeleton */}
+            {loading && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[...Array(12)].map((_, i) => <TrackCardSkeleton key={i} />)}
+              </div>
+            )}
+
+            {/* Empty State */}
+            {!loading && tracks.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-32 text-center">
+                <div className="w-20 h-20 bg-gray-100 dark:bg-gray-900 rounded-3xl flex items-center justify-center mb-6">
+                  <Music2 size={32} className="text-gray-400" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                  No tracks found
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400 font-medium">
+                  Try a different genre
+                </p>
+              </div>
+            )}
+
+            {/* Track Grid — Horizontal compact cards */}
+            {!loading && tracks.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {tracks.map((track, idx) => {
+                  const isCurrent = currentTrack?.trackId === track.trackId
+                  const isPlayingThis = isCurrent && isPlaying
+
+                  return (
+                    <div
+                      key={track.trackId}
+                      onClick={() => { setCachedTrack(track); router.push(`/track/${track.trackId}`) }}
+                      style={{ animationDelay: `${idx * 25}ms` }}
+                      className={`group relative flex items-center gap-4 p-3 rounded-2xl border cursor-pointer transition-all duration-300 animate-in fade-in slide-in-from-bottom-2 fill-mode-both ${isCurrent
+                          ? "bg-gray-50 dark:bg-gray-800/80 border-pink-500/30 shadow-lg shadow-pink-500/5"
+                          : "bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/60 hover:border-gray-200 dark:hover:border-gray-700"
+                        }`}
+                    >
+                      {/* Artwork with play overlay */}
+                      <div className="relative w-14 h-14 flex-shrink-0 rounded-xl overflow-hidden shadow-md">
+                        <img
+                          src={track.artworkUrl100}
+                          alt={track.trackName}
+                          className="w-full h-full object-cover"
+                        />
+                        <div
+                          onClick={(e) => handlePlay(e, track)}
+                          className={`absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px] rounded-xl transition-opacity ${isCurrent ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                            }`}
+                        >
+                          <div className="w-8 h-8 flex items-center justify-center bg-white text-gray-950 rounded-full shadow-lg transition-transform active:scale-90">
+                            {isPlayingThis
+                              ? <Pause size={14} fill="currentColor" />
+                              : <Play size={14} fill="currentColor" className="ml-0.5" />
+                            }
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Track info + badges */}
+                      <div className="flex-1 min-w-0">
+                        <h4 className={`font-bold text-sm truncate ${isCurrent ? "text-pink-500" : "text-gray-950 dark:text-white"}`}>
+                          {track.trackName}
+                        </h4>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 font-medium truncate">
+                          {track.artistName}
+                        </p>
+                        <div className="flex items-center gap-1.5 mt-1.5">
+                          <span className="px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-tight">
+                            {formatDuration(track.trackTimeMillis)}
+                          </span>
+                          {track.primaryGenreName && (
+                            <span className="px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-tight truncate max-w-[80px]">
+                              {track.primaryGenreName}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Actions — heart & plus */}
+                      <div className="flex flex-col items-center gap-2 flex-shrink-0">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); toggleFavorite(track, !!isSignedIn) }}
+                          className={`transition-all hover:scale-110 ${favorites.has(track.trackId)
+                              ? "text-pink-500"
+                              : "text-gray-300 dark:text-gray-600 hover:text-pink-500"
+                            }`}
+                        >
+                          <Heart size={16} fill={favorites.has(track.trackId) ? "currentColor" : "none"} />
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setLibraryTrack(track) }}
+                          className="text-gray-300 dark:text-gray-600 hover:text-gray-900 dark:hover:text-white transition-all hover:scale-110"
+                        >
+                          <Plus size={16} />
+                        </button>
+                      </div>
+
+                      {/* Navigation indicator */}
+                      <ChevronRight size={14} className="flex-shrink-0 text-gray-300 dark:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+      </div>
 
       {libraryTrack && (
         <AddToLibraryModal

@@ -15,11 +15,13 @@ import {
     VolumeX
 } from "lucide-react"
 import React, { useState } from "react" // useState kept for isExpanded
+import { useUser } from "@clerk/nextjs"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
-import { usePlayback } from "@/context/PlaybackContext"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { formatDuration } from "@/services/itunesService"
 
 export default function NowPlayingBar() {
+    const { isSignedIn } = useUser()
     const {
         currentTrack,
         isPlaying,
@@ -38,7 +40,7 @@ export default function NowPlayingBar() {
         toggleShuffle,
         toggleRepeat,
         toggleFavorite,
-    } = usePlayback()
+    } = usePlaybackStore()
     const [isExpanded, setIsExpanded] = useState(false)
     const [showLibraryModal, setShowLibraryModal] = useState(false)
 
@@ -205,7 +207,7 @@ export default function NowPlayingBar() {
                             </p>
                         </div>
                         <button
-                            onClick={() => toggleFavorite(currentTrack)}
+                            onClick={() => toggleFavorite(currentTrack, !!isSignedIn)}
                             className={`ml-1 transition-all hover:scale-110 active:scale-90 hidden sm:block ${favorites.has(currentTrack.trackId) ? 'text-pink-500' : 'text-gray-300 dark:text-gray-600 hover:text-pink-500'}`}
                         >
                             <Heart size={18} fill={favorites.has(currentTrack.trackId) ? "currentColor" : "none"} />

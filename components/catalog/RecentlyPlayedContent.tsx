@@ -4,7 +4,7 @@ import { useUser } from "@clerk/nextjs"
 import { Clock, Heart, Music, Pause, Play, Plus } from "lucide-react"
 import { useEffect, useState } from "react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
-import { usePlayback } from "@/context/PlaybackContext"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import type { SongPlay } from "@/lib/db"
 import { formatDuration } from "@/services/itunesService"
 import { getPageData, setPageData } from "@/lib/pageDataCache"
@@ -60,7 +60,7 @@ function SkeletonCard() {
 
 export default function RecentlyPlayedContent() {
     const { isSignedIn, isLoaded } = useUser()
-    const { currentTrack, isPlaying, playTrack, togglePlay, favorites, toggleFavorite } = usePlayback()
+    const { currentTrack, isPlaying, playTrack, togglePlay, favorites, toggleFavorite } = usePlaybackStore()
     const cachedRecent = getPageData<SongPlay[]>("recentlyPlayed")
     const [recentTracks, setRecentTracks] = useState<SongPlay[]>(cachedRecent ?? [])
     const [loading, setLoading] = useState(!cachedRecent)
@@ -91,7 +91,7 @@ export default function RecentlyPlayedContent() {
         if (currentTrack?.trackId === play.track_id) {
             togglePlay()
         } else {
-            playTrack(track, queue)
+            playTrack(track, queue, !!isSignedIn)
         }
     }
 
@@ -143,11 +143,10 @@ export default function RecentlyPlayedContent() {
                         <div
                             key={play.track_id}
                             style={{ animationDelay: `${index * 40}ms` }}
-                            className={`group relative bg-white dark:bg-gray-900/50 border rounded-3xl overflow-hidden transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 fill-mode-both hover:shadow-2xl hover:shadow-black/10 dark:hover:shadow-white/5 hover:-translate-y-1 ${
-                                isCurrent
+                            className={`group relative bg-white dark:bg-gray-900/50 border rounded-3xl overflow-hidden transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 fill-mode-both hover:shadow-2xl hover:shadow-black/10 dark:hover:shadow-white/5 hover:-translate-y-1 ${isCurrent
                                     ? "border-blue-500/40 shadow-xl shadow-blue-500/10"
                                     : "border-gray-100 dark:border-gray-800"
-                            }`}
+                                }`}
                         >
                             {/* Artwork */}
                             <div className="relative aspect-square overflow-hidden">
@@ -166,9 +165,8 @@ export default function RecentlyPlayedContent() {
                                 {/* Play overlay */}
                                 <div
                                     onClick={() => handlePlay(play)}
-                                    className={`absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px] transition-opacity cursor-pointer ${
-                                        isCurrent ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                                    }`}
+                                    className={`absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px] transition-opacity cursor-pointer ${isCurrent ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                                        }`}
                                 >
                                     <div className="w-12 h-12 flex items-center justify-center bg-white text-gray-950 rounded-full shadow-2xl transition-transform active:scale-90 hover:scale-110">
                                         {isPlayingThis
@@ -217,7 +215,7 @@ export default function RecentlyPlayedContent() {
                                             <Plus size={16} />
                                         </button>
                                         <button
-                                            onClick={() => toggleFavorite(playToTrack(play))}
+                                            onClick={() => toggleFavorite(playToTrack(play), !!isSignedIn)}
                                             className={`hover:scale-110 active:scale-90 transition-all ${isFav ? "text-pink-500" : "text-gray-300 dark:text-gray-600 hover:text-pink-500"}`}
                                             title={isFav ? "Remove from favorites" : "Add to favorites"}
                                         >

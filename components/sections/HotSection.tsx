@@ -2,8 +2,9 @@
 
 import { AlertCircle, Flame, Pause, Play, Plus, TrendingUp } from "lucide-react"
 import { useEffect, useState } from "react"
+import { useUser } from "@clerk/nextjs"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
-import { usePlayback } from "@/context/PlaybackContext"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { trackTrackSelected } from "@/lib/analytics"
 import { getHotTracks } from "@/lib/api"
 import { getPageData, setPageData } from "@/lib/pageDataCache"
@@ -14,7 +15,8 @@ export default function HotSection() {
     const [tracks, setTracks] = useState<HotTrackWithMeta[]>(cachedHot ?? [])
     const [loading, setLoading] = useState(!cachedHot)
     const [error, setError] = useState(false)
-    const { currentTrack, isPlaying, playTrack, togglePlay } = usePlayback()
+    const { isSignedIn } = useUser()
+    const { currentTrack, isPlaying, playTrack, togglePlay } = usePlaybackStore()
     const [libraryTrack, setLibraryTrack] = useState<HotTrackWithMeta | null>(null)
 
     const handlePlay = (e: React.MouseEvent, track: HotTrackWithMeta) => {
@@ -30,7 +32,7 @@ export default function HotSection() {
         if (currentTrack?.trackId === track.trackId) {
             togglePlay()
         } else {
-            playTrack(track, tracks)
+            playTrack(track, tracks, !!isSignedIn)
         }
     }
 
