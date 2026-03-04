@@ -248,7 +248,7 @@ export default function GenresPage() {
                         {/* Artwork with play overlay */}
                         <div className="relative w-14 h-14 flex-shrink-0 rounded-xl overflow-hidden shadow-md">
                           <img
-                            src={track.artworkUrl100}
+                            src={track.artworkUrl100.replace('100x100', '400x400')}
                             alt={track.trackName}
                             className="w-full h-full object-cover"
                           />
