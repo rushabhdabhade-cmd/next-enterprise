@@ -37,6 +37,7 @@ export interface Library {
     name: string
     description: string | null
     cover_url: string | null
+    share_id: string | null
     created_at: string
     updated_at: string
 }
@@ -160,6 +161,7 @@ export async function getLibraries(userId: string): Promise<LibraryWithCount[]> 
         name: lib.name as string,
         description: lib.description as string | null,
         cover_url: lib.cover_url as string | null,
+        share_id: (lib.share_id as string | null) ?? null,
         created_at: lib.created_at as string,
         updated_at: lib.updated_at as string,
         track_count: (lib.library_tracks?.[0]?.count as number) ?? 0,
@@ -277,4 +279,71 @@ export async function removeTrackFromLibrary(
 
     if (error) console.error("[db] removeTrackFromLibrary error:", error.message)
     return !error
+}
+
+// ─── Library Sharing ──────────────────────────────────────────────────────────
+
+export async function enableLibraryShare(
+    libraryId: string,
+    userId: string
+): Promise<string | null> {
+    const { data: existing } = await supabaseAdmin
+        .from("libraries")
+        .select("share_id")
+        .eq("id", libraryId)
+        .eq("user_id", userId)
+        .maybeSingle()
+
+    if (!existing) return null
+    if (existing.share_id) return existing.share_id as string
+
+    const shareId = crypto.randomUUID().replace(/-/g, "").slice(0, 12)
+
+    const { error } = await supabaseAdmin
+        .from("libraries")
+        .update({ share_id: shareId })
+        .eq("id", libraryId)
+        .eq("user_id", userId)
+
+    if (error) {
+        console.error("[db] enableLibraryShare error:", error.message)
+        return null
+    }
+    return shareId
+}
+
+export async function disableLibraryShare(
+    libraryId: string,
+    userId: string
+): Promise<boolean> {
+    const { error } = await supabaseAdmin
+        .from("libraries")
+        .update({ share_id: null })
+        .eq("id", libraryId)
+        .eq("user_id", userId)
+
+    if (error) console.error("[db] disableLibraryShare error:", error.message)
+    return !error
+}
+
+export async function getSharedLibrary(
+    shareId: string
+): Promise<{ library: Library; tracks: LibraryTrack[] } | null> {
+    const { data: lib, error: libError } = await supabaseAdmin
+        .from("libraries")
+        .select("*")
+        .eq("share_id", shareId)
+        .maybeSingle()
+
+    if (libError || !lib) return null
+
+    const { data: tracks, error: tracksError } = await supabaseAdmin
+        .from("library_tracks")
+        .select("*")
+        .eq("library_id", lib.id)
+        .order("added_at", { ascending: false })
+
+    if (tracksError) console.error("[db] getSharedLibrary tracks error:", tracksError.message)
+
+    return { library: lib as Library, tracks: (tracks ?? []) as LibraryTrack[] }
 }

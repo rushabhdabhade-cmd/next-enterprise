@@ -8,6 +8,7 @@ export interface LibrarySummary {
     id: string
     name: string
     description: string | null
+    share_id: string | null
     track_count: number
 }
 
