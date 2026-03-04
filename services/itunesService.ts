@@ -1,6 +1,7 @@
-import { ITunesSearchResponse, SearchTrackParams } from "@/types/itunes"
+import { ITunesSearchResponse, SearchTrackParams, ITunesTrack } from "@/types/itunes"
 
 const ITUNES_API_BASE = "https://itunes.apple.com/search"
+const ITUNES_LOOKUP_BASE = "https://itunes.apple.com/lookup"
 
 export async function searchTracks(
   params: SearchTrackParams
@@ -14,9 +15,6 @@ export async function searchTracks(
 
     const response = await fetch(`${ITUNES_API_BASE}?${queryParams}`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
     })
 
     if (!response.ok) {
@@ -27,6 +25,24 @@ export async function searchTracks(
     return data
   } catch (error) {
     console.error("Failed to search tracks:", error)
+    throw error
+  }
+}
+
+export async function getTrackById(id: number): Promise<ITunesTrack | null> {
+  try {
+    const response = await fetch(`${ITUNES_LOOKUP_BASE}?id=${id}`, {
+      method: "GET",
+    })
+
+    if (!response.ok) {
+      throw new Error(`iTunes Lookup error: ${response.statusText}`)
+    }
+
+    const data = (await response.json()) as ITunesSearchResponse
+    return data.results[0] || null
+  } catch (error) {
+    console.error("Failed to lookup track:", error)
     throw error
   }
 }
