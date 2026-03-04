@@ -69,7 +69,7 @@ export default function RecentlyPlayedContent() {
         fetch("/api/user/plays?limit=100")
             .then((r) => r.json() as Promise<{ plays: SongPlay[] }>)
             .then(({ plays }) => setRecentTracks(deduplicateByTrack(plays ?? [])))
-            .catch(() => {})
+            .catch((err) => console.error("Failed to fetch recent plays:", err))
             .finally(() => setLoading(false))
     }, [isLoaded, isSignedIn])
 
