@@ -6,11 +6,13 @@ import AddToLibraryModal from "@/components/AddToLibraryModal"
 import { usePlayback } from "@/context/PlaybackContext"
 import { trackTrackSelected } from "@/lib/analytics"
 import { getHotTracks } from "@/lib/api"
+import { getPageData, setPageData } from "@/lib/pageDataCache"
 import { HotTrackWithMeta } from "@/types/hot"
 
 export default function HotSection() {
-    const [tracks, setTracks] = useState<HotTrackWithMeta[]>([])
-    const [loading, setLoading] = useState(true)
+    const cachedHot = getPageData<HotTrackWithMeta[]>("hot:tracks", 60000)
+    const [tracks, setTracks] = useState<HotTrackWithMeta[]>(cachedHot ?? [])
+    const [loading, setLoading] = useState(!cachedHot)
     const [error, setError] = useState(false)
     const { currentTrack, isPlaying, playTrack, togglePlay } = usePlayback()
     const [libraryTrack, setLibraryTrack] = useState<HotTrackWithMeta | null>(null)
@@ -39,13 +41,23 @@ export default function HotSection() {
             const data = await getHotTracks()
             if (data.length === 0) {
                 setError(true)
+            } else {
+                setPageData("hot:tracks", data)
             }
             setTracks(data)
             setLoading(false)
         }
 
-        load()
-        const interval = setInterval(load, 60000) // Re-fetch every 60s
+        // Use cache for initial render, then refresh via interval
+        const cached = getPageData<HotTrackWithMeta[]>("hot:tracks", 60000)
+        if (cached) {
+            setTracks(cached)
+            setLoading(false)
+        } else {
+            load()
+        }
+
+        const interval = setInterval(load, 60000)
         return () => clearInterval(interval)
     }, [])
 

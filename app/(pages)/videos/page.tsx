@@ -2,23 +2,31 @@
 
 import { Film, Music, Play, Search, X } from "lucide-react"
 import { useEffect, useState } from "react"
-import LeftSidebar from "@/components/layout/LeftSidebar"
-import Queue from "@/components/playback/Queue"
+import { getPageData, setPageData } from "@/lib/pageDataCache"
 import { formatDuration, searchMusicVideos } from "@/services/itunesService"
 import type { ITunesMusicVideo } from "@/types/itunes"
 
 const trendingSearches = ["Pop Hits", "Hip Hop", "Rock Classics", "K-Pop", "Latin", "R&B", "Country", "Indie"]
 
 export default function VideosPage() {
-    const [videos, setVideos] = useState<ITunesMusicVideo[]>([])
+    const initialCache = getPageData<ITunesMusicVideo[]>("videos:Pop Hits")
+    const [videos, setVideos] = useState<ITunesMusicVideo[]>(initialCache ?? [])
     const [query, setQuery] = useState("")
     const [activeTag, setActiveTag] = useState("Pop Hits")
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(!initialCache)
     const [playingVideo, setPlayingVideo] = useState<ITunesMusicVideo | null>(null)
 
     const fetchVideos = async (term: string) => {
+        const key = `videos:${term}`
+        const cached = getPageData<ITunesMusicVideo[]>(key)
+        if (cached) {
+            setVideos(cached)
+            setLoading(false)
+            return
+        }
         setLoading(true)
         const results = await searchMusicVideos(term, 30)
+        setPageData(key, results)
         setVideos(results)
         setLoading(false)
     }
@@ -35,10 +43,8 @@ export default function VideosPage() {
     }
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-950 flex transition-colors duration-500 relative">
-            <LeftSidebar />
-            <main className="flex-1 overflow-y-auto scroll-smooth">
-                <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
+        <>
+            <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
                     {/* Header */}
                     <header className="flex items-center justify-between mb-8 lg:mb-12">
@@ -153,9 +159,7 @@ export default function VideosPage() {
                             <p className="text-gray-500 font-medium max-w-xs">Try searching for something else.</p>
                         </div>
                     )}
-                </div>
-            </main>
-            <Queue />
+            </div>
 
             {/* Video player modal */}
             {playingVideo && (
@@ -191,6 +195,6 @@ export default function VideosPage() {
                     </div>
                 </div>
             )}
-        </div>
+        </>
     )
 }

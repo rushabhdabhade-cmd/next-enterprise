@@ -4,8 +4,7 @@ import { useUser } from "@clerk/nextjs"
 import { Clock, Disc3, Music, Play, Sparkles, TrendingUp, User, Users } from "lucide-react"
 import { useEffect, useState } from "react"
 import type { UserStats } from "@/app/api/user/stats/route"
-import LeftSidebar from "@/components/layout/LeftSidebar"
-import Queue from "@/components/playback/Queue"
+import { getPageData, setPageData } from "@/lib/pageDataCache"
 
 function formatHours(ms: number) {
     const hours = Math.floor(ms / 3600000)
@@ -25,16 +24,21 @@ function getPersonality(stats: UserStats): { label: string; desc: string; emoji:
 
 export default function StatsPage() {
     const { isSignedIn, isLoaded } = useUser()
-    const [stats, setStats] = useState<UserStats | null>(null)
-    const [loading, setLoading] = useState(true)
+    const cachedStats = getPageData<UserStats>("user:stats")
+    const [stats, setStats] = useState<UserStats | null>(cachedStats)
+    const [loading, setLoading] = useState(!cachedStats)
 
     useEffect(() => {
         if (!isLoaded) return
         if (!isSignedIn) { setLoading(false); return }
+        if (getPageData("user:stats")) { setLoading(false); return }
 
         fetch("/api/user/stats")
             .then((r) => r.ok ? r.json() : null)
-            .then((data) => setStats(data as UserStats))
+            .then((data) => {
+                if (data) setPageData("user:stats", data)
+                setStats(data as UserStats)
+            })
             .catch(() => {})
             .finally(() => setLoading(false))
     }, [isLoaded, isSignedIn])
@@ -58,10 +62,7 @@ export default function StatsPage() {
     ]
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-950 flex transition-colors duration-500 relative">
-            <LeftSidebar />
-            <main className="flex-1 overflow-y-auto scroll-smooth">
-                <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
+        <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
                     {/* Header */}
                     <header className="mb-10 lg:mb-14">
@@ -284,9 +285,6 @@ export default function StatsPage() {
                             )}
                         </>
                     )}
-                </div>
-            </main>
-            <Queue />
         </div>
     )
 }

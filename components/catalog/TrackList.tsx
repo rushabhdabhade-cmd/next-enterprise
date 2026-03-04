@@ -1,12 +1,13 @@
 "use client"
 
-import { Heart, Pause, Play, Plus } from "lucide-react"
+import { ChevronRight, Heart, Pause, Play, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
 import { usePlayback } from "@/context/PlaybackContext"
 import { trackTrackSelected } from "@/lib/analytics"
 import { formatDuration } from "@/services/itunesService"
+import { setCachedTrack } from "@/lib/trackNavigationCache"
 import { ITunesTrack } from "@/types/itunes"
 
 interface TrackListProps {
@@ -41,6 +42,7 @@ export default function TrackList({ tracks, loading }: TrackListProps) {
       artist: track.artistName,
       genre: track.primaryGenreName
     })
+    setCachedTrack(track)
     router.push(`/track/${track.trackId}`)
   }
 
@@ -129,6 +131,9 @@ export default function TrackList({ tracks, loading }: TrackListProps) {
                 <Plus size={18} />
               </button>
             </div>
+
+            {/* Navigation indicator */}
+            <ChevronRight size={14} className="flex-shrink-0 text-gray-300 dark:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
         )
       })}

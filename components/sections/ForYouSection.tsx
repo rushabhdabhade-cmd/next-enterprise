@@ -5,20 +5,24 @@ import { LogIn, Music, Sparkles } from "lucide-react"
 import { useEffect, useState } from "react"
 import CatalogGrid, { CatalogLoadingSkeleton } from "@/components/catalog/CatalogGrid"
 import { getRecommendations } from "@/lib/api"
+import { getPageData, setPageData } from "@/lib/pageDataCache"
 import type { RecommendationsResponse } from "@/types/recommendations"
 
 export default function ForYouSection() {
     const { isSignedIn, isLoaded } = useUser()
-    const [data, setData] = useState<RecommendationsResponse | null>(null)
-    const [loading, setLoading] = useState(true)
+    const cachedRecs = getPageData<RecommendationsResponse>("forYou")
+    const [data, setData] = useState<RecommendationsResponse | null>(cachedRecs)
+    const [loading, setLoading] = useState(!cachedRecs)
 
     useEffect(() => {
         if (!isLoaded) return
         if (!isSignedIn) { setLoading(false); return }
+        if (getPageData("forYou")) { setLoading(false); return }
 
         const load = async () => {
             setLoading(true)
             const result = await getRecommendations()
+            if (result) setPageData("forYou", result)
             setData(result)
             setLoading(false)
         }

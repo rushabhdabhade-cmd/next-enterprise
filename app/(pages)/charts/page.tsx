@@ -3,9 +3,8 @@
 import { BarChart3, Globe, Heart, Music, Pause, Play, Plus } from "lucide-react"
 import { useEffect, useState } from "react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
-import LeftSidebar from "@/components/layout/LeftSidebar"
-import Queue from "@/components/playback/Queue"
 import { usePlayback } from "@/context/PlaybackContext"
+import { getPageData, setPageData } from "@/lib/pageDataCache"
 import { formatDuration, getTopTracksByGenre } from "@/services/itunesService"
 import type { ITunesTrack } from "@/types/itunes"
 
@@ -36,22 +35,31 @@ export default function ChartsPage() {
     const { currentTrack, isPlaying, playTrack, togglePlay, toggleFavorite, favorites } = usePlayback()
     const [selectedCountry, setSelectedCountry] = useState("us")
     const [selectedGenre, setSelectedGenre] = useState("all")
-    const [tracks, setTracks] = useState<ITunesTrack[]>([])
-    const [loading, setLoading] = useState(true)
+    const initialCache = getPageData<ITunesTrack[]>("charts:us:all")
+    const [tracks, setTracks] = useState<ITunesTrack[]>(initialCache ?? [])
+    const [loading, setLoading] = useState(!initialCache)
     const [libraryTrack, setLibraryTrack] = useState<ITunesTrack | null>(null)
 
     useEffect(() => {
+        const key = `charts:${selectedCountry}:${selectedGenre}`
+        const cached = getPageData<ITunesTrack[]>(key)
+        if (cached) {
+            setTracks(cached)
+            setLoading(false)
+            return
+        }
         setLoading(true)
         getTopTracksByGenre(selectedGenre, selectedCountry, 100)
-            .then(setTracks)
+            .then((data) => {
+                setPageData(key, data)
+                setTracks(data)
+            })
             .catch(() => setTracks([]))
             .finally(() => setLoading(false))
     }, [selectedCountry, selectedGenre])
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-950 flex transition-colors duration-500 relative">
-            <LeftSidebar />
-            <main className="flex-1 overflow-y-auto scroll-smooth">
+        <>
                 <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
                     {/* Header */}
@@ -207,12 +215,10 @@ export default function ChartsPage() {
                         </div>
                     )}
                 </div>
-            </main>
-            <Queue />
 
             {libraryTrack && (
                 <AddToLibraryModal track={libraryTrack} open={!!libraryTrack} onOpenChange={(open) => { if (!open) setLibraryTrack(null) }} />
             )}
-        </div>
+        </>
     )
 }

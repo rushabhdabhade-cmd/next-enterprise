@@ -4,12 +4,11 @@ import { useUser } from "@clerk/nextjs"
 import { Heart, Music, Pause, Play, Plus } from "lucide-react"
 import { useEffect, useState } from "react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
-import LeftSidebar from "@/components/layout/LeftSidebar"
-import Queue from "@/components/playback/Queue"
 import { usePlayback } from "@/context/PlaybackContext"
 import type { Favorite } from "@/lib/db"
 import { formatDuration } from "@/services/itunesService"
 import type { ITunesTrack } from "@/types/itunes"
+import { getPageData, setPageData } from "@/lib/pageDataCache"
 
 function favoriteToTrack(fav: Favorite): ITunesTrack {
     return {
@@ -53,20 +52,26 @@ function SkeletonCard() {
 export default function FavoritesPage() {
     const { isSignedIn, isLoaded } = useUser()
     const { currentTrack, isPlaying, playTrack, togglePlay, toggleFavorite } = usePlayback()
-    const [favorites, setFavorites] = useState<Favorite[]>([])
-    const [loading, setLoading] = useState(true)
+    const cachedFavorites = getPageData<Favorite[]>("favorites")
+    const [favorites, setFavorites] = useState<Favorite[]>(cachedFavorites ?? [])
+    const [loading, setLoading] = useState(!cachedFavorites)
     const [libraryTrack, setLibraryTrack] = useState<ITunesTrack | null>(null)
 
     useEffect(() => {
         if (!isLoaded) return
         if (!isSignedIn) { setLoading(false); return }
+        if (getPageData("favorites")) { setLoading(false); return }
 
         fetch("/api/user/favorites")
             .then((r) => {
                 if (!r.ok) throw new Error(`${r.status}`)
                 return r.json() as Promise<{ favorites: Favorite[] }>
             })
-            .then(({ favorites }) => setFavorites(favorites ?? []))
+            .then(({ favorites }) => {
+                const data = favorites ?? []
+                setPageData("favorites", data)
+                setFavorites(data)
+            })
             .catch((err) => console.error("Failed to load favorites:", err))
             .finally(() => setLoading(false))
     }, [isLoaded, isSignedIn])
@@ -88,10 +93,7 @@ export default function FavoritesPage() {
     }
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-950 flex transition-colors duration-500 relative">
-            <LeftSidebar />
-
-            <main className="flex-1 overflow-y-auto scroll-smooth">
+        <>
                 <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
                     {/* Header */}
@@ -244,9 +246,6 @@ export default function FavoritesPage() {
                         </div>
                     )}
                 </div>
-            </main>
-
-            <Queue />
 
             {libraryTrack && (
                 <AddToLibraryModal
@@ -255,6 +254,6 @@ export default function FavoritesPage() {
                     onOpenChange={(open) => { if (!open) setLibraryTrack(null) }}
                 />
             )}
-        </div>
+        </>
     )
 }
