@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   description:
     "Discover trending tracks, build curated libraries, and share your music taste. Powered by iTunes.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
   openGraph: {
     type: "website",
     siteName: "iTunes",
