@@ -65,7 +65,7 @@ export default function Home() {
     { id: "trending", name: "Trending", icon: Flame },
     { id: "recent", name: "Recently Played", icon: History },
     { id: "recommended", name: "For You", icon: Sparkles },
-  ]
+  ] as const;
 
   // Pagination Window Logic
   const renderPageButtons = () => {
