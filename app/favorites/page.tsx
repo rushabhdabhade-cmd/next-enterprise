@@ -62,7 +62,7 @@ export default function FavoritesPage() {
         fetch("/api/user/favorites")
             .then((r) => r.json() as Promise<{ favorites: Favorite[] }>)
             .then(({ favorites }) => setFavorites(favorites ?? []))
-            .catch(() => {})
+            .catch((err) => console.error("Failed to fetch favorites:", err))
             .finally(() => setLoading(false))
     }, [isLoaded, isSignedIn])
 
