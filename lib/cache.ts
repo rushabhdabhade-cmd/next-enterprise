@@ -8,6 +8,7 @@ export const cacheTags = {
   plays: (userId: string) => `plays-${userId}`,
   libraries: (userId: string) => `libraries-${userId}`,
   recommendations: (userId: string) => `recs-${userId}`,
+  stats: (userId: string) => `stats-${userId}`,
 } as const
 
 // ─── TTLs (seconds) ────────────────────────────────────────────────────────────
@@ -102,4 +103,8 @@ export function revalidateLibraries(userId: string) {
 
 export function revalidateRecommendations(userId: string) {
   revalidateTag(cacheTags.recommendations(userId))
+}
+
+export function revalidateStats(userId: string) {
+  revalidateTag(cacheTags.stats(userId))
 }

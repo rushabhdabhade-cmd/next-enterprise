@@ -1,13 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { useUser } from "@clerk/nextjs"
-import { History, Play, Pause, Music, Heart } from "lucide-react"
+import { Heart, History, Music, Pause, Play } from "lucide-react"
+import { useEffect, useState } from "react"
 import LeftSidebar from "@/components/layout/LeftSidebar"
 import Queue from "@/components/playback/Queue"
 import { usePlayback } from "@/context/PlaybackContext"
-import { formatDuration } from "@/services/itunesService"
 import type { SongPlay } from "@/lib/db"
+import { formatDuration } from "@/services/itunesService"
 import type { ITunesTrack } from "@/types/itunes"
 
 function playToTrack(play: SongPlay): ITunesTrack {
@@ -123,7 +123,7 @@ export default function HistoryPage() {
             <LeftSidebar />
 
             <main className="flex-1 overflow-y-auto scroll-smooth">
-                <div className="max-w-7xl mx-auto px-8 py-12 pb-32">
+                <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
                     {/* Header */}
                     <header className="flex items-center justify-between mb-10">
@@ -144,7 +144,7 @@ export default function HistoryPage() {
 
                     {/* Loading skeleton */}
                     {loading && (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
                             {[...Array(10)].map((_, i) => <SkeletonCard key={i} />)}
                         </div>
                     )}
@@ -185,7 +185,7 @@ export default function HistoryPage() {
                                         <h3 className="text-xs uppercase tracking-[0.2em] font-bold text-gray-400 mb-5">
                                             {label}
                                         </h3>
-                                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
                                             {groupPlays.map((play, index) => {
                                                 const isCurrent = currentTrack?.trackId === play.track_id
                                                 const isPlayingThis = isCurrent && isPlaying

@@ -71,7 +71,7 @@ export async function GET() {
             throw new Error(`PostHog query failed: ${phResponse.statusText}`)
         }
 
-        const phData = await phResponse.json() as { results: any[][] }
+        const phData = await phResponse.json() as { results: [trackId: string, count: number][] };
         const results = phData.results || []
 
         if (results.length === 0) {
@@ -97,7 +97,7 @@ export async function GET() {
                         { next: { revalidate: 86400 } } // track metadata is stable for 24h
                     )
                     if (!itunesRes.ok) return null
-                    const itunesData = await itunesRes.json() as { results: any[] }
+                    const itunesData = await itunesRes.json() as { results: import("@/types/itunes").ITunesTrack[] };
                     const track = itunesData.results?.[0]
                     if (!track) return null
 

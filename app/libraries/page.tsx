@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
 import { useUser } from "@clerk/nextjs"
-import { ListMusic, Plus, Trash2, Music } from "lucide-react"
+import { ListMusic, Music, Plus, Trash2 } from "lucide-react"
 import Link from "next/link"
+import { useState } from "react"
 import LeftSidebar from "@/components/layout/LeftSidebar"
 import Queue from "@/components/playback/Queue"
 import { useLibrary } from "@/context/LibraryContext"
@@ -52,7 +52,7 @@ export default function LibrariesPage() {
             <LeftSidebar />
 
             <main className="flex-1 overflow-y-auto scroll-smooth">
-                <div className="max-w-7xl mx-auto px-8 py-12 pb-32">
+                <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
                     {/* Header */}
                     <header className="flex items-center justify-between mb-10">
                         <div>
@@ -113,7 +113,7 @@ export default function LibrariesPage() {
 
                     {/* Loading */}
                     {loading && (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
                             {[...Array(5)].map((_, i) => (
                                 <SkeletonCard key={i} />
                             ))}
@@ -159,7 +159,7 @@ export default function LibrariesPage() {
 
                     {/* Libraries grid */}
                     {!loading && libraries.length > 0 && (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
                             {libraries.map((lib, index) => (
                                 <Link
                                     key={lib.id}
