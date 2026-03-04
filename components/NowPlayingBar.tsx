@@ -1,8 +1,21 @@
 "use client"
 
-import React from "react"
+import React, { useState } from "react"
 import { usePlayback } from "@/context/PlaybackContext"
 import { formatDuration } from "@/services/itunesService"
+import {
+    Play,
+    Pause,
+    SkipBack,
+    SkipForward,
+    Volume2,
+    Volume1,
+    VolumeX,
+    Heart,
+    Repeat,
+    Shuffle,
+    Maximize2
+} from "lucide-react"
 
 export default function NowPlayingBar() {
     const {
@@ -19,6 +32,10 @@ export default function NowPlayingBar() {
         updateVolume
     } = usePlayback()
 
+    const [isLiked, setIsLiked] = useState(false)
+    const [isShuffle, setIsShuffle] = useState(false)
+    const [isRepeat, setIsRepeat] = useState(false)
+
     if (!currentTrack) return null
 
     const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -33,102 +50,142 @@ export default function NowPlayingBar() {
         updateVolume(parseFloat(e.target.value))
     }
 
+    const VolumeIcon = volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2
+
     return (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-t border-purple-100/50 dark:border-gray-800/50 p-4 z-50 shadow-2xl transition-all duration-500 animate-in slide-in-from-bottom-full">
-            <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-                {/* Track Info */}
-                <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <div className="relative group">
-                        <img
-                            src={currentTrack.artworkUrl60}
-                            alt={currentTrack.trackName}
-                            className="w-12 h-12 rounded-lg object-cover shadow-md group-hover:scale-105 transition-transform duration-300"
-                        />
-                        {isPlaying && (
-                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-pink-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse" />
-                        )}
-                    </div>
-                    <div className="min-w-0">
-                        <h4 className="font-bold text-gray-900 dark:text-white truncate text-sm hover:text-pink-600 transition-colors cursor-default">
-                            {currentTrack.trackName}
-                        </h4>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                            {currentTrack.artistName}
-                        </p>
-                    </div>
-                </div>
+        <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4">
+            <div className="max-w-7xl mx-auto bg-white/70 dark:bg-gray-950/70 backdrop-blur-2xl border border-white/20 dark:border-gray-800/50 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] p-3 md:p-4 transition-all duration-700 animate-in slide-in-from-bottom-10">
+                <div className="flex items-center justify-between gap-4 md:gap-8">
 
-                {/* Controls */}
-                <div className="flex flex-col items-center gap-2 flex-1">
-                    <div className="flex items-center gap-6">
-                        <button
-                            onClick={playPrevious}
-                            className="text-gray-400 hover:text-pink-600 transition-all text-xl active:scale-90"
-                            title="Previous"
-                        >
-                            ⏮
-                        </button>
-                        <button
-                            onClick={togglePlay}
-                            className="w-10 h-10 flex items-center justify-center bg-pink-600 text-white rounded-full shadow-lg hover:bg-pink-700 transition-all active:scale-95 hover:scale-110 shadow-pink-500/20"
-                        >
-                            {isPlaying ? "⏸" : "▶"}
-                        </button>
-                        <button
-                            onClick={playNext}
-                            className="text-gray-400 hover:text-pink-600 transition-all text-xl active:scale-90"
-                            title="Next"
-                        >
-                            ⏭
-                        </button>
-                    </div>
-
-                    <div className="w-full max-w-md flex items-center gap-3">
-                        <span className="text-[10px] text-gray-400 w-8 text-right font-medium">
-                            {formatDuration(currentTime * 1000)}
-                        </span>
-                        <div
-                            onClick={handleProgressClick}
-                            className="flex-1 bg-gray-200 dark:bg-gray-700 h-1.5 rounded-full overflow-hidden cursor-pointer group relative"
-                        >
-                            <div
-                                className="bg-gradient-to-r from-purple-500 to-pink-600 h-full transition-all duration-200"
-                                style={{ width: `${progress}%` }}
+                    {/* Left: Track Info */}
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                        <div className="relative group flex-shrink-0">
+                            <img
+                                src={currentTrack.artworkUrl60}
+                                alt={currentTrack.trackName}
+                                className="w-12 h-12 md:w-14 md:h-14 rounded-2xl object-cover shadow-lg group-hover:scale-105 transition-transform duration-500"
                             />
-                            <div
-                                className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white border-2 border-pink-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
-                                style={{ left: `${progress}%`, marginLeft: '-6px' }}
-                            />
+                            {isPlaying && (
+                                <div className="absolute inset-0 bg-black/10 rounded-2xl flex items-center justify-center">
+                                    <div className="flex gap-1 items-end h-3">
+                                        <div className="w-0.5 bg-white rounded-full animate-[music-bar_0.6s_ease-in-out_infinite]" />
+                                        <div className="w-0.5 bg-white rounded-full animate-[music-bar_0.8s_ease-in-out_infinite_0.1s]" />
+                                        <div className="w-0.5 bg-white rounded-full animate-[music-bar_0.7s_ease-in-out_infinite_0.2s]" />
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                        <span className="text-[10px] text-gray-400 w-8 text-left font-medium">
-                            {formatDuration(duration * 1000)}
-                        </span>
+                        <div className="min-w-0">
+                            <h4 className="font-bold text-gray-950 dark:text-white truncate text-sm md:text-base mb-0.5 tracking-tight">
+                                {currentTrack.trackName}
+                            </h4>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate font-medium">
+                                {currentTrack.artistName}
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => setIsLiked(!isLiked)}
+                            className={`ml-2 transition-all hover:scale-110 active:scale-90 ${isLiked ? 'text-pink-500' : 'text-gray-300 dark:text-gray-600 hover:text-pink-500'}`}
+                        >
+                            <Heart size={18} fill={isLiked ? "currentColor" : "none"} />
+                        </button>
                     </div>
-                </div>
 
-                {/* Extra Info & Volume */}
-                <div className="flex items-center justify-end gap-6 flex-1 text-sm text-gray-500">
-                    <div className="flex items-center gap-3 group/volume">
-                        <span className="text-gray-400 group-hover/volume:text-pink-500 transition-colors">
-                            {volume === 0 ? "🔇" : volume < 0.5 ? "🔉" : "🔊"}
-                        </span>
-                        <div className="w-24 relative flex items-center">
-                            <input
-                                type="range"
-                                min="0"
-                                max="1"
-                                step="0.01"
-                                value={volume}
-                                onChange={handleVolumeChange}
-                                className="w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-full appearance-none cursor-pointer accent-pink-600 hover:accent-pink-500 transition-all"
-                            />
+                    {/* Center: Controls & Global Progress */}
+                    <div className="flex flex-col items-center gap-3 flex-[2] max-w-2xl">
+                        <div className="flex items-center gap-5 md:gap-8">
+                            <button
+                                onClick={() => setIsShuffle(!isShuffle)}
+                                className={`transition-colors hidden sm:block ${isShuffle ? 'text-pink-500' : 'text-gray-300 dark:text-gray-600 hover:text-gray-900 dark:hover:text-gray-300'}`}
+                            >
+                                <Shuffle size={16} />
+                            </button>
+
+                            <button
+                                onClick={playPrevious}
+                                className="text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all active:scale-90"
+                            >
+                                <SkipBack fill="currentColor" size={24} />
+                            </button>
+
+                            <button
+                                onClick={togglePlay}
+                                className="w-11 h-11 md:w-12 md:h-12 flex items-center justify-center bg-gray-950 dark:bg-white text-white dark:text-gray-950 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all"
+                            >
+                                {isPlaying ? <Pause fill="currentColor" size={20} /> : <Play fill="currentColor" className="ml-1" size={20} />}
+                            </button>
+
+                            <button
+                                onClick={playNext}
+                                className="text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all active:scale-90"
+                            >
+                                <SkipForward fill="currentColor" size={24} />
+                            </button>
+
+                            <button
+                                onClick={() => setIsRepeat(!isRepeat)}
+                                className={`transition-colors hidden sm:block ${isRepeat ? 'text-pink-500' : 'text-gray-300 dark:text-gray-600 hover:text-gray-900 dark:hover:text-gray-300'}`}
+                            >
+                                <Repeat size={16} />
+                            </button>
+                        </div>
+
+                        <div className="w-full flex items-center gap-3 group/progress">
+                            <span className="text-[10px] tabular-nums font-bold text-gray-400 w-10 text-right">
+                                {formatDuration(currentTime * 1000)}
+                            </span>
+                            <div
+                                onClick={handleProgressClick}
+                                className="flex-1 bg-gray-100 dark:bg-gray-800/50 h-1.5 rounded-full overflow-hidden cursor-pointer relative"
+                            >
+                                <div
+                                    className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300 h-full"
+                                    style={{ width: `${progress}%` }}
+                                />
+                                <div
+                                    className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white dark:bg-gray-200 border-2 border-gray-950 dark:border-white rounded-full opacity-0 group-hover/progress:opacity-100 transition-opacity shadow-xl"
+                                    style={{ left: `${progress}%`, marginLeft: '-8px' }}
+                                />
+                            </div>
+                            <span className="text-[10px] tabular-nums font-bold text-gray-400 w-10 text-left">
+                                {formatDuration(duration * 1000)}
+                            </span>
                         </div>
                     </div>
-                    <button className="hover:text-pink-500 transition-colors text-lg active:scale-90" title="Favorite">
-                        ❤️
-                    </button>
+
+                    {/* Right: Volume & Utilities */}
+                    <div className="flex items-center justify-end gap-6 flex-1 hidden md:flex">
+                        <div className="flex items-center gap-3 group/volume">
+                            <VolumeIcon
+                                size={18}
+                                className="text-gray-400 group-hover/volume:text-gray-900 dark:group-hover/volume:text-white transition-colors cursor-pointer"
+                                onClick={() => updateVolume(volume === 0 ? 0.7 : 0)}
+                            />
+                            <div className="w-24 relative flex items-center">
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="1"
+                                    step="0.01"
+                                    value={volume}
+                                    onChange={handleVolumeChange}
+                                    className="w-full h-1 bg-gray-100 dark:bg-gray-800 rounded-full appearance-none cursor-pointer accent-gray-950 dark:white hover:accent-pink-600 transition-all"
+                                />
+                            </div>
+                        </div>
+                        <button className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                            <Maximize2 size={16} />
+                        </button>
+                    </div>
                 </div>
             </div>
+
+            <style jsx>{`
+        @keyframes music-bar {
+          0%, 100% { height: 4px; }
+          50% { height: 12px; }
+        }
+      `}</style>
         </div>
     )
 }
