@@ -584,7 +584,7 @@ pnpm e2e:headless   # E2E tests — should pass
 
 ---
 
-## 11. Observability
+## 12. Observability
 
 **Source:** [instrumentation.ts](instrumentation.ts)
 
