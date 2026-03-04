@@ -2,6 +2,7 @@
 
 import { useUser } from "@clerk/nextjs"
 import { Check, ChevronLeft, Heart, Loader2, Pause, Play, Plus, Share2 } from "lucide-react"
+import NextImage from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
@@ -100,9 +101,11 @@ export default function TrackDetailClient({ trackId }: { trackId: number }) {
                         {/* Minimalist Artwork Display */}
                         <div className="relative w-full max-w-[280px] md:max-w-[440px] aspect-square flex-shrink-0 group">
                             <div className="absolute inset-0 bg-pink-500/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                            <img
+                            <NextImage
                                 src={highResArtwork}
                                 alt={track.trackName}
+                                fill
+                                unoptimized
                                 className="w-full h-full rounded-3xl md:rounded-[40px] object-cover shadow-[0_40px_100px_-20px_rgba(0,0,0,0.3)] dark:shadow-[0_40px_100px_-20px_rgba(0,0,0,0.6)] relative z-10 transition-transform duration-700 hover:scale-[1.03]"
                             />
                         </div>

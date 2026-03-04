@@ -14,6 +14,9 @@ interface PlaybackState {
     isRepeat: boolean
     favorites: Set<number>
     progress: number
+    guestPlayCount: number
+    showGuestLimitModal: boolean
+    isSignedInStore: boolean
 
     // Actions
     setCurrentTrack: (track: ITunesTrack | null) => void
@@ -37,6 +40,9 @@ interface PlaybackState {
     toggleRepeat: () => void
     toggleFavorite: (track: ITunesTrack, isSignedIn: boolean) => void
     loadFavorites: () => Promise<void>
+    setGuestLimitModal: (show: boolean) => void
+    incrementGuestPlayCount: () => void
+    setSignedIn: (signedIn: boolean) => void
 }
 
 // Keep audio object outside the store to avoid re-renders on audio state changes
@@ -54,6 +60,9 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
     isRepeat: false,
     favorites: new Set(),
     progress: 0,
+    guestPlayCount: typeof window !== 'undefined' ? Number(localStorage.getItem('guestPlayCount') || 0) : 0,
+    showGuestLimitModal: false,
+    isSignedInStore: false,
 
     setCurrentTrack: (currentTrack: ITunesTrack | null) => set({ currentTrack }),
     setQueue: (queue: ITunesTrack[]) => set({ queue }),
@@ -70,9 +79,28 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
     setShuffle: (isShuffle: boolean) => set({ isShuffle }),
     setRepeat: (isRepeat: boolean) => set({ isRepeat }),
     setFavorites: (favorites: Set<number>) => set({ favorites }),
+    setGuestLimitModal: (showGuestLimitModal: boolean) => set({ showGuestLimitModal }),
+    incrementGuestPlayCount: () => set((state: PlaybackState) => {
+        const nextCount = state.guestPlayCount + 1
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('guestPlayCount', String(nextCount))
+        }
+        return { guestPlayCount: nextCount }
+    }),
+    setSignedIn: (isSignedInStore: boolean) => set({ isSignedInStore }),
 
     playTrack: (track: ITunesTrack, newQueue?: ITunesTrack[], isSignedIn?: boolean) => {
-        const { isShuffle } = get()
+        const { isShuffle, guestPlayCount, incrementGuestPlayCount, setGuestLimitModal, isSignedInStore } = get()
+
+        // Use a more robust check: if either the passed value or the store state is true, we consider them signed in.
+        // This handles cases where components might pass 'false' before Clerk is fully loaded.
+        const effectivelySignedIn = (isSignedIn === true) || (isSignedInStore === true)
+
+        // Check for guest limit
+        if (!effectivelySignedIn && guestPlayCount >= 5) {
+            setGuestLimitModal(true)
+            return
+        }
 
         if (newQueue) {
             const slicedQueue = newQueue.slice(0, 20)
@@ -161,12 +189,16 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
             get().playNext()
         })
 
-        if (isSignedIn) {
+        if (effectivelySignedIn) {
             fetch("/api/user/plays", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(track),
             }).catch(() => { })
+        }
+
+        if (!effectivelySignedIn) {
+            incrementGuestPlayCount()
         }
 
         set({ currentTrack: track, isPlaying: true })
@@ -262,8 +294,9 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
 
     toggleRepeat: () => set((state: PlaybackState) => ({ isRepeat: !state.isRepeat })),
 
-    toggleFavorite: async (track: ITunesTrack, isSignedIn: boolean) => {
-        const { favorites } = get()
+    toggleFavorite: async (track: ITunesTrack, isSignedIn?: boolean) => {
+        const { favorites, isSignedInStore } = get()
+        const effectivelySignedIn = (isSignedIn === true) || (isSignedInStore === true)
         const trackId = track.trackId
         const isFav = favorites.has(trackId)
 
@@ -274,8 +307,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
         set({ favorites: nextFavorites })
 
         trackTrackFavorited(String(trackId), !isFav)
-
-        if (!isSignedIn) return
+        if (!effectivelySignedIn) return
 
         if (isFav) {
             fetch("/api/user/favorites", {

@@ -2,6 +2,7 @@
 
 import { useUser } from "@clerk/nextjs"
 import { Heart, Music, Pause, Play, Plus } from "lucide-react"
+import NextImage from "next/image"
 import { useEffect, useState } from "react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
 import type { Favorite } from "@/lib/db"
@@ -94,7 +95,7 @@ export default function FavoritesPage() {
 
     return (
         <>
-            <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
+            <div className="max-w-7xl mx-auto px-4 py-6 pb-48 md:pb-32 md:px-8 md:py-12">
 
                 {/* Header */}
                 <header className="flex items-center justify-between mb-10">
@@ -165,10 +166,12 @@ export default function FavoritesPage() {
                                     {/* Artwork */}
                                     <div className="relative aspect-square overflow-hidden">
                                         {fav.artwork_url ? (
-                                            <img
+                                            <NextImage
                                                 src={fav.artwork_url}
                                                 alt={fav.track_name}
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                                fill
+                                                unoptimized
+                                                className="object-cover transition-transform duration-700 group-hover:scale-105"
                                             />
                                         ) : (
                                             <div className="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
