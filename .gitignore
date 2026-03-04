@@ -32,5 +32,12 @@ storybook-static/
 /test-results/
 /playwright-report/
 /playwright/.cache/
+.lighthouseci
 
 /.npm-only-allow
+
+# generated artifacts
+graph.svg
+tsconfig.tsbuildinfo
+
+.env

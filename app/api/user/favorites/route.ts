@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server"
 import { NextRequest, NextResponse } from "next/server"
-import { getCachedFavorites, revalidateFavorites } from "@/lib/cache"
+import { getCachedFavorites, revalidateFavorites, revalidateRecommendations } from "@/lib/cache"
 import { addFavorite, removeFavorite } from "@/lib/db"
 import type { ITunesTrack } from "@/types/itunes"
 
@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
     const track = await req.json() as ITunesTrack
     await addFavorite(userId, track)
     revalidateFavorites(userId)
+    revalidateRecommendations(userId)
 
     return NextResponse.json({ ok: true })
 }
@@ -33,6 +34,7 @@ export async function DELETE(req: NextRequest) {
     const { trackId } = await req.json() as { trackId: number }
     await removeFavorite(userId, trackId)
     revalidateFavorites(userId)
+    revalidateRecommendations(userId)
 
     return NextResponse.json({ ok: true })
 }
