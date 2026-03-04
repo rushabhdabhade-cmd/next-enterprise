@@ -2,6 +2,7 @@
 
 import { useUser } from "@clerk/nextjs"
 import { Heart, History, Music, Pause, Play } from "lucide-react"
+import NextImage from "next/image"
 import { useEffect, useState } from "react"
 import type { SongPlay } from "@/lib/db"
 import { getPageData, setPageData } from "@/lib/pageDataCache"
@@ -124,7 +125,7 @@ export default function HistoryPage() {
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
+        <div className="max-w-7xl mx-auto px-4 py-6 pb-48 md:pb-32 md:px-8 md:py-12">
 
             {/* Header */}
             <header className="flex items-center justify-between mb-10">
@@ -197,17 +198,19 @@ export default function HistoryPage() {
                                                 key={play.id}
                                                 style={{ animationDelay: `${index * 40}ms` }}
                                                 className={`group relative bg-white dark:bg-gray-900/50 border rounded-3xl overflow-hidden transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 fill-mode-both hover:shadow-2xl hover:shadow-black/10 dark:hover:shadow-white/5 hover:-translate-y-1 ${isCurrent
-                                                        ? "border-violet-500/40 shadow-xl shadow-violet-500/10"
-                                                        : "border-gray-100 dark:border-gray-800"
+                                                    ? "border-violet-500/40 shadow-xl shadow-violet-500/10"
+                                                    : "border-gray-100 dark:border-gray-800"
                                                     }`}
                                             >
                                                 {/* Artwork */}
                                                 <div className="relative aspect-square overflow-hidden">
                                                     {play.artwork_url ? (
-                                                        <img
+                                                        <NextImage
                                                             src={play.artwork_url}
                                                             alt={play.track_name}
-                                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                                            fill
+                                                            unoptimized
+                                                            className="object-cover transition-transform duration-700 group-hover:scale-105"
                                                         />
                                                     ) : (
                                                         <div className="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">

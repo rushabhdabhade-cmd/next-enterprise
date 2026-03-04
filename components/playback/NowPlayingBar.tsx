@@ -2,8 +2,9 @@
 
 import { useUser } from "@clerk/nextjs"
 import {
+    ExternalLink,
     Heart,
-    Maximize2,
+    Minimize2,
     Pause,
     Play,
     Plus,
@@ -72,7 +73,7 @@ export default function NowPlayingBar() {
                                 onClick={() => setIsExpanded(false)}
                                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all active:scale-90"
                             >
-                                <Maximize2 size={16} className="rotate-180" />
+                                <Minimize2 size={16} className="rotate-180" />
                             </button>
                         </div>
                         <div className="relative group mb-6">
@@ -306,7 +307,7 @@ export default function NowPlayingBar() {
                             onClick={() => setIsExpanded(true)}
                             className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all hover:scale-110 active:scale-90"
                         >
-                            <Maximize2 size={16} />
+                            <ExternalLink size={16} />
                         </button>
                     </div>
                 </div>

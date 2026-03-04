@@ -2,11 +2,7 @@
 
 import {
   SignedIn,
-  SignedOut,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-  useUser
+  SignedOut
 } from "@clerk/nextjs"
 import {
   BarChart3,
@@ -35,7 +31,6 @@ import { useLibraryStore } from "@/store/useLibraryStore"
 
 export default function LeftSidebar() {
   const pathname = usePathname()
-  const { user } = useUser()
   const { libraries } = useLibraryStore()
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -146,8 +141,8 @@ export default function LeftSidebar() {
                       href={`/libraries/${lib.id}`}
                       onClick={closeMobile}
                       className={`flex items-center gap-3 px-4 py-2 rounded-xl text-xs font-medium transition-all ${isActive
-                          ? "bg-gray-100 dark:bg-gray-900 text-gray-950 dark:text-white"
-                          : "text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900/50 hover:text-gray-950 dark:hover:text-white"
+                        ? "bg-gray-100 dark:bg-gray-900 text-gray-950 dark:text-white"
+                        : "text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900/50 hover:text-gray-950 dark:hover:text-white"
                         }`}
                     >
                       <span className="w-1.5 h-1.5 rounded-full bg-purple-500/40 flex-shrink-0" />
@@ -174,49 +169,6 @@ export default function LeftSidebar() {
     </div>
   )
 
-  /* ── Profile / Auth section — shared ── */
-  const profileSection = (
-    <div className="p-4 lg:p-6 border-t border-gray-100 dark:border-gray-900 flex-shrink-0">
-      <SignedIn>
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-900/60 border border-gray-100 dark:border-gray-800">
-          <UserButton
-            afterSignOutUrl="/"
-            appearance={{
-              elements: {
-                userButtonAvatarBox: "w-9 h-9 rounded-xl"
-              }
-            }}
-          />
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold text-gray-950 dark:text-white truncate">
-              {user?.fullName ?? user?.firstName ?? "Profile"}
-            </p>
-            <p className="text-[10px] text-gray-500 font-medium truncate">
-              {user?.primaryEmailAddress?.emailAddress ?? "Manage Account"}
-            </p>
-          </div>
-        </div>
-      </SignedIn>
-
-      <SignedOut>
-        <div className="space-y-2">
-          <p className="text-[10px] text-gray-400 font-medium px-1 mb-3">
-            Sign in to unlock your library
-          </p>
-          <SignInButton mode="modal">
-            <button className="w-full flex items-center justify-center gap-2 py-2.5 bg-gray-950 dark:bg-white text-white dark:text-gray-950 text-xs font-bold rounded-xl hover:scale-[1.02] transition-transform">
-              Sign In
-            </button>
-          </SignInButton>
-          <SignUpButton mode="modal">
-            <button className="w-full py-2.5 bg-gray-100 dark:bg-gray-900 text-gray-950 dark:text-white text-xs font-bold rounded-xl border border-gray-200 dark:border-gray-800 hover:scale-[1.02] transition-transform">
-              Create Account
-            </button>
-          </SignUpButton>
-        </div>
-      </SignedOut>
-    </div>
-  )
 
   return (
     <>
@@ -264,7 +216,6 @@ export default function LeftSidebar() {
           </div>
 
           {navContent}
-          {profileSection}
         </aside>
       </div>
 
@@ -283,7 +234,6 @@ export default function LeftSidebar() {
         </div>
 
         {navContent}
-        {profileSection}
       </aside>
     </>
   )

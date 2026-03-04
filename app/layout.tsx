@@ -1,12 +1,14 @@
+import { ClerkProvider } from "@clerk/nextjs"
 import type { Metadata } from "next"
 import { Suspense } from "react"
+
 import "styles/tailwind.css"
 import PostHogIdentifier from "@/components/analytics/PostHogIdentifier"
 import PostHogPageView from "@/components/analytics/PostHogPageView"
 import UserSync from "@/components/analytics/UserSync"
+import GuestLimitModal from "@/components/playback/GuestLimitModal"
 import NowPlayingBar from "@/components/playback/NowPlayingBar"
 import StoreInitializer from "@/components/StoreInitializer"
-import { ClerkProvider } from "@clerk/nextjs"
 
 export const metadata: Metadata = {
   title: {
@@ -58,6 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <StoreInitializer />
           {children}
           <NowPlayingBar />
+          <GuestLimitModal />
         </body>
       </html>
     </ClerkProvider>

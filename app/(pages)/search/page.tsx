@@ -3,6 +3,7 @@
 import { useUser } from "@clerk/nextjs"
 import type { LucideIcon } from "lucide-react"
 import { Disc3, ExternalLink, Film, Heart, Music, Pause, Play, Plus, Podcast, Search, User, X } from "lucide-react"
+import NextImage from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useCallback, useEffect, useState } from "react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
@@ -104,7 +105,7 @@ function SearchPageContent() {
 
     return (
         <>
-            <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
+            <div className="max-w-7xl mx-auto px-4 py-6 pb-48 md:pb-32 md:px-8 md:py-12">
 
                 {/* Header */}
                 <header className="mb-8 lg:mb-12">
@@ -207,7 +208,13 @@ function SearchPageContent() {
                                         onClick={() => isCurrent ? togglePlay() : playTrack(track, songs, !!isSignedIn)}
                                     >
                                         <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0">
-                                            <img src={track.artworkUrl100} alt={track.trackName} className="w-full h-full object-cover" />
+                                            <NextImage
+                                                src={track.artworkUrl100}
+                                                alt={track.trackName}
+                                                fill
+                                                unoptimized
+                                                className="object-cover"
+                                            />
                                             <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity ${isCurrent ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
                                                 {isPlayingThis ? <Pause size={16} fill="white" className="text-white" /> : <Play size={16} fill="white" className="text-white ml-0.5" />}
                                             </div>
@@ -248,8 +255,14 @@ function SearchPageContent() {
                                     style={{ animationDelay: `${i * 40}ms` }}
                                     className="group bg-white dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 fill-mode-both hover:shadow-xl hover:-translate-y-1 transition-all"
                                 >
-                                    <div className="aspect-square overflow-hidden">
-                                        <img src={album.artworkUrl100?.replace("100x100", "400x400")} alt={album.collectionName} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                    <div className="aspect-square overflow-hidden relative">
+                                        <NextImage
+                                            src={album.artworkUrl100?.replace("100x100", "400x400")}
+                                            alt={album.collectionName}
+                                            fill
+                                            unoptimized
+                                            className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                        />
                                     </div>
                                     <div className="p-4">
                                         <h4 className="font-bold text-sm text-gray-900 dark:text-white truncate">{album.collectionName}</h4>
@@ -277,9 +290,15 @@ function SearchPageContent() {
                                     style={{ animationDelay: `${i * 40}ms` }}
                                     className="group flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-4 fill-mode-both"
                                 >
-                                    <div className="w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-900 mb-3 group-hover:scale-105 transition-transform shadow-lg">
+                                    <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-900 mb-3 group-hover:scale-105 transition-transform shadow-lg">
                                         {artist.artworkUrl100 ? (
-                                            <img src={artist.artworkUrl100.replace("100x100", "400x400")} alt={artist.artistName} className="w-full h-full object-cover" />
+                                            <NextImage
+                                                src={artist.artworkUrl100.replace("100x100", "400x400")}
+                                                alt={artist.artistName}
+                                                fill
+                                                unoptimized
+                                                className="object-cover"
+                                            />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center">
                                                 <User size={32} className="text-gray-400" />
@@ -314,7 +333,13 @@ function SearchPageContent() {
                                     className="group bg-white dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 fill-mode-both hover:shadow-xl hover:-translate-y-1 transition-all"
                                 >
                                     <div className="aspect-square overflow-hidden relative">
-                                        <img src={pod.artworkUrl100?.replace("100x100", "400x400")} alt={pod.trackName} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                        <NextImage
+                                            src={pod.artworkUrl100?.replace("100x100", "400x400")}
+                                            alt={pod.trackName}
+                                            fill
+                                            unoptimized
+                                            className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                        />
                                         <div className="absolute top-3 right-3 bg-black/30 backdrop-blur-md p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                                             <ExternalLink size={12} className="text-white" />
                                         </div>
@@ -348,7 +373,13 @@ function SearchPageContent() {
                                     onClick={() => setPlayingVideo(video)}
                                 >
                                     <div className="aspect-video overflow-hidden relative bg-gray-100 dark:bg-gray-800">
-                                        <img src={video.artworkUrl100?.replace("100x100", "640x360")} alt={video.trackName} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                        <NextImage
+                                            src={video.artworkUrl100?.replace("100x100", "640x360")}
+                                            alt={video.trackName}
+                                            fill
+                                            unoptimized
+                                            className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                        />
                                         <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                             <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-2xl">
                                                 <Play size={20} fill="currentColor" className="text-gray-950 ml-0.5" />
