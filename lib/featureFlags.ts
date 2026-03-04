@@ -46,7 +46,8 @@ export function useFeatureFlag(flagKey: string): boolean | undefined {
 
         // Check immediately if PostHog has already resolved flags
         // areFeatureFlagsLoaded exists at runtime but is not in the published types
-        if ((posthog as Record<string, unknown> & typeof posthog).areFeatureFlagsLoaded?.()) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if ((posthog as any).areFeatureFlagsLoaded?.()) {
             checkFlag()
         }
 

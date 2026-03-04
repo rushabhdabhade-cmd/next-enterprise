@@ -1,4 +1,4 @@
-import posthog, { type PostHog } from 'posthog-js'
+import posthog from 'posthog-js'
 import { env } from '../env.mjs'
 
 if (typeof window !== 'undefined') {
@@ -10,7 +10,7 @@ if (typeof window !== 'undefined') {
             api_host: host,
             persistence: 'localStorage+cookie',
             capture_pageview: false, // We use the custom component for more control
-            loaded: (ph: PostHog) => {
+            loaded: (ph) => {
                 if (process.env.NODE_ENV === 'development') ph.debug()
             },
         })
