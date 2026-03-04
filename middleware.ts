@@ -5,6 +5,7 @@ const isPublicRoute = createRouteMatcher([
     '/sign-in(.*)',
     '/sign-up(.*)',
     '/api/hot(.*)', // Trending API should be public
+    '/api/webhooks/(.*)', // Webhooks must bypass Clerk auth
     '/track/(.*)'   // Track details should be public
 ]);
 
