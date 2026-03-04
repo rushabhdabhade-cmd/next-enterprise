@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { Heart, Pause, Play, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { ITunesTrack } from "@/types/itunes"
-import { formatDuration } from "@/services/itunesService"
+import { useState } from "react"
+import AddToLibraryModal from "@/components/AddToLibraryModal"
 import { usePlayback } from "@/context/PlaybackContext"
 import { trackTrackSelected } from "@/lib/analytics"
-import { Play, Pause, Heart, Plus, Music } from "lucide-react"
-import AddToLibraryModal from "@/components/AddToLibraryModal"
+import { formatDuration } from "@/services/itunesService"
+import { ITunesTrack } from "@/types/itunes"
 
 interface TrackListProps {
   tracks: ITunesTrack[]
