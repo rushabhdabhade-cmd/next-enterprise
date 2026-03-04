@@ -144,8 +144,8 @@ function SearchPageContent() {
                             key={f.id}
                             onClick={() => handleFilterChange(f.id)}
                             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${activeFilter === f.id
-                                    ? "bg-gray-950 dark:bg-white text-white dark:text-gray-950 shadow-lg"
-                                    : "bg-gray-100 dark:bg-gray-900 text-gray-500 hover:text-gray-900 dark:hover:text-white"
+                                ? "bg-gray-950 dark:bg-white text-white dark:text-gray-950 shadow-lg"
+                                : "bg-gray-100 dark:bg-gray-900 text-gray-500 hover:text-gray-900 dark:hover:text-white"
                                 }`}
                         >
                             <f.icon size={14} />
@@ -200,7 +200,7 @@ function SearchPageContent() {
                                 const isFav = favorites.has(track.trackId)
                                 return (
                                     <div
-                                        key={`${track.trackId}-${i}`}
+                                        key={track.trackId}
                                         style={{ animationDelay: `${i * 30}ms` }}
                                         className={`group flex items-center gap-3 p-3 rounded-2xl transition-all animate-in fade-in slide-in-from-bottom-2 fill-mode-both cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900/50 ${isCurrent ? "bg-pink-50 dark:bg-pink-900/10 border border-pink-200 dark:border-pink-800/30" : ""
                                             }`}
@@ -244,7 +244,7 @@ function SearchPageContent() {
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
                             {albums.map((album, i) => (
                                 <div
-                                    key={`${album.collectionId}-${i}`}
+                                    key={album.collectionId}
                                     style={{ animationDelay: `${i * 40}ms` }}
                                     className="group bg-white dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 fill-mode-both hover:shadow-xl hover:-translate-y-1 transition-all"
                                 >
@@ -273,7 +273,7 @@ function SearchPageContent() {
                         <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
                             {artists.map((artist, i) => (
                                 <div
-                                    key={`${artist.artistId}-${i}`}
+                                    key={artist.artistId}
                                     style={{ animationDelay: `${i * 40}ms` }}
                                     className="group flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-4 fill-mode-both"
                                 >
@@ -306,7 +306,7 @@ function SearchPageContent() {
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
                             {podcasts.map((pod, i) => (
                                 <a
-                                    key={`${pod.trackId}-${i}`}
+                                    key={pod.trackId}
                                     href={pod.collectionViewUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -342,7 +342,7 @@ function SearchPageContent() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {videos.map((video, i) => (
                                 <div
-                                    key={`${video.trackId}-${i}`}
+                                    key={video.trackId}
                                     style={{ animationDelay: `${i * 40}ms` }}
                                     className="group bg-white dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 rounded-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 fill-mode-both hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer"
                                     onClick={() => setPlayingVideo(video)}
