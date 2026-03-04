@@ -2,11 +2,11 @@
 
 import { useState } from "react"
 import { SearchTrackParams } from "@/types/itunes"
-import { Search, Loader2, XCircle } from "lucide-react"
+import { SearchTrackParams, ITunesTrack } from "@/types/itunes"
 
 interface SearchBarProps {
   onSearchComplete?: (count: number) => void
-  search: (params: SearchTrackParams) => Promise<any>
+  search: (params: SearchTrackParams) => Promise<ITunesTrack[]>
   loading: boolean
   error: string | null
 }
