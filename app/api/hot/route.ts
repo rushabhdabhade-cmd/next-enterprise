@@ -24,8 +24,8 @@ import { NextResponse } from "next/server"
 import { env } from "@/env.mjs"
 import { HotTrack, HotTrackWithMeta } from "@/types/hot"
 
-// Cache the entire route response for 60 seconds (ISR)
-export const revalidate = 60
+// Route is dynamic — freshness handled by fetch-level caches below
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
     try {
@@ -71,7 +71,7 @@ export async function GET() {
             throw new Error(`PostHog query failed: ${phResponse.statusText}`)
         }
 
-        const phData = await phResponse.json() as { results: any[][] }
+        const phData = await phResponse.json() as { results: [trackId: string, count: number][] };
         const results = phData.results || []
 
         if (results.length === 0) {
@@ -97,7 +97,7 @@ export async function GET() {
                         { next: { revalidate: 86400 } } // track metadata is stable for 24h
                     )
                     if (!itunesRes.ok) return null
-                    const itunesData = await itunesRes.json() as { results: any[] }
+                    const itunesData = await itunesRes.json() as { results: import("@/types/itunes").ITunesTrack[] };
                     const track = itunesData.results?.[0]
                     if (!track) return null
 

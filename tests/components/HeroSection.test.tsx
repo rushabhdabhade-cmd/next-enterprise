@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react"
 import { describe, it, expect } from "vitest"
-import HeroSection from "@/components/HeroSection"
+import HeroSection from "@/components/sections/HeroSection"
 
 describe("HeroSection", () => {
     it("renders title and subtitle correctly", () => {

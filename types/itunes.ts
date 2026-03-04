@@ -24,6 +24,43 @@ export interface ITunesTrack {
   trackExplicitness?: string
 }
 
+export interface ITunesPodcast {
+  wrapperType: string
+  kind: string
+  collectionId: number
+  trackId: number
+  artistName: string
+  collectionName: string
+  trackName: string
+  artworkUrl100: string
+  artworkUrl600: string
+  feedUrl: string
+  trackCount: number
+  releaseDate: string
+  primaryGenreName: string
+  contentAdvisoryRating: string
+  genres: { name: string; id: string }[]
+  collectionViewUrl: string
+}
+
+export interface ITunesMusicVideo {
+  wrapperType: string
+  kind: string
+  trackId: number
+  artistId: number
+  trackName: string
+  artistName: string
+  collectionName: string
+  artworkUrl100: string
+  previewUrl: string
+  trackTimeMillis: number
+  primaryGenreName: string
+  releaseDate: string
+  trackPrice: number
+  currency: string
+  country: string
+}
+
 export interface ITunesSearchResponse {
   resultCount: number
   results: ITunesTrack[]
@@ -31,6 +68,6 @@ export interface ITunesSearchResponse {
 
 export interface SearchTrackParams {
   term: string
-  entity?: "song" | "album" | "artist"
+  entity?: "song" | "album" | "artist" | "podcast" | "musicVideo"
   limit?: number
 }
