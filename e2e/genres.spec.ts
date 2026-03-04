@@ -38,7 +38,7 @@ test.describe("Genres Page", () => {
         await expect(page.locator("h2").filter({ hasText: "Pop" })).toBeVisible({ timeout: 15000 })
 
         // The back arrow button should be visible — click it
-        const backButton = page.locator("button").filter({ has: page.locator("svg") }).first()
+        const backButton = page.locator('button:has(.lucide-arrow-left)')
         await backButton.click()
 
         // Genre grid should reappear
