@@ -11,8 +11,18 @@ import {
   History,
   Radio,
   PlusCircle,
-  Layout
+  Layout,
+  User as UserIcon,
+  LogOut,
+  Settings
 } from "lucide-react"
+import {
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  SignedIn,
+  SignedOut
+} from "@clerk/nextjs"
 
 export default function LeftSidebar() {
   const pathname = usePathname()
@@ -56,8 +66,8 @@ export default function LeftSidebar() {
                   key={item.name}
                   href={item.href}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all group ${isActive
-                      ? "bg-gray-100 dark:bg-gray-900 text-gray-950 dark:text-white"
-                      : "text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-900/50 hover:text-gray-950 dark:hover:text-white"
+                    ? "bg-gray-100 dark:bg-gray-900 text-gray-950 dark:text-white"
+                    : "text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-900/50 hover:text-gray-950 dark:hover:text-white"
                     }`}
                 >
                   <item.icon size={18} className={isActive ? "text-pink-500" : "group-hover:text-pink-500 transition-colors"} />
@@ -91,14 +101,38 @@ export default function LeftSidebar() {
         </div>
       </div>
 
-      <div className="p-8">
-        <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-4 border border-gray-100 dark:border-gray-800">
-          <p className="text-xs font-bold text-gray-400 mb-2">PRO PLAN</p>
-          <p className="text-sm text-gray-900 dark:text-white font-medium mb-3">Unlock immersive spatial audio</p>
-          <button className="w-full py-2 bg-gray-950 dark:bg-white text-white dark:text-gray-950 text-xs font-bold rounded-lg hover:scale-[1.02] transition-transform">
-            Upgrade Now
-          </button>
-        </div>
+      <div className="p-8 border-t border-gray-100 dark:border-gray-900">
+        <SignedIn>
+          <div className="flex items-center gap-3 px-2">
+            <UserButton
+              afterSignOutUrl="/"
+              appearance={{
+                elements: {
+                  userButtonAvatarBox: "w-10 h-10 rounded-xl"
+                }
+              }}
+            />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-gray-950 dark:text-white truncate">Profile</p>
+              <p className="text-[10px] text-gray-500 font-medium">Manage Account</p>
+            </div>
+          </div>
+        </SignedIn>
+
+        <SignedOut>
+          <div className="space-y-3">
+            <SignInButton mode="modal">
+              <button className="w-full flex items-center justify-center gap-2 py-3 bg-gray-950 dark:bg-white text-white dark:text-gray-950 text-xs font-bold rounded-xl hover:scale-[1.02] transition-transform">
+                Sign In
+              </button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <button className="w-full py-3 bg-gray-100 dark:bg-gray-900 text-gray-950 dark:text-white text-xs font-bold rounded-xl border border-gray-200 dark:border-gray-800 hover:scale-[1.02] transition-transform">
+                Create Account
+              </button>
+            </SignUpButton>
+          </div>
+        </SignedOut>
       </div>
     </aside>
   )
