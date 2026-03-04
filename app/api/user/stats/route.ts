@@ -19,22 +19,25 @@ export interface UserStats {
 
 async function fetchUserStats(userId: string): Promise<UserStats> {
     // Fetch all plays (up to 10000 for stats aggregation)
-    const { data: plays } = await supabaseAdmin
-        .from("song_plays")
-        .select("track_id, track_name, artist_name, artwork_url, genre, duration_ms, played_at")
-        .eq("user_id", userId)
-        .order("played_at", { ascending: false })
-        .limit(10000)
+    const [
+        { data: plays, error: playsError },
+        { count: favCount, error: favError },
+        { count: libCount, error: libError },
+    ] = await Promise.all([
+        supabaseAdmin
+            .from("song_plays")
+            .select("track_id, track_name, artist_name, artwork_url, genre, duration_ms, played_at")
+            .eq("user_id", userId)
+            .order("played_at", { ascending: false })
+            .limit(10000),
+        supabaseAdmin.from("favorites").select("id", { count: "exact", head: true }).eq("user_id", userId),
+        supabaseAdmin.from("libraries").select("id", { count: "exact", head: true }).eq("user_id", userId),
+    ])
 
-    const { count: favCount } = await supabaseAdmin
-        .from("favorites")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", userId)
-
-    const { count: libCount } = await supabaseAdmin
-        .from("libraries")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", userId)
+    if (playsError || favError || libError) {
+        console.error("Error fetching user stats data:", { playsError, favError, libError })
+        throw new Error("Failed to fetch all user stats data.")
+    }
 
     const allPlays = plays ?? []
 
