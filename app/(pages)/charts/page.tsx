@@ -1,12 +1,12 @@
 "use client"
 
+import { useUser } from "@clerk/nextjs"
 import { BarChart3, Globe, Heart, Music, Pause, Play, Plus } from "lucide-react"
 import { useEffect, useState } from "react"
-import { useUser } from "@clerk/nextjs"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
-import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { getPageData, setPageData } from "@/lib/pageDataCache"
 import { formatDuration, getTopTracksByGenre } from "@/services/itunesService"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import type { ITunesTrack } from "@/types/itunes"
 
 const countries = [

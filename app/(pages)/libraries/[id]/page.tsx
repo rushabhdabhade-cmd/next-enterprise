@@ -5,10 +5,10 @@ import { Check, ChevronLeft, Heart, Link2, ListMusic, Loader2, Music, Pause, Pla
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
-import { useLibraryStore } from "@/store/useLibraryStore"
-import { usePlaybackStore } from "@/store/usePlaybackStore"
 import type { LibraryTrack } from "@/lib/db"
 import { formatDuration } from "@/services/itunesService"
+import { useLibraryStore } from "@/store/useLibraryStore"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import type { ITunesTrack } from "@/types/itunes"
 
 function libraryTrackToTrack(lt: LibraryTrack): ITunesTrack {
@@ -65,7 +65,7 @@ export default function LibraryDetailPage() {
     const [copied, setCopied] = useState(false)
     const [showSharePopover, setShowSharePopover] = useState(false)
 
-    const library = libraries.find((l: any) => l.id === libraryId)
+    const library = libraries.find((l) => l.id === libraryId)
 
     useEffect(() => {
         if (!isLoaded) return

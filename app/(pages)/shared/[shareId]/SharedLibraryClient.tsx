@@ -1,12 +1,12 @@
 "use client"
 
+import { useUser } from "@clerk/nextjs"
 import { Check, ChevronLeft, ListMusic, Music, Pause, Play, Share2 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { useUser } from "@clerk/nextjs"
-import { usePlaybackStore } from "@/store/usePlaybackStore"
 import type { LibraryTrack } from "@/lib/db"
 import { formatDuration } from "@/services/itunesService"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import type { ITunesTrack } from "@/types/itunes"
 
 function libraryTrackToTrack(lt: LibraryTrack): ITunesTrack {

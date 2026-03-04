@@ -1,6 +1,7 @@
 "use client"
 
 import { ChevronRight, Music, Play } from "lucide-react"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 
 interface Item {
@@ -19,7 +20,7 @@ export default function RecentlyPlayedGrid({ items }: Props) {
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-8">
-      {items.map((item, i) => (
+      {items.map((item) => (
         <div
           key={item.id}
           onClick={() => router.push(`/track/${item.id}`)}
@@ -27,10 +28,11 @@ export default function RecentlyPlayedGrid({ items }: Props) {
         >
           <div className="relative aspect-square rounded-[32px] overflow-hidden bg-gray-100 dark:bg-gray-900 mb-4 shadow-sm transition-all duration-500 hover:shadow-2xl hover:shadow-pink-500/10 group-hover:-translate-y-2">
             {item.imageUrl ? (
-              <img
+              <Image
                 src={item.imageUrl.replace("100x100", "400x400")}
                 alt={item.name}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-300">

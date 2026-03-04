@@ -154,7 +154,7 @@ export default function LibrariesPage() {
             {/* Libraries grid */}
             {!loading && libraries.length > 0 && (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
-                    {libraries.map((lib: any, index: number) => (
+                    {libraries.map((lib, index) => (
                         <Link
                             key={lib.id}
                             href={`/libraries/${lib.id}`}

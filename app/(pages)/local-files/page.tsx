@@ -1,11 +1,11 @@
 "use client"
 
+import { useUser } from "@clerk/nextjs"
 import {
   AlertCircle,
   FolderOpen,
   HardDrive,
   Music,
-  Pause,
   Play,
   Plus,
   Trash2,
@@ -14,9 +14,8 @@ import {
 } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import ThemeToggle from "@/components/ui/ThemeToggle"
-import { useUser } from "@clerk/nextjs"
-import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { formatDuration } from "@/services/itunesService"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { ITunesTrack } from "@/types/itunes"
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -350,8 +349,8 @@ export default function LocalFilesPage() {
                     onClick={() => handlePlay(lf)}
                     style={{ animationDelay: `${idx * 18}ms` }}
                     className={`group flex items-center gap-3 md:grid md:grid-cols-[32px_44px_1fr_76px_56px_68px_36px] md:gap-4 px-3 md:px-4 py-3 rounded-2xl cursor-pointer transition-all duration-200 animate-in fade-in slide-in-from-left-2 fill-mode-both ${isCurrent
-                        ? "bg-pink-50 dark:bg-pink-950/20 border border-pink-200/60 dark:border-pink-800/40"
-                        : "border border-transparent hover:bg-gray-50 dark:hover:bg-gray-900/50"
+                      ? "bg-pink-50 dark:bg-pink-950/20 border border-pink-200/60 dark:border-pink-800/40"
+                      : "border border-transparent hover:bg-gray-50 dark:hover:bg-gray-900/50"
                       }`}
                   >
                     {/* # / play indicator */}

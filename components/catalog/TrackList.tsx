@@ -1,14 +1,14 @@
 "use client"
 
+import { useUser } from "@clerk/nextjs"
 import { ChevronRight, Heart, Pause, Play, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { useUser } from "@clerk/nextjs"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
-import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { trackTrackSelected } from "@/lib/analytics"
-import { formatDuration } from "@/services/itunesService"
 import { setCachedTrack } from "@/lib/trackNavigationCache"
+import { formatDuration } from "@/services/itunesService"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { ITunesTrack } from "@/types/itunes"
 
 interface TrackListProps {

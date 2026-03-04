@@ -4,10 +4,10 @@ import { useUser } from "@clerk/nextjs"
 import { Clock, Heart, Music, Pause, Play, Plus } from "lucide-react"
 import { useEffect, useState } from "react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
-import { usePlaybackStore } from "@/store/usePlaybackStore"
 import type { SongPlay } from "@/lib/db"
-import { formatDuration } from "@/services/itunesService"
 import { getPageData, setPageData } from "@/lib/pageDataCache"
+import { formatDuration } from "@/services/itunesService"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import type { ITunesTrack } from "@/types/itunes"
 
 function playToTrack(play: SongPlay): ITunesTrack {

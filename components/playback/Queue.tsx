@@ -1,10 +1,10 @@
 "use client"
 
+import { useUser } from "@clerk/nextjs"
 import { ChevronLeft, ChevronRight, GripVertical, MoreVertical, Music } from "lucide-react"
 import { useState } from "react"
-import { useUser } from "@clerk/nextjs"
-import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { formatDuration } from "@/services/itunesService"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { ITunesTrack } from "@/types/itunes"
 
 const ITEMS_PER_PAGE = 10

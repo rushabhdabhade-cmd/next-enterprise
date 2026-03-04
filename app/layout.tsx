@@ -4,8 +4,8 @@ import "styles/tailwind.css"
 import PostHogIdentifier from "@/components/analytics/PostHogIdentifier"
 import PostHogPageView from "@/components/analytics/PostHogPageView"
 import UserSync from "@/components/analytics/UserSync"
-import StoreInitializer from "@/components/StoreInitializer"
 import NowPlayingBar from "@/components/playback/NowPlayingBar"
+import StoreInitializer from "@/components/StoreInitializer"
 import { ClerkProvider } from "@clerk/nextjs"
 
 export const metadata: Metadata = {

@@ -1,13 +1,13 @@
 "use client"
 
+import { useUser } from "@clerk/nextjs"
 import { AlertCircle, Flame, Pause, Play, Plus, TrendingUp } from "lucide-react"
 import { useEffect, useState } from "react"
-import { useUser } from "@clerk/nextjs"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
-import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { trackTrackSelected } from "@/lib/analytics"
 import { getHotTracks } from "@/lib/api"
 import { getPageData, setPageData } from "@/lib/pageDataCache"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { HotTrackWithMeta } from "@/types/hot"
 
 export default function HotSection() {

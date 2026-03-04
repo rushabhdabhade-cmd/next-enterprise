@@ -1,16 +1,16 @@
 "use client"
 
+import { useUser } from "@clerk/nextjs"
 import { Check, ChevronLeft, Heart, Loader2, Pause, Play, Plus, Share2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { useUser } from "@clerk/nextjs"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
 import AISummary from "@/components/AISummary"
-import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { trackAISummaryExposure } from "@/lib/analytics"
 import { useFeatureFlag } from "@/lib/featureFlags"
 import { getCachedTrack } from "@/lib/trackNavigationCache"
 import { formatDuration } from "@/services/itunesService"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { ITunesTrack } from "@/types/itunes"
 
 export default function TrackDetailClient({ trackId }: { trackId: number }) {

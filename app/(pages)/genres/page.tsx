@@ -1,5 +1,6 @@
 "use client"
 
+import { useUser } from "@clerk/nextjs"
 import {
   ArrowLeft, ChevronRight, Crown, Flame, Guitar, Heart, type LucideIcon, Mic,
   Music, Music2, Music3, Pause, Play, Plus,
@@ -8,13 +9,12 @@ import {
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
-import { useUser } from "@clerk/nextjs"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
 import ThemeToggle from "@/components/ui/ThemeToggle"
-import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { trackTrackSelected } from "@/lib/analytics"
 import { setCachedTrack } from "@/lib/trackNavigationCache"
 import { formatDuration } from "@/services/itunesService"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { ITunesTrack } from "@/types/itunes"
 
 const GENRES: { name: string; icon: LucideIcon; searchTerm: string }[] = [

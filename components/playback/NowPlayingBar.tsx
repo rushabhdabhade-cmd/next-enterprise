@@ -1,5 +1,6 @@
 "use client"
 
+import { useUser } from "@clerk/nextjs"
 import {
     Heart,
     Maximize2,
@@ -15,10 +16,9 @@ import {
     VolumeX
 } from "lucide-react"
 import React, { useState } from "react" // useState kept for isExpanded
-import { useUser } from "@clerk/nextjs"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
-import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { formatDuration } from "@/services/itunesService"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 
 export default function NowPlayingBar() {
     const { isSignedIn } = useUser()

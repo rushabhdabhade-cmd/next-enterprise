@@ -1,13 +1,13 @@
 "use client"
 
+import { useUser } from "@clerk/nextjs"
 import type { LucideIcon } from "lucide-react"
 import { Disc3, ExternalLink, Film, Heart, Music, Pause, Play, Plus, Podcast, Search, User, X } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useCallback, useEffect, useState } from "react"
-import { useUser } from "@clerk/nextjs"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
-import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { formatDuration, searchMusicVideos, searchPodcasts, searchTracks } from "@/services/itunesService"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import type { ITunesMusicVideo, ITunesPodcast, ITunesTrack } from "@/types/itunes"
 
 type FilterType = "all" | "song" | "album" | "artist" | "podcast" | "musicVideo"
