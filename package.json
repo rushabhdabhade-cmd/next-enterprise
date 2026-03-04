@@ -52,6 +52,7 @@
     "@vercel/otel": "^1.12.0",
     "class-variance-authority": "^0.7.0",
     "lodash": "^4.17.21",
+    "lucide-react": "^0.575.0",
     "next": "15.3.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -100,7 +101,9 @@
     "eslint-plugin-tailwindcss": "^3.18.0",
     "fetch-mock": "^9.11.0",
     "gzip-size": "6.0.0",
+    "husky": "^8.0.0",
     "jsdom": "^26.1.0",
+    "lint-staged": "^14.0.0",
     "mkdirp": "^3.0.1",
     "patch-package": "^8.0.0",
     "postcss": "^8.5.3",
@@ -118,16 +121,11 @@
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4",
     "webpack": "5.94.0"
-    ,
-    "husky": "^8.0.0",
-    "lint-staged": "^14.0.0"
   },
   "engines": {
     "node": ">=20.0.0"
   },
-  "packageManager": "pnpm@10.0.0"
-
-  ,
+  "packageManager": "pnpm@10.0.0",
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "prettier --write",
