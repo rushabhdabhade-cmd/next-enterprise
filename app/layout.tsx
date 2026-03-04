@@ -17,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               and shows a flash of light mode on load/refresh. */}
           <script
             dangerouslySetInnerHTML={{
-              __html: `(function(){try{var t=localStorage.getItem('theme'),d=window.matchMedia('(prefers-color-scheme:dark)').matches;if(t==='dark'||(!t&&d)){document.documentElement.classList.add('dark');document.documentElement.style.colorScheme='dark';}}catch(e){}})();`,
+              __html: `(function(){ try { const theme = localStorage.getItem('theme'); const prefersDark = window.matchMedia('(prefers-color-scheme:dark)').matches; if (theme === 'dark' || (!theme && prefersDark)) { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme = 'dark'; } } catch(e){} })();`,
             }}
           />
         </head>
