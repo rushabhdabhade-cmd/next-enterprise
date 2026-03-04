@@ -36,7 +36,7 @@ function NewCatalogGrid({ tracks }: Props) {
     const router = useRouter()
     const { playTrack, togglePlay, currentTrack, isPlaying } = usePlayback()
 
-    const handlePlay = (e: React.MouseEvent, track: ITunesTrack) => {
+    const handlePlay = React.useCallback((e: React.MouseEvent, track: ITunesTrack) => {
         e.stopPropagation() // prevent card navigation
         trackTrackSelected({ id: String(track.trackId), artist: track.artistName, genre: track.primaryGenreName })
         if (currentTrack?.trackId === track.trackId) {
@@ -44,7 +44,7 @@ function NewCatalogGrid({ tracks }: Props) {
         } else {
             playTrack(track, tracks)
         }
-    }
+    }, [currentTrack, tracks, playTrack, togglePlay])
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
