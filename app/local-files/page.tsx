@@ -1,21 +1,21 @@
 "use client"
 
-import { useState, useCallback, useRef, useEffect } from "react"
 import {
-  HardDrive,
+  AlertCircle,
   FolderOpen,
+  HardDrive,
   Music,
-  Play,
   Pause,
-  X,
-  Upload,
+  Play,
   Plus,
   Trash2,
-  AlertCircle,
+  Upload,
+  X,
 } from "lucide-react"
-import LeftSidebar from "@/components/LeftSidebar"
-import Queue from "@/components/Queue"
-import ThemeToggle from "@/components/ThemeToggle"
+import { useCallback, useEffect, useRef, useState } from "react"
+import LeftSidebar from "@/components/layout/LeftSidebar"
+import Queue from "@/components/playback/Queue"
+import ThemeToggle from "@/components/ui/ThemeToggle"
 import { usePlayback } from "@/context/PlaybackContext"
 import { formatDuration } from "@/services/itunesService"
 import { ITunesTrack } from "@/types/itunes"
@@ -52,7 +52,7 @@ const ACCEPTED = ".mp3,.flac,.wav,.aac,.ogg,.m4a,.webm,audio/*"
 let idCounter = Date.now()
 
 function nameGradient(name: string): string {
-  const hash = [...name].reduce((acc, c) => acc + c.charCodeAt(0), 0)
+  const hash = Array.from(name).reduce((acc, c) => acc + c.charCodeAt(0), 0)
   return GRADIENTS[hash % GRADIENTS.length]!
 }
 
@@ -114,7 +114,7 @@ function DropZone({ onBrowse }: { onBrowse: () => void }) {
   return (
     <div
       onClick={onBrowse}
-      className="group mt-4 flex flex-col items-center justify-center gap-6 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-[40px] py-28 cursor-pointer hover:border-pink-300 dark:hover:border-pink-800 hover:bg-pink-50/40 dark:hover:bg-pink-950/10 transition-all duration-300"
+      className="group mt-4 flex flex-col items-center justify-center gap-4 md:gap-6 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-3xl md:rounded-[40px] py-16 md:py-28 px-4 cursor-pointer hover:border-pink-300 dark:hover:border-pink-800 hover:bg-pink-50/40 dark:hover:bg-pink-950/10 transition-all duration-300"
     >
       <div className="w-24 h-24 bg-gray-100 dark:bg-gray-900 rounded-3xl flex items-center justify-center group-hover:bg-pink-100 dark:group-hover:bg-pink-900/20 transition-colors duration-300">
         <HardDrive size={40} className="text-gray-400 group-hover:text-pink-500 transition-colors duration-300" />
@@ -266,7 +266,7 @@ export default function LocalFilesPage() {
       )}
 
       <main className="flex-1 overflow-y-auto scroll-smooth">
-        <div className="max-w-5xl mx-auto px-8 py-12 pb-32">
+        <div className="max-w-5xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
           {/* Header */}
           <header className="flex items-center justify-between mb-10">
@@ -328,8 +328,8 @@ export default function LocalFilesPage() {
                 </button>
               </div>
 
-              {/* Column headings */}
-              <div className="hidden sm:grid grid-cols-[32px_44px_1fr_76px_56px_68px_36px] gap-4 items-center px-4 pb-2 border-b border-gray-100 dark:border-gray-900 mb-1">
+              {/* Column headings (desktop only) */}
+              <div className="hidden md:grid grid-cols-[32px_44px_1fr_76px_56px_68px_36px] gap-4 items-center px-4 pb-2 border-b border-gray-100 dark:border-gray-900 mb-1">
                 <span />
                 <span />
                 <span className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Title</span>
@@ -352,16 +352,15 @@ export default function LocalFilesPage() {
                       key={lf.id}
                       onClick={() => handlePlay(lf)}
                       style={{ animationDelay: `${idx * 18}ms` }}
-                      className={`group grid grid-cols-[32px_44px_1fr_76px_56px_68px_36px] gap-4 items-center px-4 py-3 rounded-2xl cursor-pointer transition-all duration-200 animate-in fade-in slide-in-from-left-2 fill-mode-both ${
+                      className={`group flex items-center gap-3 md:grid md:grid-cols-[32px_44px_1fr_76px_56px_68px_36px] md:gap-4 px-3 md:px-4 py-3 rounded-2xl cursor-pointer transition-all duration-200 animate-in fade-in slide-in-from-left-2 fill-mode-both ${
                         isCurrent
                           ? "bg-pink-50 dark:bg-pink-950/20 border border-pink-200/60 dark:border-pink-800/40"
                           : "border border-transparent hover:bg-gray-50 dark:hover:bg-gray-900/50"
                       }`}
                     >
                       {/* # / play indicator */}
-                      <div className="flex items-center justify-center">
+                      <div className="flex items-center justify-center w-6 md:w-auto flex-shrink-0">
                         {isPlayingThis ? (
-                          /* Animated bars when playing */
                           <div className="flex items-end gap-[2px] h-4">
                             {[0, 0.15, 0.08].map((delay, i) => (
                               <span
@@ -392,36 +391,43 @@ export default function LocalFilesPage() {
                         <Music size={15} className="text-white/80" />
                       </div>
 
-                      {/* Title */}
-                      <span
-                        className={`text-sm font-semibold truncate ${
-                          isCurrent ? "text-pink-500" : "text-gray-900 dark:text-white"
-                        }`}
-                      >
-                        {lf.displayName}
-                      </span>
+                      {/* Title + mobile meta */}
+                      <div className="flex-1 min-w-0 md:contents">
+                        <span
+                          className={`text-sm font-semibold truncate block ${
+                            isCurrent ? "text-pink-500" : "text-gray-900 dark:text-white"
+                          }`}
+                        >
+                          {lf.displayName}
+                        </span>
+                        <div className="flex items-center gap-2 mt-0.5 md:hidden">
+                          <span className="text-[10px] font-bold text-gray-400">{lf.duration > 0 ? formatDuration(lf.duration * 1000) : "—"}</span>
+                          <span className="px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-[9px] font-bold text-gray-500 uppercase">{format}</span>
+                          <span className="text-[10px] text-gray-400">{formatBytes(lf.sizeBytes)}</span>
+                        </div>
+                      </div>
 
-                      {/* Duration */}
-                      <span className="text-xs font-medium text-gray-400 tabular-nums">
+                      {/* Duration (desktop) */}
+                      <span className="hidden md:block text-xs font-medium text-gray-400 tabular-nums">
                         {lf.duration > 0 ? formatDuration(lf.duration * 1000) : "—"}
                       </span>
 
-                      {/* Format badge */}
-                      <span>
+                      {/* Format badge (desktop) */}
+                      <span className="hidden md:block">
                         <span className="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-[10px] font-bold text-gray-500 uppercase tracking-tight">
                           {format}
                         </span>
                       </span>
 
-                      {/* File size */}
-                      <span className="text-xs font-medium text-gray-400 tabular-nums">
+                      {/* File size (desktop) */}
+                      <span className="hidden md:block text-xs font-medium text-gray-400 tabular-nums">
                         {formatBytes(lf.sizeBytes)}
                       </span>
 
                       {/* Remove */}
                       <button
                         onClick={(e) => { e.stopPropagation(); removeFile(lf.id) }}
-                        className="opacity-0 group-hover:opacity-100 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-100 dark:hover:bg-red-900/20 text-gray-400 hover:text-red-500 transition-all"
+                        className="opacity-0 group-hover:opacity-100 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-100 dark:hover:bg-red-900/20 text-gray-400 hover:text-red-500 transition-all flex-shrink-0"
                       >
                         <X size={14} />
                       </button>
