@@ -73,7 +73,7 @@ export async function getTopTracks(): Promise<ITunesTrack[]> {
           isStreamable: true
         } as ITunesTrack)
       } catch (err) {
-        // Skip malformed
+        console.warn("Skipping malformed RSS entry due to error:", err);
       }
     })
 
