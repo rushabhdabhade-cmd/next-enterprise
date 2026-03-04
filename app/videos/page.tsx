@@ -16,16 +16,16 @@ export default function VideosPage() {
     const [loading, setLoading] = useState(true)
     const [playingVideo, setPlayingVideo] = useState<ITunesMusicVideo | null>(null)
 
-    const fetchVideos = async (term: string) => {
+    const fetchVideos = useCallback(async (term: string) => {
         setLoading(true)
         const results = await searchMusicVideos(term, 30)
         setVideos(results)
         setLoading(false)
-    }
+    }, [])
 
     useEffect(() => {
         fetchVideos(activeTag)
-    }, [activeTag])
+    }, [activeTag, fetchVideos])
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault()
