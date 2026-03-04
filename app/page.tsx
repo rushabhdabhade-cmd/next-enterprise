@@ -1,16 +1,17 @@
 "use client"
 
-import { useState, useEffect, useRef, useMemo } from "react"
-import LeftSidebar from "@/components/LeftSidebar"
-import HeroSection from "@/components/HeroSection"
-import RecentlyPlayedContent from "@/components/RecentlyPlayedContent"
-import Queue from "@/components/Queue"
-import ThemeToggle from "@/components/ThemeToggle"
-import SearchBar from "@/components/SearchBar"
-import CatalogGrid, { CatalogLoadingSkeleton } from "@/components/CatalogGrid"
-import HotSection from "@/components/HotSection"
+import { ChevronLeft, ChevronRight, Compass, Flame, History, MoreHorizontal, Sparkles, Star } from "lucide-react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import CatalogGrid, { CatalogLoadingSkeleton } from "@/components/catalog/CatalogGrid"
+import RecentlyPlayedContent from "@/components/catalog/RecentlyPlayedContent"
+import LeftSidebar from "@/components/layout/LeftSidebar"
+import SearchBar from "@/components/layout/SearchBar"
+import Queue from "@/components/playback/Queue"
+import ForYouSection from "@/components/sections/ForYouSection"
+import HeroSection from "@/components/sections/HeroSection"
+import HotSection from "@/components/sections/HotSection"
+import ThemeToggle from "@/components/ui/ThemeToggle"
 import { useItunesSearch } from "@/hooks/useItunesSearch"
-import { Sparkles, Compass, History, Star, ChevronLeft, ChevronRight, MoreHorizontal, Flame } from "lucide-react"
 
 const ITEMS_PER_PAGE = 20
 const MAX_PAGES = 20
@@ -74,7 +75,7 @@ export default function Home() {
     const windowSize = 4
 
     let startPage = Math.max(1, currentPage - 1)
-    let endPage = Math.min(totalPages, startPage + windowSize - 1)
+    const endPage = Math.min(totalPages, startPage + windowSize - 1)
 
     if (endPage - startPage < windowSize - 1) {
       startPage = Math.max(1, endPage - windowSize + 1)
@@ -85,7 +86,7 @@ export default function Home() {
         <button
           key={i}
           onClick={() => handlePageChange(i)}
-          className={`w-10 h-10 rounded-2xl text-[13px] font-bold transition-all duration-300 ${currentPage === i
+          className={`w-8 h-8 md:w-10 md:h-10 rounded-xl md:rounded-2xl text-[12px] md:text-[13px] font-bold transition-all duration-300 ${currentPage === i
             ? "bg-pink-500 text-white shadow-xl shadow-pink-500/25 scale-110"
             : "text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-900"
             }`}
@@ -103,45 +104,39 @@ export default function Home() {
 
       {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto relative scroll-smooth">
-        <div className="max-w-7xl mx-auto px-8 py-12 pb-32">
+        <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
-          <header className="flex items-center justify-between mb-10">
-            <div>
-              <h2 className="text-3xl font-light tracking-tight text-gray-900 dark:text-white">
-                Discovery <span className="font-bold">Hub</span>
-              </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">
-                Your personalized soundtrack for today
-              </p>
-            </div>
+          <header className="flex items-center justify-end mb-6 md:mb-10 pl-12 lg:pl-0">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full border border-gray-100 dark:border-gray-900 flex items-center justify-center opacity-50">
+              <div className="w-10 h-10 rounded-full border border-gray-100 dark:border-gray-900 flex items-center justify-center opacity-50 hidden md:flex">
                 <Star size={18} />
               </div>
               <ThemeToggle />
             </div>
           </header>
 
-          <div className="rounded-[40px] overflow-hidden border border-gray-100 dark:border-gray-900 shadow-2xl shadow-black/5 dark:shadow-white/5 mb-16">
+          <div className="rounded-2xl md:rounded-[40px] overflow-hidden border border-gray-100 dark:border-gray-900 shadow-2xl shadow-black/5 dark:shadow-white/5 mb-8 md:mb-16">
             <HeroSection title={heroTitle} subtitle={heroSubtitle} track={firstTrack} queue={tracks} />
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex items-center gap-12 border-b border-gray-100 dark:border-gray-900 mb-12">
+          <div className="flex items-center gap-4 md:gap-8 lg:gap-12 border-b border-gray-100 dark:border-gray-900 mb-8 md:mb-12 overflow-x-auto scrollbar-hide">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   setActiveTab(tab.id as any)
                   setCurrentPage(1)
                 }}
-                className={`group pb-6 flex items-center gap-2.5 text-sm font-bold tracking-tight transition-all relative ${activeTab === tab.id
+                className={`group pb-4 md:pb-6 flex items-center gap-2 md:gap-2.5 text-xs md:text-sm font-bold tracking-tight transition-all relative whitespace-nowrap ${activeTab === tab.id
                   ? "text-gray-950 dark:text-white"
                   : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
                   }`}
               >
-                <tab.icon size={18} className={activeTab === tab.id ? "text-pink-500" : "group-hover:text-pink-400 transition-colors"} />
-                {tab.name}
+                <tab.icon size={16} className={`flex-shrink-0 ${activeTab === tab.id ? "text-pink-500" : "group-hover:text-pink-400 transition-colors"}`} />
+                <span className="hidden sm:inline">{tab.name}</span>
+                <span className="sm:hidden">{tab.id === "recent" ? "Recent" : tab.id === "recommended" ? "For You" : tab.name}</span>
                 {activeTab === tab.id && (
                   <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-950 dark:bg-white rounded-full animate-in fade-in slide-in-from-bottom-1" />
                 )}
@@ -165,36 +160,33 @@ export default function Home() {
 
                 {/* Refined Modern Pagination UI */}
                 {!loading && tracks.length > ITEMS_PER_PAGE && (
-                  <div className="mt-20 flex items-center justify-between py-10 border-t border-gray-100 dark:border-gray-900">
-                    <div className="flex flex-col">
+                  <div className="mt-10 md:mt-20 flex flex-col sm:flex-row items-center justify-between gap-4 py-6 md:py-10 border-t border-gray-100 dark:border-gray-900">
+                    <p className="text-xs font-bold text-gray-400">
+                      Page <span className="text-gray-900 dark:text-white">{currentPage}</span> of {totalPages}
+                    </p>
 
-                      <p className="text-xs font-bold text-gray-400">
-                        Page <span className="text-gray-900 dark:text-white">{currentPage}</span> of {totalPages}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 md:gap-3">
                       <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="w-12 h-12 rounded-2xl border border-gray-100 dark:border-gray-900 flex items-center justify-center text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:bg-gray-50 dark:hover:bg-gray-900 hover:scale-105 active:scale-95"
+                        className="w-10 h-10 md:w-12 md:h-12 rounded-2xl border border-gray-100 dark:border-gray-900 flex items-center justify-center text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:bg-gray-50 dark:hover:bg-gray-900 hover:scale-105 active:scale-95"
                       >
-                        <ChevronLeft size={20} />
+                        <ChevronLeft size={18} />
                       </button>
 
-                      <div className="flex items-center gap-2 bg-gray-50/50 dark:bg-gray-900/50 p-1.5 rounded-[20px] border border-gray-100/50 dark:border-gray-800/50">
+                      <div className="flex items-center gap-1 md:gap-2 bg-gray-50/50 dark:bg-gray-900/50 p-1 md:p-1.5 rounded-2xl border border-gray-100/50 dark:border-gray-800/50">
                         {renderPageButtons()}
 
                         {totalPages > 5 && currentPage < totalPages - 2 && (
-                          <div className="w-10 h-10 flex items-center justify-center text-gray-300">
-                            <MoreHorizontal size={16} />
+                          <div className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-gray-300">
+                            <MoreHorizontal size={14} />
                           </div>
                         )}
 
                         {totalPages > 5 && currentPage < totalPages - 2 && (
                           <button
                             onClick={() => handlePageChange(totalPages)}
-                            className={`w-10 h-10 rounded-2xl text-[13px] font-bold transition-all ${currentPage === totalPages
+                            className={`w-8 h-8 md:w-10 md:h-10 rounded-xl md:rounded-2xl text-[12px] md:text-[13px] font-bold transition-all ${currentPage === totalPages
                               ? "bg-pink-500 text-white shadow-xl shadow-pink-500/25"
                               : "text-gray-400 hover:text-gray-900 dark:hover:text-white"
                               }`}
@@ -207,9 +199,9 @@ export default function Home() {
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="w-12 h-12 rounded-2xl border border-gray-100 dark:border-gray-900 flex items-center justify-center text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:bg-gray-50 dark:hover:bg-gray-900 hover:scale-105 active:scale-95"
+                        className="w-10 h-10 md:w-12 md:h-12 rounded-2xl border border-gray-100 dark:border-gray-900 flex items-center justify-center text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:bg-gray-50 dark:hover:bg-gray-900 hover:scale-105 active:scale-95"
                       >
-                        <ChevronRight size={20} />
+                        <ChevronRight size={18} />
                       </button>
                     </div>
                   </div>
@@ -231,14 +223,8 @@ export default function Home() {
             )}
 
             {activeTab === "recommended" && (
-              <div className="h-64 flex flex-col items-center justify-center text-center p-12 bg-gray-50 dark:bg-gray-900 rounded-[40px] border border-gray-100 dark:border-gray-800 animate-in zoom-in-95 duration-700">
-                <div className="w-16 h-16 bg-white dark:bg-gray-950 rounded-3xl flex items-center justify-center shadow-xl mb-6">
-                  <Sparkles size={28} className="text-pink-500" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Curating Perfection</h3>
-                <p className="text-gray-500 dark:text-gray-400 max-w-sm font-medium leading-relaxed">
-                  Our algorithm is learning your acoustic fingerprint. Check back soon for custom picks.
-                </p>
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <ForYouSection />
               </div>
             )}
           </div>

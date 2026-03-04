@@ -1,12 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { useUser } from "@clerk/nextjs"
-import { Clock, Play, Pause, Music, Heart, Plus } from "lucide-react"
-import { usePlayback } from "@/context/PlaybackContext"
-import { formatDuration } from "@/services/itunesService"
+import { Clock, Heart, Music, Pause, Play, Plus } from "lucide-react"
+import { useEffect, useState } from "react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
+import { usePlayback } from "@/context/PlaybackContext"
 import type { SongPlay } from "@/lib/db"
+import { formatDuration } from "@/services/itunesService"
 import type { ITunesTrack } from "@/types/itunes"
 
 function playToTrack(play: SongPlay): ITunesTrack {
@@ -69,9 +69,12 @@ export default function RecentlyPlayedContent() {
         if (!isSignedIn) { setLoading(false); return }
 
         fetch("/api/user/plays?limit=100")
-            .then((r) => r.json() as Promise<{ plays: SongPlay[] }>)
+            .then((r) => {
+                if (!r.ok) throw new Error(`${r.status}`)
+                return r.json() as Promise<{ plays: SongPlay[] }>
+            })
             .then(({ plays }) => setRecentTracks(deduplicateByTrack(plays ?? [])))
-            .catch(() => {})
+            .catch((err) => console.error("Failed to load play history:", err))
             .finally(() => setLoading(false))
     }, [isLoaded, isSignedIn])
 

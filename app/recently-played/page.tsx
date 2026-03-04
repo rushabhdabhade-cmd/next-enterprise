@@ -1,9 +1,9 @@
 "use client"
 
 import { Clock } from "lucide-react"
-import LeftSidebar from "@/components/LeftSidebar"
-import Queue from "@/components/Queue"
-import RecentlyPlayedContent from "@/components/RecentlyPlayedContent"
+import RecentlyPlayedContent from "@/components/catalog/RecentlyPlayedContent"
+import LeftSidebar from "@/components/layout/LeftSidebar"
+import Queue from "@/components/playback/Queue"
 
 export default function RecentlyPlayedPage() {
     return (
@@ -11,7 +11,7 @@ export default function RecentlyPlayedPage() {
             <LeftSidebar />
 
             <main className="flex-1 overflow-y-auto scroll-smooth">
-                <div className="max-w-7xl mx-auto px-8 py-12 pb-32">
+                <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
                     {/* Header */}
                     <header className="mb-10">
