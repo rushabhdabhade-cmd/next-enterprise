@@ -110,7 +110,7 @@ export default function NowPlayingBar() {
 
                             <button
                                 onClick={togglePlay}
-                                className="w-11 h-11 md:w-13 md:h-13 flex items-center justify-center bg-gray-950 dark:bg-white text-white dark:text-gray-950 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all"
+                                className="w-11 h-11 md:w-12 md:h-12 flex items-center justify-center bg-gray-950 dark:bg-white text-white dark:text-gray-950 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all"
                             >
                                 {isPlaying ? <Pause fill="currentColor" size={20} /> : <Play fill="currentColor" className="ml-1" size={20} />}
                             </button>
