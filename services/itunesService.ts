@@ -93,7 +93,7 @@ export async function searchTracks(
     const queryParams = new URLSearchParams({
       term: params.term,
       entity: params.entity || "song",
-      limit: "200",
+      limit: String(params.limit || 20),
     })
 
     const response = await fetch(`${ITUNES_API_BASE}?${queryParams}`, {
