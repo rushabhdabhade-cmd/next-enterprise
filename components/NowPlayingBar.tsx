@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { usePlayback } from "@/context/PlaybackContext"
 import { formatDuration } from "@/services/itunesService"
+import { trackInteraction } from "@/lib/analytics"
 import {
     Play,
     Pause,
@@ -50,7 +51,12 @@ export default function NowPlayingBar() {
     }
 
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        updateVolume(parseFloat(e.target.value))
+        const newVal = parseFloat(e.target.value)
+        updateVolume(newVal)
+        // Throttle this or only track on major changes if needed, but for now simple track
+        if (newVal === 0 || newVal === 1) {
+            trackInteraction('volume_slider', newVal === 0 ? 'mute' : 'max_volume')
+        }
     }
 
     const VolumeIcon = volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2
@@ -117,7 +123,10 @@ export default function NowPlayingBar() {
                         <div className="flex flex-col gap-6">
                             <div className="flex items-center justify-between">
                                 <button
-                                    onClick={toggleShuffle}
+                                    onClick={() => {
+                                        toggleShuffle()
+                                        trackInteraction('shuffle_toggle', !isShuffle ? 'enabled' : 'disabled')
+                                    }}
                                     className={`transition-colors ${isShuffle ? 'text-pink-500' : 'text-gray-300 dark:text-gray-600'}`}
                                 >
                                     <Shuffle size={18} />
@@ -143,7 +152,10 @@ export default function NowPlayingBar() {
                                     </button>
                                 </div>
                                 <button
-                                    onClick={toggleRepeat}
+                                    onClick={() => {
+                                        toggleRepeat()
+                                        trackInteraction('repeat_toggle', !isRepeat ? 'enabled' : 'disabled')
+                                    }}
                                     className={`transition-colors ${isRepeat ? 'text-pink-500' : 'text-gray-300 dark:text-gray-600'}`}
                                 >
                                     <Repeat size={18} />
@@ -298,7 +310,10 @@ export default function NowPlayingBar() {
                             </div>
                         </div>
                         <button
-                            onClick={() => setIsExpanded(true)}
+                            onClick={() => {
+                                setIsExpanded(true)
+                                trackInteraction('now_playing_bar', 'expand')
+                            }}
                             className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all hover:scale-110 active:scale-90"
                         >
                             <Maximize2 size={16} />

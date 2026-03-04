@@ -7,6 +7,7 @@ import { formatDuration } from "@/services/itunesService"
 import { usePlayback } from "@/context/PlaybackContext"
 import { trackTrackSelected, trackTrackFavorited } from "@/lib/analytics"
 import { Play, Pause, Heart, Plus, Music } from "lucide-react"
+import { trackTrackSelected, trackTrackFavorited } from "@/lib/analytics"
 
 interface TrackListProps {
   tracks: ITunesTrack[]
@@ -21,11 +22,11 @@ export default function TrackList({ tracks, loading }: TrackListProps) {
   const handlePlayClick = (e: React.MouseEvent, track: ITunesTrack) => {
     e.stopPropagation()
 
-    // Explicitly track selection when playing as well for trending aggregation
+    // Log analytics
     trackTrackSelected({
       id: String(track.trackId),
       artist: track.artistName,
-      genre: track.primaryGenreName
+      genre: track.primaryGenreName || "Unknown"
     })
 
     if (currentTrack?.trackId === track.trackId) {
@@ -36,10 +37,11 @@ export default function TrackList({ tracks, loading }: TrackListProps) {
   }
 
   const handleDetailsClick = (track: ITunesTrack) => {
+    // Log analytics
     trackTrackSelected({
       id: String(track.trackId),
       artist: track.artistName,
-      genre: track.primaryGenreName
+      genre: track.primaryGenreName || "Unknown"
     })
     router.push(`/track/${track.trackId}`)
   }

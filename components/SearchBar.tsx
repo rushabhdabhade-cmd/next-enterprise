@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { SearchTrackParams } from "@/types/itunes"
-import { Search, Loader2, XCircle } from "lucide-react"
+import { Search, Loader2, XCircle, X } from "lucide-react"
+import { trackSearch, trackSearchCleared } from "@/lib/analytics"
 
 interface SearchBarProps {
   onSearchComplete?: (count: number) => void
@@ -31,10 +32,17 @@ export default function SearchBar({
         limit: 20,
       })
 
-      onSearchComplete?.(results.length)
+      const count = results.length
+      trackSearch(searchQuery, count)
+      onSearchComplete?.(count)
     } catch {
       // Error is handled in the hook
     }
+  }
+
+  const handleClear = () => {
+    setSearchQuery("")
+    trackSearchCleared()
   }
 
   return (
@@ -53,9 +61,19 @@ export default function SearchBar({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Artist, song or mood..."
-          className="w-full pl-16 pr-32 py-6 rounded-[32px] bg-gray-50 dark:bg-gray-900 border-none text-gray-950 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-lg font-light tracking-tight focus:ring-4 focus:ring-pink-500/10 focus:bg-white dark:focus:bg-gray-800 transition-all duration-300 shadow-sm"
+          className="w-full pl-16 pr-44 py-6 rounded-[32px] bg-gray-50 dark:bg-gray-900 border-none text-gray-950 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-lg font-light tracking-tight focus:ring-4 focus:ring-pink-500/10 focus:bg-white dark:focus:bg-gray-800 transition-all duration-300 shadow-sm"
           disabled={loading}
         />
+
+        {searchQuery && !loading && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="absolute right-36 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+          >
+            <X size={20} />
+          </button>
+        )}
 
         <button
           type="submit"

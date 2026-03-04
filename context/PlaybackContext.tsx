@@ -4,6 +4,8 @@ import React, { createContext, useContext, useState, useRef, ReactNode, useEffec
 import { ITunesTrack } from "@/types/itunes"
 import { trackTrackPlayed, trackTrackPaused } from "@/lib/analytics"
 
+import { trackTrackPlayed, trackTrackPaused } from "@/lib/analytics"
+
 interface PlaybackContextType {
     currentTrack: ITunesTrack | null
     queue: ITunesTrack[]

@@ -10,6 +10,9 @@ import SearchBar from "@/components/SearchBar"
 import TrackList from "@/components/TrackList"
 import HotSection from "@/components/HotSection"
 import { useItunesSearch } from "@/hooks/useItunesSearch"
+import { useFeatureFlag } from "@/lib/featureFlags"
+import { trackLayoutExposure } from "@/lib/analytics"
+import { Sparkles, Compass, History, Star, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 import { Sparkles, Compass, History, Star, ChevronLeft, ChevronRight, MoreHorizontal, Flame } from "lucide-react"
 
 const ITEMS_PER_PAGE = 20
@@ -17,6 +20,14 @@ const MAX_PAGES = 20
 
 export default function Home() {
   const { tracks, loading, error, search, fetchTopTracks } = useItunesSearch()
+  const isNewLayout = useFeatureFlag('new-catalog-layout')
+
+  useEffect(() => {
+    if (isNewLayout !== undefined) {
+      trackLayoutExposure(isNewLayout ? "new" : "old")
+    }
+  }, [isNewLayout])
+
   const [activeTab, setActiveTab] = useState<"explore" | "trending" | "recent" | "recommended">("explore")
   const [currentPage, setCurrentPage] = useState(1)
   const hasFetched = useRef(false)
