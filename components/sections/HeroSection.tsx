@@ -1,7 +1,8 @@
 "use client"
 
 import { Heart, Pause, Play } from "lucide-react"
-import { usePlayback } from "@/context/PlaybackContext"
+import { useUser } from "@clerk/nextjs"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { ITunesTrack } from "@/types/itunes"
 
 interface HeroSectionProps {
@@ -17,19 +18,20 @@ export default function HeroSection({
   track,
   queue,
 }: HeroSectionProps) {
-  const { playTrack, togglePlay, currentTrack, isPlaying, favorites, toggleFavorite } = usePlayback()
+  const { isSignedIn } = useUser()
+  const { playTrack, togglePlay, currentTrack, isPlaying, favorites, toggleFavorite } = usePlaybackStore()
 
-  const isCurrent     = !!track && currentTrack?.trackId === track.trackId
+  const isCurrent = !!track && currentTrack?.trackId === track.trackId
   const isPlayingThis = isCurrent && isPlaying
-  const isFavorited   = !!track && favorites.has(track.trackId)
-  const artworkUrl    = track?.artworkUrl100?.replace("100x100", "600x600")
+  const isFavorited = !!track && favorites.has(track.trackId)
+  const artworkUrl = track?.artworkUrl100?.replace("100x100", "600x600")
 
   const handlePlay = () => {
     if (!track) return
     if (isCurrent) {
       togglePlay()
     } else {
-      playTrack(track, queue ?? [track])
+      playTrack(track, queue ?? [track], !!isSignedIn)
     }
   }
 
@@ -65,13 +67,13 @@ export default function HeroSection({
             >
               {isPlayingThis
                 ? <Pause fill="currentColor" size={16} />
-                : <Play  fill="currentColor" size={16} />
+                : <Play fill="currentColor" size={16} />
               }
               {isPlayingThis ? "Pause" : "Listen Now"}
             </button>
 
             <button
-              onClick={() => track && toggleFavorite(track)}
+              onClick={() => track && toggleFavorite(track, !!isSignedIn)}
               disabled={!track}
               className="w-9 h-9 md:w-10 md:h-10 bg-pink-500/10 dark:bg-pink-500 hover:bg-pink-500/20 dark:hover:bg-pink-400 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
             >

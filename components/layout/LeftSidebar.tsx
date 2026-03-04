@@ -31,12 +31,12 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 import logo from "@/assets/logo.png"
-import { useLibrary } from "@/context/LibraryContext"
+import { useLibraryStore } from "@/store/useLibraryStore"
 
 export default function LeftSidebar() {
   const pathname = usePathname()
   const { user } = useUser()
-  const { libraries } = useLibrary()
+  const { libraries } = useLibraryStore()
   const [mobileOpen, setMobileOpen] = useState(false)
 
   const navItems = [
@@ -108,7 +108,7 @@ export default function LeftSidebar() {
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all group ${isActive
                   ? "bg-gray-100 dark:bg-gray-900 text-gray-950 dark:text-white"
                   : "text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-900/50 hover:text-gray-950 dark:hover:text-white"
-                }`}
+                  }`}
               >
                 <playlist.icon size={18} className={isActive ? "text-pink-500" : "group-hover:text-pink-500 transition-colors"} />
                 {playlist.name}
@@ -145,11 +145,10 @@ export default function LeftSidebar() {
                     <Link
                       href={`/libraries/${lib.id}`}
                       onClick={closeMobile}
-                      className={`flex items-center gap-3 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
-                        isActive
+                      className={`flex items-center gap-3 px-4 py-2 rounded-xl text-xs font-medium transition-all ${isActive
                           ? "bg-gray-100 dark:bg-gray-900 text-gray-950 dark:text-white"
                           : "text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900/50 hover:text-gray-950 dark:hover:text-white"
-                      }`}
+                        }`}
                     >
                       <span className="w-1.5 h-1.5 rounded-full bg-purple-500/40 flex-shrink-0" />
                       <span className="truncate">{lib.name}</span>
@@ -241,32 +240,31 @@ export default function LeftSidebar() {
 
         {/* ── Mobile drawer ── */}
         <aside
-          className={`fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-gray-950 border-r border-gray-100 dark:border-gray-900 flex flex-col transition-transform duration-300 ${
-            mobileOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+          className={`fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-gray-950 border-r border-gray-100 dark:border-gray-900 flex flex-col transition-transform duration-300 ${mobileOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
         >
-        {/* Mobile header — with close button */}
-        <div className="p-6">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3 group" onClick={closeMobile}>
-              <div className="w-10 h-10 rounded-xl overflow-hidden transition-transform group-hover:scale-105 flex-shrink-0">
-                <Image src={logo} alt="Logo" width={40} height={40} className="w-full h-full object-cover" />
-              </div>
-              <h1 className="text-xl font-bold tracking-tight text-gray-950 dark:text-white">
-                iTunes
-              </h1>
-            </Link>
-            <button
-              onClick={closeMobile}
-              className="w-9 h-9 flex items-center justify-center rounded-xl text-gray-500 hover:text-gray-950 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-900 transition-all"
-            >
-              <X size={20} />
-            </button>
+          {/* Mobile header — with close button */}
+          <div className="p-6">
+            <div className="flex items-center justify-between">
+              <Link href="/" className="flex items-center gap-3 group" onClick={closeMobile}>
+                <div className="w-10 h-10 rounded-xl overflow-hidden transition-transform group-hover:scale-105 flex-shrink-0">
+                  <Image src={logo} alt="Logo" width={40} height={40} className="w-full h-full object-cover" />
+                </div>
+                <h1 className="text-xl font-bold tracking-tight text-gray-950 dark:text-white">
+                  iTunes
+                </h1>
+              </Link>
+              <button
+                onClick={closeMobile}
+                className="w-9 h-9 flex items-center justify-center rounded-xl text-gray-500 hover:text-gray-950 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-900 transition-all"
+              >
+                <X size={20} />
+              </button>
+            </div>
           </div>
-        </div>
 
-        {navContent}
-        {profileSection}
+          {navContent}
+          {profileSection}
         </aside>
       </div>
 

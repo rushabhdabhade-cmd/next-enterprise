@@ -3,9 +3,10 @@
 import { Check, ChevronLeft, Heart, Loader2, Pause, Play, Plus, Share2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { useUser } from "@clerk/nextjs"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
 import AISummary from "@/components/AISummary"
-import { usePlayback } from "@/context/PlaybackContext"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { trackAISummaryExposure } from "@/lib/analytics"
 import { useFeatureFlag } from "@/lib/featureFlags"
 import { getCachedTrack } from "@/lib/trackNavigationCache"
@@ -14,7 +15,8 @@ import { ITunesTrack } from "@/types/itunes"
 
 export default function TrackDetailClient({ trackId }: { trackId: number }) {
     const router = useRouter()
-    const { playTrack, currentTrack, isPlaying, togglePlay } = usePlayback()
+    const { isSignedIn } = useUser()
+    const { playTrack, currentTrack, isPlaying, togglePlay, toggleFavorite, favorites } = usePlaybackStore()
     const showAISummary = useFeatureFlag("ai-summaries")
 
     const [track, setTrack] = useState<ITunesTrack | null>(() => getCachedTrack(trackId))
@@ -122,7 +124,7 @@ export default function TrackDetailClient({ trackId }: { trackId: number }) {
 
                             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 md:gap-4">
                                 <button
-                                    onClick={() => isCurrent ? togglePlay() : playTrack(track)}
+                                    onClick={() => isCurrent ? togglePlay() : playTrack(track, undefined, !!isSignedIn)}
                                     className="px-6 py-3 md:px-10 md:py-4 bg-gray-950 dark:bg-white text-white dark:text-gray-950 rounded-full font-semibold shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 md:gap-3 text-sm md:text-base group"
                                 >
                                     <span>
@@ -131,8 +133,15 @@ export default function TrackDetailClient({ trackId }: { trackId: number }) {
                                     {(isCurrent && isPlaying) ? 'Pause' : 'Listen Now'}
                                 </button>
 
-                                <button className="w-11 h-11 md:w-14 md:h-14 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center hover:bg-pink-50 dark:hover:bg-pink-900/10 hover:border-pink-200 dark:hover:border-pink-800 transition-all">
-                                    <Heart size={20} className="text-gray-400 hover:text-pink-500" />
+                                <button
+                                    onClick={() => track && toggleFavorite(track, !!isSignedIn)}
+                                    className="w-11 h-11 md:w-14 md:h-14 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center hover:bg-pink-50 dark:hover:bg-pink-900/10 hover:border-pink-200 dark:hover:border-pink-800 transition-all"
+                                >
+                                    <Heart
+                                        size={20}
+                                        fill={track && favorites.has(track.trackId) ? "currentColor" : "none"}
+                                        className={track && favorites.has(track.trackId) ? "text-pink-500" : "text-gray-400 hover:text-pink-500"}
+                                    />
                                 </button>
 
                                 <button

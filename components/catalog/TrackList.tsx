@@ -3,8 +3,9 @@
 import { ChevronRight, Heart, Pause, Play, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useUser } from "@clerk/nextjs"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
-import { usePlayback } from "@/context/PlaybackContext"
+import { usePlaybackStore } from "@/store/usePlaybackStore"
 import { trackTrackSelected } from "@/lib/analytics"
 import { formatDuration } from "@/services/itunesService"
 import { setCachedTrack } from "@/lib/trackNavigationCache"
@@ -17,7 +18,8 @@ interface TrackListProps {
 
 export default function TrackList({ tracks, loading }: TrackListProps) {
   const router = useRouter()
-  const { currentTrack, isPlaying, playTrack, togglePlay, favorites, toggleFavorite } = usePlayback()
+  const { isSignedIn } = useUser()
+  const { currentTrack, isPlaying, playTrack, togglePlay, favorites, toggleFavorite } = usePlaybackStore()
   const [libraryTrack, setLibraryTrack] = useState<ITunesTrack | null>(null)
 
   const handlePlayClick = (e: React.MouseEvent, track: ITunesTrack) => {
@@ -32,7 +34,7 @@ export default function TrackList({ tracks, loading }: TrackListProps) {
     if (currentTrack?.trackId === track.trackId) {
       togglePlay()
     } else {
-      playTrack(track, tracks)
+      playTrack(track, tracks, !!isSignedIn)
     }
   }
 
@@ -119,7 +121,7 @@ export default function TrackList({ tracks, loading }: TrackListProps) {
             {/* Hover Actions */}
             <div className="flex flex-col gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0 duration-300">
               <button
-                onClick={(e) => { e.stopPropagation(); toggleFavorite(track) }}
+                onClick={(e) => { e.stopPropagation(); toggleFavorite(track, !!isSignedIn) }}
                 className={`transition-all hover:scale-110 ${favorites.has(track.trackId) ? 'text-pink-500' : 'text-gray-300 dark:text-gray-600 hover:text-pink-500'}`}
               >
                 <Heart size={18} fill={favorites.has(track.trackId) ? "currentColor" : "none"} />

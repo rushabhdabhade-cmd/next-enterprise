@@ -3,7 +3,7 @@
 import * as Dialog from "@radix-ui/react-dialog"
 import { Check, ListMusic, Loader2, Plus, X } from "lucide-react"
 import { useState } from "react"
-import { useLibrary } from "@/context/LibraryContext"
+import { useLibraryStore } from "@/store/useLibraryStore"
 import type { ITunesTrack } from "@/types/itunes"
 
 interface AddToLibraryModalProps {
@@ -13,7 +13,7 @@ interface AddToLibraryModalProps {
 }
 
 export default function AddToLibraryModal({ track, open, onOpenChange }: AddToLibraryModalProps) {
-    const { libraries, librariesLoaded, addToLibrary, createLibrary } = useLibrary()
+    const { libraries, librariesLoaded, addToLibrary, createLibrary } = useLibraryStore()
     const [newLibraryName, setNewLibraryName] = useState("")
     const [creating, setCreating] = useState(false)
     const [addedTo, setAddedTo] = useState<Set<string>>(new Set())
@@ -123,11 +123,10 @@ export default function AddToLibraryModal({ track, open, onOpenChange }: AddToLi
                                     key={lib.id}
                                     onClick={() => !isAdded && handleAddToLibrary(lib.id)}
                                     disabled={isAdded || isAdding}
-                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all ${
-                                        isAdded
-                                            ? "bg-pink-50 dark:bg-pink-950/20 border border-pink-200 dark:border-pink-800/40"
-                                            : "hover:bg-gray-50 dark:hover:bg-gray-900 border border-transparent"
-                                    }`}
+                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all ${isAdded
+                                        ? "bg-pink-50 dark:bg-pink-950/20 border border-pink-200 dark:border-pink-800/40"
+                                        : "hover:bg-gray-50 dark:hover:bg-gray-900 border border-transparent"
+                                        }`}
                                 >
                                     <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
                                         <ListMusic size={16} className="text-gray-400" />

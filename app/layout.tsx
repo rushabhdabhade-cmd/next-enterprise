@@ -4,9 +4,8 @@ import "styles/tailwind.css"
 import PostHogIdentifier from "@/components/analytics/PostHogIdentifier"
 import PostHogPageView from "@/components/analytics/PostHogPageView"
 import UserSync from "@/components/analytics/UserSync"
+import StoreInitializer from "@/components/StoreInitializer"
 import NowPlayingBar from "@/components/playback/NowPlayingBar"
-import { LibraryProvider } from "@/context/LibraryContext"
-import { PlaybackProvider } from "@/context/PlaybackContext"
 import { ClerkProvider } from "@clerk/nextjs"
 
 export const metadata: Metadata = {
@@ -56,12 +55,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Suspense fallback={null}>
             <PostHogPageView />
           </Suspense>
-          <PlaybackProvider>
-            <LibraryProvider>
-              {children}
-              <NowPlayingBar />
-            </LibraryProvider>
-          </PlaybackProvider>
+          <StoreInitializer />
+          {children}
+          <NowPlayingBar />
         </body>
       </html>
     </ClerkProvider>
