@@ -136,10 +136,7 @@ export default function Home() {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => {
-                  setActiveTab(tab.id)
-                  setCurrentPage(1)
-                }}
+                onClick={() => setActiveTab(tab.id)}
                 className={`group pb-6 flex items-center gap-2.5 text-sm font-bold tracking-tight transition-all relative ${activeTab === tab.id
                   ? "text-gray-950 dark:text-white"
                   : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
