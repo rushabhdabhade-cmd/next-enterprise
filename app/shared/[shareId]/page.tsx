@@ -7,7 +7,7 @@ export const revalidate = 300
 export async function generateMetadata({
     params,
 }: {
-    params: Promise<{ shareId: string }>
+    params: { shareId: string }
 }): Promise<Metadata> {
     const { shareId } = await params
     const result = await getSharedLibrary(shareId)
