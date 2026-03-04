@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useRef, ReactNode, useEffect, useCallback } from "react"
 import { ITunesTrack } from "@/types/itunes"
+import { trackTrackPlayed, trackTrackPaused } from "@/lib/analytics"
 
 import { trackTrackPlayed, trackTrackPaused } from "@/lib/analytics"
 
@@ -198,6 +199,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
         if (audioRef.current) {
             audioRef.current.pause()
             setIsPlaying(false)
+            // Note: Pause event listener added in playTrack will handle tracking
         }
     }, [])
 

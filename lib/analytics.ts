@@ -61,6 +61,6 @@ export const trackSearchCleared = () => {
 export const trackInteraction = (elementId: string, action: string) => {
     posthog.capture('ui_interaction', {
         element_id: elementId,
-        action: action
+        action
     })
 }

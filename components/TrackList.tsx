@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { ITunesTrack } from "@/types/itunes"
 import { formatDuration } from "@/services/itunesService"
 import { usePlayback } from "@/context/PlaybackContext"
+import { trackTrackSelected, trackTrackFavorited } from "@/lib/analytics"
 import { Play, Pause, Heart, Plus, Music } from "lucide-react"
 import { trackTrackSelected, trackTrackFavorited } from "@/lib/analytics"
 

@@ -8,10 +8,12 @@ import Queue from "@/components/Queue"
 import ThemeToggle from "@/components/ThemeToggle"
 import SearchBar from "@/components/SearchBar"
 import TrackList from "@/components/TrackList"
+import HotSection from "@/components/HotSection"
 import { useItunesSearch } from "@/hooks/useItunesSearch"
 import { useFeatureFlag } from "@/lib/featureFlags"
 import { trackLayoutExposure } from "@/lib/analytics"
 import { Sparkles, Compass, History, Star, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
+import { Sparkles, Compass, History, Star, ChevronLeft, ChevronRight, MoreHorizontal, Flame } from "lucide-react"
 
 const ITEMS_PER_PAGE = 20
 const MAX_PAGES = 20
@@ -25,7 +27,8 @@ export default function Home() {
       trackLayoutExposure(isNewLayout ? "new" : "old")
     }
   }, [isNewLayout])
-  const [activeTab, setActiveTab] = useState<"explore" | "recent" | "recommended">("explore")
+
+  const [activeTab, setActiveTab] = useState<"explore" | "trending" | "recent" | "recommended">("explore")
   const [currentPage, setCurrentPage] = useState(1)
   const hasFetched = useRef(false)
   const exploreHeaderRef = useRef<HTMLDivElement>(null)
@@ -78,6 +81,7 @@ export default function Home() {
 
   const tabs = [
     { id: "explore", name: "Explore", icon: Compass },
+    { id: "trending", name: "Trending", icon: Flame },
     { id: "recent", name: "Recently Played", icon: History },
     { id: "recommended", name: "For You", icon: Sparkles },
   ]
@@ -223,6 +227,12 @@ export default function Home() {
                     </div>
                   </div>
                 )}
+              </div>
+            )}
+
+            {activeTab === "trending" && (
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <HotSection />
               </div>
             )}
 
