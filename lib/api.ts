@@ -18,6 +18,6 @@ export async function getHotTracks(): Promise<HotTrackWithMeta[]> {
         return await response.json()
     } catch (error) {
         console.error("Error in getHotTracks:", error)
-        return []
+        throw error
     }
 }
