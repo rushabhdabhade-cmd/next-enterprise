@@ -94,8 +94,8 @@ export default function HeroSection({
             />
           )}
           {/* Gradient overlay fading artwork into the left side */}
-          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent dark:from-black dark:via-black/70 dark:to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent dark:from-black/50 dark:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent dark:from-gray-950 dark:via-gray-950/70 dark:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent dark:from-gray-900/50 dark:to-transparent" />
         </div>
       </div>
     </div>
