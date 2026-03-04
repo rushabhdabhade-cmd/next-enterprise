@@ -71,8 +71,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
         fetch("/api/user/favorites")
             .then((r) => r.json() as Promise<{ trackIds: number[] }>)
             .then(({ trackIds }) => setFavorites(new Set<number>(trackIds)))
-            .catch(() => {})
-    }, [isSignedIn, user?.id])
+            .catch((err) => console.error("Failed to load favorites:", err))
 
     const progress = duration > 0 ? (currentTime / duration) * 100 : 0
 
