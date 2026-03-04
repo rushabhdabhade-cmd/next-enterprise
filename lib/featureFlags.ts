@@ -12,34 +12,57 @@
  * 50% of users will see the "new-catalog-layout" variant.
  */
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { posthog } from './posthog'
 
 /**
  * Hook to safely access feature flags client-side.
  * Returns undefined while loading to prevent hydration mismatches and flickering.
+ *
+ * Registered flags:
+ *  - "new-catalog-layout"  A/B test: enlarged grid cards vs compact grid (50/50 split)
+ *  - "ai-summaries"        Show AI-generated insight panel on track detail page
  */
+// How long to wait for PostHog to resolve flags before falling back to disabled.
+// Prevents a permanent loading skeleton when PostHog is slow or not configured.
+const FLAG_TIMEOUT_MS = 3000
+
 export function useFeatureFlag(flagKey: string): boolean | undefined {
     const [enabled, setEnabled] = useState<boolean | undefined>(undefined)
 
     useEffect(() => {
-        // Only run on client
         if (typeof window === 'undefined') return
 
+        let resolved = false
+
         const checkFlag = () => {
-            const isFeatureEnabled = posthog.isFeatureEnabled(flagKey)
-            setEnabled(!!isFeatureEnabled)
+            const value = posthog.isFeatureEnabled(flagKey)
+            // isFeatureEnabled returns undefined when flags haven't loaded yet
+            if (value !== undefined) {
+                resolved = true
+                setEnabled(!!value)
+            }
         }
 
-        // Check immediately if flags are already loaded
-        if (posthog.areFeatureFlagsLoaded()) {
+        // Check immediately if PostHog has already resolved flags
+        // areFeatureFlagsLoaded exists at runtime but is not in the published types
+        if ((posthog as Record<string, unknown> & typeof posthog).areFeatureFlagsLoaded?.()) {
             checkFlag()
         }
 
-        // Subscribe to changes
-        posthog.onFeatureFlags(() => {
-            checkFlag()
-        })
+        // Also subscribe so we update the moment flags arrive
+        const unsubscribe = posthog.onFeatureFlags(checkFlag)
+
+        // Safety net: if flags never resolve (PostHog not configured, network error, etc.)
+        // fall back to disabled so the UI is never stuck in a permanent loading state.
+        const timeout = setTimeout(() => {
+            if (!resolved) setEnabled(false)
+        }, FLAG_TIMEOUT_MS)
+
+        return () => {
+            clearTimeout(timeout)
+            if (typeof unsubscribe === 'function') unsubscribe()
+        }
     }, [flagKey])
 
     return enabled
