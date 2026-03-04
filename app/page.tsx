@@ -71,7 +71,7 @@ export default function Home() {
     { id: "explore", name: "Explore", icon: Compass },
     { id: "recent", name: "Recently Played", icon: History },
     { id: "recommended", name: "For You", icon: Sparkles },
-  ]
+  ] as const;
 
   // Pagination Window Logic
   const renderPageButtons = () => {
