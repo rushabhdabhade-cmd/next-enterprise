@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server"
 import { currentUser } from "@clerk/nextjs/server"
+import { NextResponse } from "next/server"
 import { supabaseAdmin } from "@/lib/supabase"
 
 export async function POST() {

@@ -1,18 +1,18 @@
 "use client"
 
-import { useState, useCallback, useRef, useEffect } from "react"
 import {
-  HardDrive,
+  AlertCircle,
   FolderOpen,
+  HardDrive,
   Music,
-  Play,
   Pause,
-  X,
-  Upload,
+  Play,
   Plus,
   Trash2,
-  AlertCircle,
+  Upload,
+  X,
 } from "lucide-react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import LeftSidebar from "@/components/layout/LeftSidebar"
 import Queue from "@/components/playback/Queue"
 import ThemeToggle from "@/components/ui/ThemeToggle"
@@ -52,7 +52,7 @@ const ACCEPTED = ".mp3,.flac,.wav,.aac,.ogg,.m4a,.webm,audio/*"
 let idCounter = Date.now()
 
 function nameGradient(name: string): string {
-  const hash = [...name].reduce((acc, c) => acc + c.charCodeAt(0), 0)
+  const hash = Array.from(name).reduce((acc, c) => acc + c.charCodeAt(0), 0)
   return GRADIENTS[hash % GRADIENTS.length]!
 }
 

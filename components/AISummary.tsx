@@ -1,7 +1,7 @@
 "use client"
 
-import React from "react"
 import { Sparkles } from "lucide-react"
+import React from "react"
 
 /**
  * AISummary component - displayed based on the 'ai-summaries' feature flag.

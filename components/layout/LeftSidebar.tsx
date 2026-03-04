@@ -1,36 +1,36 @@
 "use client"
 
-import { useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { usePathname } from "next/navigation"
-import logo from "@/assets/logo.png"
 import {
-  Compass,
-  Music2,
-  BarChart3,
-  HardDrive,
-  Heart,
-  History,
-  Radio,
-  Clock,
-  PlusCircle,
-  Lock,
-  User as UserIcon,
-  LogOut,
-  Settings,
-  ListMusic,
-  Menu,
-  X,
-} from "lucide-react"
-import {
+  SignedIn,
+  SignedOut,
   SignInButton,
   SignUpButton,
   UserButton,
-  SignedIn,
-  SignedOut,
   useUser
 } from "@clerk/nextjs"
+import {
+  BarChart3,
+  Compass,
+  Film,
+  HardDrive,
+  Heart,
+  History,
+  ListMusic,
+  Lock,
+  Menu,
+  Music2,
+  PlusCircle,
+  Podcast,
+  Search,
+  TrendingUp,
+  User as UserIcon,
+  X,
+} from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useState } from "react"
+import logo from "@/assets/logo.png"
 import { useLibrary } from "@/context/LibraryContext"
 
 export default function LeftSidebar() {
@@ -41,14 +41,20 @@ export default function LeftSidebar() {
 
   const navItems = [
     { name: "Discover", href: "/", icon: Compass },
+    { name: "Search", href: "/search", icon: Search },
     { name: "Genres", href: "/genres", icon: Music2 },
+    { name: "Charts", href: "/charts", icon: BarChart3 },
+    { name: "Podcasts", href: "/podcasts", icon: Podcast },
+    { name: "Videos", href: "/videos", icon: Film },
     { name: "Local Files", href: "/local-files", icon: HardDrive },
   ]
 
   const playlists = [
     { name: "Favorites", href: "/favorites", icon: Heart, requiresAuth: true },
     { name: "History", href: "/recently-played", icon: History, requiresAuth: true },
-    { name: "My Libraries", href: "/libraries", icon: ListMusic, requiresAuth: true }
+    { name: "My Libraries", href: "/libraries", icon: ListMusic, requiresAuth: true },
+    { name: "Profile", href: "/profile", icon: UserIcon, requiresAuth: true },
+    { name: "Stats", href: "/stats", icon: TrendingUp, requiresAuth: true },
   ]
 
   const closeMobile = () => setMobileOpen(false)

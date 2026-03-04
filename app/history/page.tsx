@@ -1,13 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { useUser } from "@clerk/nextjs"
-import { History, Play, Pause, Music, Heart } from "lucide-react"
+import { Heart, History, Music, Pause, Play } from "lucide-react"
+import { useEffect, useState } from "react"
 import LeftSidebar from "@/components/layout/LeftSidebar"
 import Queue from "@/components/playback/Queue"
 import { usePlayback } from "@/context/PlaybackContext"
-import { formatDuration } from "@/services/itunesService"
 import type { SongPlay } from "@/lib/db"
+import { formatDuration } from "@/services/itunesService"
 import type { ITunesTrack } from "@/types/itunes"
 
 function playToTrack(play: SongPlay): ITunesTrack {

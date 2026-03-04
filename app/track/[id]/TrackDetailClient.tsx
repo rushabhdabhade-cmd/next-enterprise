@@ -1,16 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Check, ChevronLeft, Heart, Pause, Play, Plus, Share2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { ITunesTrack } from "@/types/itunes"
-import { usePlayback } from "@/context/PlaybackContext"
-import LeftSidebar from "@/components/layout/LeftSidebar"
-import AISummary from "@/components/AISummary"
-import { formatDuration } from "@/services/itunesService"
-import { useFeatureFlag } from "@/lib/featureFlags"
-import { trackAISummaryExposure } from "@/lib/analytics"
-import { Play, Pause, Heart, Plus, ChevronLeft, Share2, Check } from "lucide-react"
+import { useEffect, useState } from "react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
+import AISummary from "@/components/AISummary"
+import LeftSidebar from "@/components/layout/LeftSidebar"
+import { usePlayback } from "@/context/PlaybackContext"
+import { trackAISummaryExposure } from "@/lib/analytics"
+import { useFeatureFlag } from "@/lib/featureFlags"
+import { formatDuration } from "@/services/itunesService"
+import { ITunesTrack } from "@/types/itunes"
 
 export default function TrackDetailClient({ track }: { track: ITunesTrack }) {
     const router = useRouter()

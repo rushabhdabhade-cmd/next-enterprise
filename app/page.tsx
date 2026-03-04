@@ -1,17 +1,17 @@
 "use client"
 
-import { useState, useEffect, useRef, useMemo } from "react"
-import LeftSidebar from "@/components/layout/LeftSidebar"
-import HeroSection from "@/components/sections/HeroSection"
-import RecentlyPlayedContent from "@/components/catalog/RecentlyPlayedContent"
-import Queue from "@/components/playback/Queue"
-import ThemeToggle from "@/components/ui/ThemeToggle"
-import SearchBar from "@/components/layout/SearchBar"
+import { ChevronLeft, ChevronRight, Compass, Flame, History, MoreHorizontal, Sparkles, Star } from "lucide-react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import CatalogGrid, { CatalogLoadingSkeleton } from "@/components/catalog/CatalogGrid"
-import HotSection from "@/components/sections/HotSection"
+import RecentlyPlayedContent from "@/components/catalog/RecentlyPlayedContent"
+import LeftSidebar from "@/components/layout/LeftSidebar"
+import SearchBar from "@/components/layout/SearchBar"
+import Queue from "@/components/playback/Queue"
 import ForYouSection from "@/components/sections/ForYouSection"
+import HeroSection from "@/components/sections/HeroSection"
+import HotSection from "@/components/sections/HotSection"
+import ThemeToggle from "@/components/ui/ThemeToggle"
 import { useItunesSearch } from "@/hooks/useItunesSearch"
-import { Sparkles, Compass, History, Star, ChevronLeft, ChevronRight, MoreHorizontal, Flame } from "lucide-react"
 
 const ITEMS_PER_PAGE = 20
 const MAX_PAGES = 20
@@ -75,7 +75,7 @@ export default function Home() {
     const windowSize = 4
 
     let startPage = Math.max(1, currentPage - 1)
-    let endPage = Math.min(totalPages, startPage + windowSize - 1)
+    const endPage = Math.min(totalPages, startPage + windowSize - 1)
 
     if (endPage - startPage < windowSize - 1) {
       startPage = Math.max(1, endPage - windowSize + 1)
@@ -125,6 +125,7 @@ export default function Home() {
               <button
                 key={tab.id}
                 onClick={() => {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   setActiveTab(tab.id as any)
                   setCurrentPage(1)
                 }}

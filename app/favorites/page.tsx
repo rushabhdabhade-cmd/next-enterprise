@@ -1,14 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { useUser } from "@clerk/nextjs"
-import { Heart, Play, Pause, Music, Plus } from "lucide-react"
+import { Heart, Music, Pause, Play, Plus } from "lucide-react"
+import { useEffect, useState } from "react"
+import AddToLibraryModal from "@/components/AddToLibraryModal"
 import LeftSidebar from "@/components/layout/LeftSidebar"
 import Queue from "@/components/playback/Queue"
 import { usePlayback } from "@/context/PlaybackContext"
-import { formatDuration } from "@/services/itunesService"
-import AddToLibraryModal from "@/components/AddToLibraryModal"
 import type { Favorite } from "@/lib/db"
+import { formatDuration } from "@/services/itunesService"
 import type { ITunesTrack } from "@/types/itunes"
 
 function favoriteToTrack(fav: Favorite): ITunesTrack {
