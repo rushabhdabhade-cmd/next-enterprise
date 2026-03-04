@@ -26,7 +26,7 @@ export default function ProfilePage() {
         fetch("/api/user/stats")
             .then((r) => r.ok ? r.json() : null)
             .then((data) => setStats(data as UserStats))
-            .catch(() => {})
+            .catch((err) => console.error("Failed to fetch user stats:", err))
             .finally(() => setLoading(false))
     }, [isLoaded, isSignedIn])
 
