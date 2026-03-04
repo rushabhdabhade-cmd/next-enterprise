@@ -6,7 +6,7 @@ import { SearchTrackParams } from "@/types/itunes"
 
 interface SearchBarProps {
   onSearchComplete?: (count: number) => void
-  search: (params: SearchTrackParams) => Promise<{ length: number }>
+  search: (params: SearchTrackParams) => Promise<import("@/types/itunes").ITunesTrack[]>
   loading: boolean
   error: string | null
 }
