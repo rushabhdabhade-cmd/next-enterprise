@@ -64,3 +64,10 @@ export const trackInteraction = (elementId: string, action: string) => {
         action: action
     })
 }
+
+export const trackAISummaryExposure = (trackId: string) => {
+    posthog.capture('ai_summary_exposed', {
+        track_id: trackId,
+        experiment: 'ai-summaries',
+    })
+}

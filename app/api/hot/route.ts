@@ -24,7 +24,8 @@ import { NextResponse } from "next/server"
 import { env } from "@/env.mjs"
 import { HotTrack, HotTrackWithMeta } from "@/types/hot"
 
-export const dynamic = 'force-dynamic' // Ensure we always get fresh data or respect ISR
+// Cache the entire route response for 60 seconds (ISR)
+export const revalidate = 60
 
 export async function GET() {
     try {
@@ -91,7 +92,10 @@ export async function GET() {
         const metaResults = await Promise.all(
             hotTracks.map(async (item) => {
                 try {
-                    const itunesRes = await fetch(`https://itunes.apple.com/lookup?id=${item.trackId}`)
+                    const itunesRes = await fetch(
+                        `https://itunes.apple.com/lookup?id=${item.trackId}`,
+                        { next: { revalidate: 86400 } } // track metadata is stable for 24h
+                    )
                     if (!itunesRes.ok) return null
                     const itunesData = await itunesRes.json() as { results: any[] }
                     const track = itunesData.results?.[0]
