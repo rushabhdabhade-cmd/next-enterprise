@@ -89,8 +89,8 @@ export default function ChartsPage() {
                             key={c.code}
                             onClick={() => setSelectedCountry(c.code)}
                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${selectedCountry === c.code
-                                    ? "bg-orange-500 text-white shadow-lg shadow-orange-500/25"
-                                    : "bg-gray-100 dark:bg-gray-900 text-gray-500 hover:text-gray-900 dark:hover:text-white"
+                                ? "bg-orange-500 text-white shadow-lg shadow-orange-500/25"
+                                : "bg-gray-100 dark:bg-gray-900 text-gray-500 hover:text-gray-900 dark:hover:text-white"
                                 }`}
                         >
                             <span>{c.flag}</span> {c.name}
@@ -105,8 +105,8 @@ export default function ChartsPage() {
                             key={g.id}
                             onClick={() => setSelectedGenre(g.id)}
                             className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${selectedGenre === g.id
-                                    ? "bg-gray-950 dark:bg-white text-white dark:text-gray-950 shadow-lg"
-                                    : "bg-gray-100 dark:bg-gray-900 text-gray-500 hover:text-gray-900 dark:hover:text-white"
+                                ? "bg-gray-950 dark:bg-white text-white dark:text-gray-950 shadow-lg"
+                                : "bg-gray-100 dark:bg-gray-900 text-gray-500 hover:text-gray-900 dark:hover:text-white"
                                 }`}
                         >
                             {g.name}
@@ -141,11 +141,11 @@ export default function ChartsPage() {
 
                             return (
                                 <div
-                                    key={`${track.trackId}-${i}`}
+                                    key={track.trackId}
                                     style={{ animationDelay: `${i * 20}ms` }}
                                     className={`group flex items-center gap-3 md:gap-4 p-2.5 md:p-3 rounded-2xl transition-all animate-in fade-in slide-in-from-bottom-2 fill-mode-both cursor-pointer ${isCurrent
-                                            ? "bg-orange-50 dark:bg-orange-900/10 border border-orange-200 dark:border-orange-800/30"
-                                            : "hover:bg-gray-50 dark:hover:bg-gray-900/50"
+                                        ? "bg-orange-50 dark:bg-orange-900/10 border border-orange-200 dark:border-orange-800/30"
+                                        : "hover:bg-gray-50 dark:hover:bg-gray-900/50"
                                         }`}
                                     onClick={() => isCurrent ? togglePlay() : playTrack(track, tracks, !!isSignedIn)}
                                 >
