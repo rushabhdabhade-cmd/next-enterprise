@@ -137,7 +137,7 @@ export default function Home() {
               <button
                 key={tab.id}
                 onClick={() => {
-                  setActiveTab(tab.id as any)
+                  setActiveTab(tab.id)
                   setCurrentPage(1)
                 }}
                 className={`group pb-6 flex items-center gap-2.5 text-sm font-bold tracking-tight transition-all relative ${activeTab === tab.id
