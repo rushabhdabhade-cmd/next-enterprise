@@ -2,8 +2,8 @@ import posthog, { type PostHog } from 'posthog-js'
 import { env } from '../env.mjs'
 
 if (typeof window !== 'undefined') {
-    const key = env.NEXT_PUBLIC_POSTHOG_KEY || process.env.NEXT_PUBLIC_POSTHOG_KEY
-    const host = env.NEXT_PUBLIC_POSTHOG_HOST || process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com'
+    const key = env.NEXT_PUBLIC_POSTHOG_KEY
+    const host = env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com'
 
     if (key) {
         posthog.init(key, {
