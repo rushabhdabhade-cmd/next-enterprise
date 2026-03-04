@@ -71,8 +71,7 @@ export async function GET() {
             throw new Error(`PostHog query failed: ${phResponse.statusText}`)
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const phData = await phResponse.json() as { results: any[][] }
+        const phData = await phResponse.json() as { results: [trackId: string, count: number][] };
         const results = phData.results || []
 
         if (results.length === 0) {
