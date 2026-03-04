@@ -163,11 +163,13 @@ import {
 
 | Constant | Value | Used for |
 |---|---|---|
-| `TTL.USER_DATA` | 300s | Favorites, play history |
-| `TTL.HOT_TRACKS` | 60s | PostHog trending |
-| `TTL.ITUNES_META` | 86400s | Track/artist lookup |
-| `TTL.ITUNES_CHARTS` | 86400s | RSS feed charts |
-| `TTL.ITUNES_SEARCH` | 3600s | Search results |
+| Constant | Value | Used for |
+|---|---|---|
+| `TTL.USER_DATA` | 300 | Favorites, play history |
+| `TTL.HOT_TRACKS` | 60 | PostHog trending |
+| `TTL.ITUNES_META` | 86400 | Track/artist lookup |
+| `TTL.ITUNES_CHARTS` | 86400 | RSS feed charts |
+| `TTL.ITUNES_SEARCH` | 3600 | Search results |
 
 ---
 
