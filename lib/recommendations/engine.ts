@@ -1,15 +1,15 @@
 import { getCachedFavorites, getCachedPlayHistory } from "@/lib/cache"
-import { searchTracks, getTopTracks } from "@/services/itunesService"
-import { buildUserProfile } from "./profile"
-import type { ITunesTrack } from "@/types/itunes"
+import { getTopTracks, searchTracks } from "@/services/itunesService"
 import type { HotTrackWithMeta } from "@/types/hot"
+import type { ITunesTrack } from "@/types/itunes"
 import type {
-  UserTasteProfile,
-  ScoredTrack,
-  ScoreBreakdown,
   CandidateSource,
   RecommendationsResponse,
+  ScoreBreakdown,
+  ScoredTrack,
+  UserTasteProfile,
 } from "@/types/recommendations"
+import { buildUserProfile } from "./profile"
 
 // ─── Blending Ratios (how many of each pool in final 20) ────────────────────
 

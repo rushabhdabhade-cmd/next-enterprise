@@ -1,36 +1,36 @@
 "use client"
 
-import { useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { usePathname } from "next/navigation"
-import logo from "@/assets/logo.png"
 import {
-  Compass,
-  Music2,
-  BarChart3,
-  HardDrive,
-  Heart,
-  History,
-  PlusCircle,
-  Lock,
-  User as UserIcon,
-  ListMusic,
-  Menu,
-  X,
-  Search,
-  Podcast,
-  Film,
-  TrendingUp,
-} from "lucide-react"
-import {
+  SignedIn,
+  SignedOut,
   SignInButton,
   SignUpButton,
   UserButton,
-  SignedIn,
-  SignedOut,
   useUser
 } from "@clerk/nextjs"
+import {
+  BarChart3,
+  Compass,
+  Film,
+  HardDrive,
+  Heart,
+  History,
+  ListMusic,
+  Lock,
+  Menu,
+  Music2,
+  PlusCircle,
+  Podcast,
+  Search,
+  TrendingUp,
+  User as UserIcon,
+  X,
+} from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useState } from "react"
+import logo from "@/assets/logo.png"
 import { useLibrary } from "@/context/LibraryContext"
 
 export default function LeftSidebar() {

@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Podcast, Search, ExternalLink, Music } from "lucide-react"
+import { ExternalLink, Music, Podcast, Search } from "lucide-react"
+import { useEffect, useState } from "react"
 import LeftSidebar from "@/components/layout/LeftSidebar"
 import Queue from "@/components/playback/Queue"
 import { getTopPodcasts, searchPodcasts } from "@/services/itunesService"

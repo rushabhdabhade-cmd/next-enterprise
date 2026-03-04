@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { BarChart3, Play, Pause, Heart, Plus, Music, Globe } from "lucide-react"
+import { BarChart3, Globe, Heart, Music, Pause, Play, Plus } from "lucide-react"
+import { useEffect, useState } from "react"
+import AddToLibraryModal from "@/components/AddToLibraryModal"
 import LeftSidebar from "@/components/layout/LeftSidebar"
 import Queue from "@/components/playback/Queue"
 import { usePlayback } from "@/context/PlaybackContext"
-import { getTopTracksByGenre, formatDuration } from "@/services/itunesService"
-import AddToLibraryModal from "@/components/AddToLibraryModal"
+import { formatDuration, getTopTracksByGenre } from "@/services/itunesService"
 import type { ITunesTrack } from "@/types/itunes"
 
 const countries = [

@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs/server"
-import { NextResponse } from "next/server"
-import { supabaseAdmin } from "@/lib/supabase"
 import { unstable_cache } from "next/cache"
+import { NextResponse } from "next/server"
 import { cacheTags, TTL } from "@/lib/cache"
+import { supabaseAdmin } from "@/lib/supabase"
 
 export interface UserStats {
     totalPlays: number

@@ -1,7 +1,7 @@
 "use client"
 
+import { Music, Play } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { Play, Music } from "lucide-react"
 
 interface Item {
   id: number

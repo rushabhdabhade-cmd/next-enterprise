@@ -1,11 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { useUser } from "@clerk/nextjs"
-import { User, Music, Clock, Heart, ListMusic, TrendingUp, Play } from "lucide-react"
+import { Clock, Heart, ListMusic, Music, Play, TrendingUp, User } from "lucide-react"
+import { useEffect, useState } from "react"
+import type { UserStats } from "@/app/api/user/stats/route"
 import LeftSidebar from "@/components/layout/LeftSidebar"
 import Queue from "@/components/playback/Queue"
-import type { UserStats } from "@/app/api/user/stats/route"
 
 function formatHours(ms: number) {
     const hours = Math.floor(ms / 3600000)

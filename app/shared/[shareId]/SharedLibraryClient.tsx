@@ -1,13 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
 import { Check, ChevronLeft, ListMusic, Music, Pause, Play, Share2 } from "lucide-react"
+import Link from "next/link"
+import { useEffect, useState } from "react"
 import LeftSidebar from "@/components/layout/LeftSidebar"
 import Queue from "@/components/playback/Queue"
 import { usePlayback } from "@/context/PlaybackContext"
-import { formatDuration } from "@/services/itunesService"
 import type { LibraryTrack } from "@/lib/db"
+import { formatDuration } from "@/services/itunesService"
 import type { ITunesTrack } from "@/types/itunes"
 
 function libraryTrackToTrack(lt: LibraryTrack): ITunesTrack {

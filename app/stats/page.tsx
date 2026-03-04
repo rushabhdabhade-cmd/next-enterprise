@@ -1,11 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { useUser } from "@clerk/nextjs"
-import { TrendingUp, Music, Clock, Disc3, Users, Sparkles, Play, User } from "lucide-react"
+import { Clock, Disc3, Music, Play, Sparkles, TrendingUp, User, Users } from "lucide-react"
+import { useEffect, useState } from "react"
+import type { UserStats } from "@/app/api/user/stats/route"
 import LeftSidebar from "@/components/layout/LeftSidebar"
 import Queue from "@/components/playback/Queue"
-import type { UserStats } from "@/app/api/user/stats/route"
 
 function formatHours(ms: number) {
     const hours = Math.floor(ms / 3600000)
@@ -217,7 +217,7 @@ export default function StatsPage() {
                                         <span className="text-xs text-gray-400 font-medium ml-1">Last 30 days</span>
                                     </h3>
                                     <div className="flex items-end gap-[3px] h-32">
-                                        {stats.dailyPlays.map((day, i) => {
+                                        {stats.dailyPlays.map((day) => {
                                             const height = day.count > 0 ? Math.max((day.count / maxDailyPlays) * 100, 4) : 2
                                             return (
                                                 <div
