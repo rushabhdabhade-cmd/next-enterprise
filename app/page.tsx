@@ -186,21 +186,20 @@ export default function Home() {
                         {renderPageButtons()}
 
                         {totalPages > 5 && currentPage < totalPages - 2 && (
-                          <div className="w-10 h-10 flex items-center justify-center text-gray-300">
-                            <MoreHorizontal size={16} />
-                          </div>
-                        )}
-
-                        {totalPages > 5 && currentPage < totalPages - 2 && (
-                          <button
-                            onClick={() => handlePageChange(totalPages)}
-                            className={`w-10 h-10 rounded-2xl text-[13px] font-bold transition-all ${currentPage === totalPages
-                              ? "bg-pink-500 text-white shadow-xl shadow-pink-500/25"
-                              : "text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                              }`}
-                          >
-                            {totalPages}
-                          </button>
+                          <>
+                            <div className="w-10 h-10 flex items-center justify-center text-gray-300">
+                              <MoreHorizontal size={16} />
+                            </div>
+                            <button
+                              onClick={() => handlePageChange(totalPages)}
+                              className={`w-10 h-10 rounded-2xl text-[13px] font-bold transition-all ${currentPage === totalPages
+                                ? "bg-pink-500 text-white shadow-xl shadow-pink-500/25"
+                                : "text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                                }`}
+                            >
+                              {totalPages}
+                            </button>
+                          </>
                         )}
                       </div>
 
