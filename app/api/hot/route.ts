@@ -97,8 +97,7 @@ export async function GET() {
                         { next: { revalidate: 86400 } } // track metadata is stable for 24h
                     )
                     if (!itunesRes.ok) return null
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const itunesData = await itunesRes.json() as { results: any[] }
+                    const itunesData = await itunesRes.json() as { results: import("@/types/itunes").ITunesTrack[] };
                     const track = itunesData.results?.[0]
                     if (!track) return null
 
