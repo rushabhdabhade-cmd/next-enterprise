@@ -78,7 +78,7 @@ export default function HeroSection({
               <Heart
                 size={16}
                 fill={isFavorited ? "currentColor" : "none"}
-                className={isFavorited ? "text-pink-500 dark:text-white" : "text-pink-500 dark:text-white"}
+                className="text-pink-500 dark:text-white"
               />
             </button>
           </div>
