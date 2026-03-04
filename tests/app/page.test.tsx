@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react"
 import { describe, it, expect, vi, beforeEach } from "vitest"
-import Home from "@/app/page"
+import Home from "@/app/(pages)/page"
 import { useItunesSearch } from "@/hooks/useItunesSearch"
 
 // Mock the hook

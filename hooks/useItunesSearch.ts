@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react"
 import { ITunesTrack, SearchTrackParams } from "@/types/itunes"
 import { searchTracks, getTopTracks } from "@/services/itunesService"
+import { getPageData, setPageData } from "@/lib/pageDataCache"
 
 interface UseItunesSearchState {
   tracks: ITunesTrack[]
@@ -11,10 +12,13 @@ interface UseItunesSearchState {
 }
 
 export function useItunesSearch() {
-  const [state, setState] = useState<UseItunesSearchState>({
-    tracks: [],
-    loading: false,
-    error: null,
+  const [state, setState] = useState<UseItunesSearchState>(() => {
+    const cached = getPageData<ITunesTrack[]>("home:topTracks")
+    return {
+      tracks: cached ?? [],
+      loading: !cached,
+      error: null,
+    }
   })
 
   const search = useCallback(async (params: SearchTrackParams) => {
@@ -33,6 +37,12 @@ export function useItunesSearch() {
   }, [])
 
   const fetchTopTracks = useCallback(async () => {
+    const cached = getPageData<ITunesTrack[]>("home:topTracks")
+    if (cached) {
+      setState({ tracks: cached, loading: false, error: null })
+      return cached
+    }
+
     setState(s => ({ ...s, loading: true, error: null }))
 
     try {
@@ -43,6 +53,7 @@ export function useItunesSearch() {
 
       // Shuffle results for "random" feel
       const shuffled = [...results].sort(() => 0.5 - Math.random())
+      setPageData("home:topTracks", shuffled)
       setState({ tracks: shuffled, loading: false, error: null })
       return shuffled
     } catch (error) {

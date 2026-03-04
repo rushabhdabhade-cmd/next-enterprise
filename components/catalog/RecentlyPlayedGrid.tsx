@@ -1,6 +1,6 @@
 "use client"
 
-import { Music, Play } from "lucide-react"
+import { ChevronRight, Music, Play } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface Item {
@@ -47,9 +47,12 @@ export default function RecentlyPlayedGrid({ items }: Props) {
           </div>
 
           <div className="space-y-1">
-            <h4 className="text-sm font-bold text-gray-950 dark:text-white truncate group-hover:text-pink-500 transition-colors">
-              {item.name}
-            </h4>
+            <div className="flex items-center gap-1">
+              <h4 className="text-sm font-bold text-gray-950 dark:text-white truncate flex-1 group-hover:text-pink-500 transition-colors">
+                {item.name}
+              </h4>
+              <ChevronRight size={12} className="flex-shrink-0 text-gray-300 dark:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
             <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium truncate uppercase tracking-wider">
               {item.artist}
             </p>
