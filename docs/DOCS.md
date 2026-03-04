@@ -156,7 +156,7 @@ Renders an `<a>` (anchor) tag styled as a button. Use this for navigation links,
 | `size` | `"sm" \| "lg"` | `"lg"` | `sm` = min-h-10; `lg` = min-h-12 |
 | `underline` | `boolean` | `false` | Underlines the label text |
 | `className` | `string` | — | Additional classes merged via tailwind-merge |
-| `...rest` | `React.ButtonHTMLAttributes<HTMLAnchorElement>` | — | All standard anchor attributes (`target`, `rel`, etc.) |
+| `...rest` | `React.AnchorHTMLAttributes<HTMLAnchorElement>` | — | All standard anchor attributes (`target`, `rel`, etc.) |
 
 **Examples:**
 
@@ -584,7 +584,7 @@ pnpm e2e:headless   # E2E tests — should pass
 
 ---
 
-## 11. Observability
+## 12. Observability
 
 **Source:** [instrumentation.ts](instrumentation.ts)
 
