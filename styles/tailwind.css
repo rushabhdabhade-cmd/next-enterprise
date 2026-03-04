@@ -17,3 +17,9 @@
         @apply bg-gray-950 text-white;
     }
 }
+
+/* Shared keyframe used by all components for the "now playing" animated bars */
+@keyframes music-bar {
+    0%, 100% { height: 4px; }
+    50%       { height: 12px; }
+}
