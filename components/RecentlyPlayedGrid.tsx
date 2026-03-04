@@ -21,7 +21,7 @@ export default function RecentlyPlayedGrid({ items }: Props) {
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
       {items.map((item, i) => (
         <div
-          key={i}
+          key={item.id}
           onClick={() => router.push(`/track/${item.id}`)}
           className="group cursor-pointer"
         >
