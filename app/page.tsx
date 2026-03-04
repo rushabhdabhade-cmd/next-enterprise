@@ -3,11 +3,11 @@
 import { useState, useEffect, useRef, useMemo } from "react"
 import LeftSidebar from "@/components/LeftSidebar"
 import HeroSection from "@/components/HeroSection"
-import RecentlyPlayedGrid from "@/components/RecentlyPlayedGrid"
+import RecentlyPlayedContent from "@/components/RecentlyPlayedContent"
 import Queue from "@/components/Queue"
 import ThemeToggle from "@/components/ThemeToggle"
 import SearchBar from "@/components/SearchBar"
-import TrackList from "@/components/TrackList"
+import CatalogGrid, { CatalogLoadingSkeleton } from "@/components/CatalogGrid"
 import HotSection from "@/components/HotSection"
 import { useItunesSearch } from "@/hooks/useItunesSearch"
 import { Sparkles, Compass, History, Star, ChevronLeft, ChevronRight, MoreHorizontal, Flame } from "lucide-react"
@@ -56,13 +56,6 @@ export default function Home() {
       exploreHeaderRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }
-
-  const recentlyPlayedItems = (tracks || []).slice(6, 12).map((track) => ({
-    id: track.trackId,
-    name: track.trackName,
-    artist: track.artistName,
-    imageUrl: track.artworkUrl100,
-  }))
 
   const firstTrack = tracks?.[0]
   const heroTitle = firstTrack ? `Discover ${firstTrack.artistName}` : "Curated for you"
@@ -162,7 +155,12 @@ export default function Home() {
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <SearchBar search={search} loading={loading} error={error} />
                 <div className="mt-12">
-                  <TrackList tracks={paginatedTracks} loading={loading} />
+                  {/* new-catalog-layout A/B test: CatalogGrid handles flag-loading skeleton internally.
+                      Show iTunes-loading skeleton until tracks arrive. */}
+                  {loading && paginatedTracks.length === 0
+                    ? <CatalogLoadingSkeleton />
+                    : <CatalogGrid tracks={paginatedTracks} />
+                  }
                 </div>
 
                 {/* Refined Modern Pagination UI */}
@@ -228,7 +226,7 @@ export default function Home() {
             {/* Other tabs remain the same */}
             {activeTab === "recent" && (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                <RecentlyPlayedGrid items={recentlyPlayedItems} />
+                <RecentlyPlayedContent />
               </div>
             )}
 

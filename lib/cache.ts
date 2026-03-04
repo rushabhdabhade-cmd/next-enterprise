@@ -1,0 +1,61 @@
+import { revalidateTag, unstable_cache } from "next/cache"
+import { getFavorites, getPlayHistory } from "@/lib/db"
+
+// ─── Cache Tags ────────────────────────────────────────────────────────────────
+
+export const cacheTags = {
+  favorites: (userId: string) => `favorites-${userId}`,
+  plays: (userId: string) => `plays-${userId}`,
+} as const
+
+// ─── TTLs (seconds) ────────────────────────────────────────────────────────────
+
+export const TTL = {
+  USER_DATA: 300,    // 5 min — favorites, play history
+  HOT_TRACKS: 60,   // 1 min — PostHog trending
+  ITUNES_META: 86400, // 24h — track/artist metadata
+  ITUNES_CHARTS: 86400, // 24h — iTunes RSS charts
+  ITUNES_SEARCH: 3600,  // 1h  — search results
+} as const
+
+// ─── Cached DB Queries ─────────────────────────────────────────────────────────
+
+/**
+ * Cache favorites per user for 5 minutes.
+ * Invalidate with: revalidateFavorites(userId)
+ */
+export function getCachedFavorites(userId: string) {
+  return unstable_cache(
+    async () => getFavorites(userId),
+    ["favorites", userId],
+    {
+      revalidate: TTL.USER_DATA,
+      tags: [cacheTags.favorites(userId)],
+    }
+  )()
+}
+
+/**
+ * Cache play history per user+limit for 5 minutes.
+ * Invalidate with: revalidatePlays(userId)
+ */
+export function getCachedPlayHistory(userId: string, limit: number) {
+  return unstable_cache(
+    async () => getPlayHistory(userId, limit),
+    ["plays", userId, String(limit)],
+    {
+      revalidate: TTL.USER_DATA,
+      tags: [cacheTags.plays(userId)],
+    }
+  )()
+}
+
+// ─── Invalidation Helpers ──────────────────────────────────────────────────────
+
+export function revalidateFavorites(userId: string) {
+  revalidateTag(cacheTags.favorites(userId))
+}
+
+export function revalidatePlays(userId: string) {
+  revalidateTag(cacheTags.plays(userId))
+}

@@ -13,7 +13,7 @@ export default function UserSync() {
         hasSynced.current = true
 
         fetch("/api/auth/sync-user", { method: "POST" })
-            .then((res) => res.json())
+            .then((res) => res.json() as Promise<{ error?: string; user?: { id: string } }>)
             .then((data) => {
                 if (data.error) {
                     console.error("[UserSync] Failed:", data.error)

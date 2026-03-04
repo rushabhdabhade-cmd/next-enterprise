@@ -21,7 +21,7 @@ export async function getTopTracks(): Promise<ITunesTrack[]> {
     ]
 
     const responses = await Promise.all(
-      feeds.map(url => fetch(url, { cache: 'no-store' }).catch(() => null))
+      feeds.map(url => fetch(url, { next: { revalidate: 86400 } }).catch(() => null))
     )
 
     const dataObjects = await Promise.all(
@@ -98,6 +98,7 @@ export async function searchTracks(
 
     const response = await fetch(`${ITUNES_API_BASE}?${queryParams}`, {
       method: "GET",
+      next: { revalidate: 3600 }, // cache search results for 1 hour
     })
 
     if (!response.ok) {
@@ -116,6 +117,7 @@ export async function getTrackById(id: number): Promise<ITunesTrack | null> {
   try {
     const response = await fetch(`${ITUNES_LOOKUP_BASE}?id=${id}`, {
       method: "GET",
+      next: { revalidate: 86400 }, // track metadata is stable for 24h
     })
 
     if (!response.ok) {
