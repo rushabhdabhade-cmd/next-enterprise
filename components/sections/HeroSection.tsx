@@ -1,6 +1,6 @@
 "use client"
 
-import { Play, Pause, Heart } from "lucide-react"
+import { Heart, Pause, Play } from "lucide-react"
 import { usePlayback } from "@/context/PlaybackContext"
 import { ITunesTrack } from "@/types/itunes"
 
@@ -34,34 +34,34 @@ export default function HeroSection({
   }
 
   return (
-    <div className="relative h-80 bg-gray-950 overflow-hidden group">
+    <div className="relative h-56 md:h-80 bg-gradient-to-br from-pink-50 via-purple-50/50 to-white dark:from-gray-950 dark:via-purple-950/20 dark:to-gray-900 overflow-hidden group">
       <div className="relative h-full flex">
 
         {/* Left — Text content */}
-        <div className="relative z-10 flex flex-col justify-center px-10 md:px-14 w-full md:w-[55%]">
-          <p className="text-pink-400 text-xs font-semibold tracking-wide mb-4">
+        <div className="relative z-10 flex flex-col justify-center px-5 md:px-10 w-full md:w-[55%]">
+          <p className="text-pink-500 dark:text-pink-400 text-[10px] md:text-xs font-semibold tracking-wide mb-2 md:mb-4">
             Trending New Hits
           </p>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 leading-tight tracking-tight">
+          <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-gray-950 dark:text-white leading-tight tracking-tight line-clamp-2">
             {track?.trackName || title}
           </h1>
 
-          <p className="text-gray-400 text-sm mb-8">
-            <span className="text-white font-medium">{track?.artistName}</span>
+          <p className="text-gray-500 dark:text-gray-400 text-sm md:text-lg mt-1 mb-4 md:mb-6 truncate">
+            <span className="text-gray-900 dark:text-white font-medium">{track?.artistName}</span>
             {track?.artistName && (
-              <span className="ml-2 text-gray-500">
+              <span className="ml-2 text-gray-400 dark:text-gray-500">
                 {track?.primaryGenreName ?? "Music"}
               </span>
             )}
             {!track?.artistName && subtitle}
           </p>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <button
               onClick={handlePlay}
               disabled={!track}
-              className="px-6 py-2.5 bg-pink-500 hover:bg-pink-400 text-white text-sm font-semibold rounded-full transition-all hover:scale-105 active:scale-95 flex items-center gap-2 shadow-lg shadow-pink-500/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="px-4 py-2 md:px-6 md:py-2.5 bg-pink-500 hover:bg-pink-400 text-white text-xs md:text-sm font-semibold rounded-full transition-all hover:scale-105 active:scale-95 flex items-center gap-2 shadow-lg shadow-pink-500/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isPlayingThis
                 ? <Pause fill="currentColor" size={16} />
@@ -73,12 +73,12 @@ export default function HeroSection({
             <button
               onClick={() => track && toggleFavorite(track)}
               disabled={!track}
-              className="w-10 h-10 bg-purple-600 hover:bg-purple-500 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-9 h-9 md:w-10 md:h-10 bg-pink-500/10 dark:bg-pink-500 hover:bg-pink-500/20 dark:hover:bg-pink-400 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Heart
                 size={16}
                 fill={isFavorited ? "currentColor" : "none"}
-                className={isFavorited ? "text-white" : "text-white"}
+                className="text-pink-500 dark:text-white"
               />
             </button>
           </div>
@@ -93,9 +93,9 @@ export default function HeroSection({
               className="w-full h-full object-cover"
             />
           )}
-          {/* Gradient overlay fading artwork into the dark left side */}
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-950 via-gray-950/60 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-950/40 to-transparent" />
+          {/* Gradient overlay fading artwork into the left side */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent dark:from-gray-950 dark:via-gray-950/70 dark:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent dark:from-gray-900/50 dark:to-transparent" />
         </div>
       </div>
     </div>

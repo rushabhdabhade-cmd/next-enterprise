@@ -1,7 +1,7 @@
 "use client"
 
+import { ChevronLeft, ChevronRight, GripVertical, MoreVertical, Music } from "lucide-react"
 import { useState } from "react"
-import { Music, MoreVertical, GripVertical, ChevronLeft, ChevronRight } from "lucide-react"
 import { usePlayback } from "@/context/PlaybackContext"
 import { formatDuration } from "@/services/itunesService"
 
@@ -52,7 +52,7 @@ export default function Queue() {
 
       <div className="flex-1 overflow-y-auto px-4 space-y-2 pb-24">
         {currentItems.length > 0 ? (
-          currentItems.map((track, i) => {
+          currentItems.map((track) => {
             const isCurrent = currentTrack?.trackId === track.trackId
             return (
               <div
