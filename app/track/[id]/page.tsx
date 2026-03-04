@@ -9,7 +9,7 @@ export const revalidate = 86400
 export async function generateMetadata({
     params,
 }: {
-    params: Promise<{ id: string }>
+    params: { id: string }
 }): Promise<Metadata> {
     const { id } = await params
     const track = await getTrackById(Number(id))
