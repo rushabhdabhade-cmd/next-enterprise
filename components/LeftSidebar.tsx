@@ -35,13 +35,11 @@ export default function LeftSidebar() {
     { name: "Discover", href: "/", icon: Compass },
     { name: "Genres", href: "/genres", icon: Music2 },
     { name: "Top Charts", href: "/top-charts", icon: BarChart3 },
-    { name: "Local Files", href: "/local-files", icon: HardDrive },
-  ]
-
   const playlists = [
-    { name: "Favorites", href: "/favorites", icon: Heart, requiresAuth: true },
-    { name: "History", href: "/recently-played", icon: History, requiresAuth: true },
-    { name: "Stations", href: "/stations", icon: Radio, requiresAuth: false },
+    { name: "Favorites", href: "/favorites", icon: Heart },
+    { name: "History", href: "/history", icon: History },
+    { name: "Recently Played", href: "/recently-played", icon: Clock },
+    { name: "Stations", href: "/stations", icon: Radio },
   ]
 
   return (
