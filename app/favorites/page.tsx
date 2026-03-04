@@ -1,14 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { useUser } from "@clerk/nextjs"
-import { Heart, Play, Pause, Music, Plus } from "lucide-react"
-import LeftSidebar from "@/components/LeftSidebar"
-import Queue from "@/components/Queue"
-import { usePlayback } from "@/context/PlaybackContext"
-import { formatDuration } from "@/services/itunesService"
+import { Heart, Music, Pause, Play, Plus } from "lucide-react"
+import { useEffect, useState } from "react"
 import AddToLibraryModal from "@/components/AddToLibraryModal"
+import LeftSidebar from "@/components/layout/LeftSidebar"
+import Queue from "@/components/playback/Queue"
+import { usePlayback } from "@/context/PlaybackContext"
 import type { Favorite } from "@/lib/db"
+import { formatDuration } from "@/services/itunesService"
 import type { ITunesTrack } from "@/types/itunes"
 
 function favoriteToTrack(fav: Favorite): ITunesTrack {
@@ -92,7 +92,7 @@ export default function FavoritesPage() {
             <LeftSidebar />
 
             <main className="flex-1 overflow-y-auto scroll-smooth">
-                <div className="max-w-7xl mx-auto px-8 py-12 pb-32">
+                <div className="max-w-7xl mx-auto px-4 py-6 pb-32 md:px-8 md:py-12">
 
                     {/* Header */}
                     <header className="flex items-center justify-between mb-10">
@@ -113,7 +113,7 @@ export default function FavoritesPage() {
 
                     {/* Loading skeleton */}
                     {loading && (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
                             {[...Array(10)].map((_, i) => <SkeletonCard key={i} />)}
                         </div>
                     )}
@@ -146,7 +146,7 @@ export default function FavoritesPage() {
 
                     {/* Favorites grid */}
                     {!loading && favorites.length > 0 && (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
                             {favorites.map((fav, index) => {
                                 const isCurrent = currentTrack?.trackId === fav.track_id
                                 const isPlayingThis = isCurrent && isPlaying

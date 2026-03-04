@@ -1,23 +1,23 @@
 "use client"
 
-import React, { useState } from "react" // useState kept for isExpanded
-import { usePlayback } from "@/context/PlaybackContext"
-import { formatDuration } from "@/services/itunesService"
 import {
-    Play,
-    Pause,
-    SkipBack,
-    SkipForward,
-    Volume2,
-    Volume1,
-    VolumeX,
     Heart,
+    Maximize2,
+    Pause,
+    Play,
+    Plus,
     Repeat,
     Shuffle,
-    Maximize2,
-    Plus
+    SkipBack,
+    SkipForward,
+    Volume1,
+    Volume2,
+    VolumeX
 } from "lucide-react"
+import React, { useState } from "react" // useState kept for isExpanded
 import AddToLibraryModal from "@/components/AddToLibraryModal"
+import { usePlayback } from "@/context/PlaybackContext"
+import { formatDuration } from "@/services/itunesService"
 
 export default function NowPlayingBar() {
     const {
@@ -176,18 +176,18 @@ export default function NowPlayingBar() {
     return (
         <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4">
             <div className="max-w-7xl mx-auto bg-white/70 dark:bg-gray-950/70 backdrop-blur-2xl border border-white/20 dark:border-gray-800/50 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] p-3 md:p-4 transition-all duration-700 animate-in slide-in-from-bottom-10">
-                <div className="flex items-center justify-between gap-4 md:gap-8">
+                <div className="flex items-center gap-3 md:gap-8">
 
                     {/* Left: Track Info */}
-                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                    <div className="flex items-center gap-3 min-w-0 flex-shrink-0 max-w-[40%] md:max-w-none md:flex-1">
                         <div className="relative group flex-shrink-0">
                             <img
                                 src={currentTrack.artworkUrl60}
                                 alt={currentTrack.trackName}
-                                className="w-12 h-12 md:w-14 md:h-14 rounded-2xl object-cover shadow-lg group-hover:scale-105 transition-transform duration-500"
+                                className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl object-cover shadow-lg group-hover:scale-105 transition-transform duration-500"
                             />
                             {isPlaying && (
-                                <div className="absolute inset-0 bg-black/10 rounded-2xl flex items-center justify-center">
+                                <div className="absolute inset-0 bg-black/10 rounded-xl md:rounded-2xl flex items-center justify-center">
                                     <div className="flex gap-1 items-end h-3">
                                         <div className="w-0.5 bg-white rounded-full animate-[music-bar_0.6s_ease-in-out_infinite]" />
                                         <div className="w-0.5 bg-white rounded-full animate-[music-bar_0.8s_ease-in-out_infinite_0.1s]" />
@@ -196,7 +196,7 @@ export default function NowPlayingBar() {
                                 </div>
                             )}
                         </div>
-                        <div className="min-w-0">
+                        <div className="min-w-0 hidden sm:block">
                             <h4 className="font-bold text-gray-950 dark:text-white truncate text-sm md:text-base mb-0.5 tracking-tight">
                                 {currentTrack.trackName}
                             </h4>
@@ -206,21 +206,21 @@ export default function NowPlayingBar() {
                         </div>
                         <button
                             onClick={() => toggleFavorite(currentTrack)}
-                            className={`ml-2 transition-all hover:scale-110 active:scale-90 ${favorites.has(currentTrack.trackId) ? 'text-pink-500' : 'text-gray-300 dark:text-gray-600 hover:text-pink-500'}`}
+                            className={`ml-1 transition-all hover:scale-110 active:scale-90 hidden sm:block ${favorites.has(currentTrack.trackId) ? 'text-pink-500' : 'text-gray-300 dark:text-gray-600 hover:text-pink-500'}`}
                         >
                             <Heart size={18} fill={favorites.has(currentTrack.trackId) ? "currentColor" : "none"} />
                         </button>
                         <button
                             onClick={() => setShowLibraryModal(true)}
-                            className="ml-1 text-gray-300 dark:text-gray-600 hover:text-gray-900 dark:hover:text-white transition-all hover:scale-110 active:scale-90"
+                            className="ml-1 text-gray-300 dark:text-gray-600 hover:text-gray-900 dark:hover:text-white transition-all hover:scale-110 active:scale-90 hidden sm:block"
                         >
                             <Plus size={18} />
                         </button>
                     </div>
 
                     {/* Center: Controls & Global Progress */}
-                    <div className="flex flex-col items-center gap-3 flex-[2] max-w-2xl">
-                        <div className="flex items-center gap-5 md:gap-8">
+                    <div className="flex flex-col items-center gap-2 md:gap-3 flex-1 md:flex-[2] md:max-w-2xl">
+                        <div className="flex items-center gap-4 md:gap-8">
                             <button
                                 onClick={toggleShuffle}
                                 className={`transition-colors hidden sm:block ${isShuffle ? 'text-pink-500' : 'text-gray-300 dark:text-gray-600'}`}
@@ -232,21 +232,21 @@ export default function NowPlayingBar() {
                                 onClick={playPrevious}
                                 className="text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all active:scale-90"
                             >
-                                <SkipBack fill="currentColor" size={24} />
+                                <SkipBack fill="currentColor" size={20} />
                             </button>
 
                             <button
                                 onClick={togglePlay}
-                                className="w-11 h-11 md:w-13 md:h-13 flex items-center justify-center bg-gray-950 dark:bg-white text-white dark:text-gray-950 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all"
+                                className="w-10 h-10 md:w-11 md:h-11 flex items-center justify-center bg-gray-950 dark:bg-white text-white dark:text-gray-950 rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all"
                             >
-                                {isPlaying ? <Pause fill="currentColor" size={20} /> : <Play fill="currentColor" className="ml-1" size={20} />}
+                                {isPlaying ? <Pause fill="currentColor" size={18} /> : <Play fill="currentColor" className="ml-0.5" size={18} />}
                             </button>
 
                             <button
                                 onClick={playNext}
                                 className="text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all active:scale-90"
                             >
-                                <SkipForward fill="currentColor" size={24} />
+                                <SkipForward fill="currentColor" size={20} />
                             </button>
 
                             <button
@@ -257,8 +257,8 @@ export default function NowPlayingBar() {
                             </button>
                         </div>
 
-                        <div className="w-full flex items-center gap-3 group/progress">
-                            <span className="text-[10px] tabular-nums font-bold text-gray-400 w-10 text-right">
+                        <div className="w-full flex items-center gap-2 md:gap-3 group/progress">
+                            <span className="text-[10px] tabular-nums font-bold text-gray-400 w-8 md:w-10 text-right hidden sm:block">
                                 {formatDuration(currentTime * 1000)}
                             </span>
                             <div
@@ -274,14 +274,14 @@ export default function NowPlayingBar() {
                                     style={{ left: `${progress}%`, marginLeft: '-8px' }}
                                 />
                             </div>
-                            <span className="text-[10px] tabular-nums font-bold text-gray-400 w-10 text-left">
+                            <span className="text-[10px] tabular-nums font-bold text-gray-400 w-8 md:w-10 text-left hidden sm:block">
                                 {formatDuration(duration * 1000)}
                             </span>
                         </div>
                     </div>
 
                     {/* Right: Volume & Utilities */}
-                    <div className="flex items-center justify-end gap-6 flex-1 hidden md:flex">
+                    <div className="hidden md:flex items-center justify-end gap-6 flex-1">
                         <div className="flex items-center gap-3 group/volume">
                             <VolumeIcon
                                 size={18}

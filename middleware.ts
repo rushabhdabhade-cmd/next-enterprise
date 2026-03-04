@@ -13,6 +13,11 @@ const isPublicRoute = createRouteMatcher([
     '/libraries(.*)',
     '/genres(.*)',
     '/top-charts(.*)',
+    '/charts(.*)',        // Public discovery pages
+    '/search(.*)',
+    '/podcasts(.*)',
+    '/videos(.*)',
+    '/offline',
 ]);
 
 export default clerkMiddleware(async (auth, request) => {

@@ -1,8 +1,8 @@
 "use client"
 
 import { useUser } from "@clerk/nextjs"
-import { useEffect } from "react"
 import posthog from "posthog-js"
+import { useEffect } from "react"
 
 /**
  * Syncs Clerk user session with PostHog identity.

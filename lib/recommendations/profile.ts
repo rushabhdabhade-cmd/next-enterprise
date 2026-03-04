@@ -1,4 +1,4 @@
-import type { SongPlay, Favorite } from "@/lib/db"
+import type { Favorite, SongPlay } from "@/lib/db"
 import type {
   AffinityScore,
   ArtistCoOccurrence,
